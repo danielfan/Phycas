@@ -19,5 +19,6 @@ if __name__ == '__main__':
     sumt.outgroup_taxon     = '40 Cyanophora paradoxa'
     sumt.tree_credible_prob = 1.0
     sumt.useGUI             = False
+    sumt.refdistfile = 'doof.txt'
     sumt()
     

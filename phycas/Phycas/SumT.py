@@ -22,6 +22,9 @@ class SumT(PhycasCommand):
         o.__dict__["splits"] = s
         PhycasCommand.__init__(self, args, "sumt", "The sumt command is used to summarize a collection of trees (usually trees that have been produced by an MCMC simulation).", o)
         
+		# options that are hidden for now because they are for features still in development
+        self.__dict__["refdistfile"] = None		# name of file in which to save reference distribution details for purposes of generalized stepping stone analyses; if None, no reference distribution file will be saved
+
         # create a variable that will be used to store information about splits
         # that can be processed by the user after sumt has been run
         self.__dict__["split_info"] = None

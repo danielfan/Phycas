@@ -30,19 +30,29 @@ class TreeSummarizer(CommonFunctions):
             self.outgroup = None
             self.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
     
-    def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples):
+    def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples, edge_lengths_are_clade_posteriors = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Assigns edge lengths in supplied tree using posterior mean split
-        weights stored in split_vect. The variable split_vect associates a
-        list with each split. The first element of this list is the number of
-        trees considered in which the split was found, and the second element
-        is the sum of the edge lengths of the split over all trees in which it
-        was found. The estimated edge length applied to the tree is the
-        second element of the split divided by the first element.
-        
+        If edge_lengths_are_clade_posteriors is True, assigns edge lengths in
+        supplied tree using posterior probabilities stored in split_map. The
+        variable split_map associates a list with each split. The first
+        element of this list is the number of trees considered in which the
+        split was found, so the edge length applied to the tree is the first 
+        element of the split divided by total_samples. This produces a tree
+        with clade probabilities for edge lengths, which is useful in
+        specifying a reference distribution for trees, used in the generalized
+        stepping-stone method.
+    
+        If edge_lengths_are_clade_posteriors is False (default), assigns edge
+        lengths in supplied tree using posterior mean split weights stored in
+        split_map. The variable split_map associates a list with each split.
+        The first element of this list is the number of trees considered in
+        which the split was found, and the second element is the sum of the
+        edge lengths of the split over all trees in which it was found. The
+        estimated edge length applied to the tree is the second element of
+        the split divided by the first element.
+    
         """
-        #tree.recalcAllSplits(tree.getNTips())
         tree.recalcAllSplits(tree.getNObservables())
         nd = tree.getFirstPreorder()
         eq_brlen = self.optsout.trees.equal_brlens
@@ -60,11 +70,14 @@ class TreeSummarizer(CommonFunctions):
                 raise ValueError('could not find edge length information for the split %s' % ss)
             support = float(v[0])/float(total_samples)
             nd.setSupport(support)
-            if eq_brlen:
-                edge_len = 1.0
+            if edge_lengths_are_clade_posteriors:
+                nd.setEdgeLen(support)
             else:
-                edge_len = float(v[1])/float(v[0])
-            nd.setEdgeLen(edge_len)
+                if eq_brlen:
+                    edge_len = 1.0
+                else:
+                    edge_len = float(v[1])/float(v[0])
+                nd.setEdgeLen(edge_len)
 
     def save_trees(self, short_names, full_names, trees):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -133,7 +146,7 @@ class TreeSummarizer(CommonFunctions):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         The supplied split_vect is a vector of key,value pairs, where the key
-        is a split pattern string and v=value[2:] is a list of samples in
+        is a split pattern string and v=value[3:] is a list of sample indices in
         which the split was found. The minimum possible value in v is 1, and
         the maximum possible value is ntrees. Consider the following
         oversimplified example involving a split with posterior probability
@@ -177,14 +190,14 @@ class TreeSummarizer(CommonFunctions):
             return
         xvect = range(0, ntrees + 1, ntrees//ndivisions)
         for k,value in split_vect:
-            if len(value) == 2:
+            if len(value) == 3:
                 trivial_ignored += 1
                 continue
             if ignore_uninteresting and value[0] == ntrees:
                 uninteresting_ignored += 1
                 continue
             line_data = [(0.0,0.0)]
-            v = value[2:]
+            v = value[3:]
             k = 0
             for i,x in enumerate(xvect[1:]):
                 while k < len(v) and v[k] <= x:
@@ -224,9 +237,9 @@ class TreeSummarizer(CommonFunctions):
         """
         Creates a plot comprising numerous horizontal lines, each representing
         the trajectory of a non-trivial, "interesting" split throughout the
-        MCMC simulation. Trivial splits are those separating a terminal taxon
+        MCMC simulation. Trivial splits are those separating a single taxon
         from the other taxa, and are aways present. "Interesting" splits are
-        those that were absent during some of the non-burn-in period. This
+        those that were absent during some portion of the non-burn-in period. This
         plot provides a visual picture of mixing in the Markov chain with
         respect to splits.
         
@@ -242,13 +255,13 @@ class TreeSummarizer(CommonFunctions):
         v = []
         splits_plotted = 0
         for k,value in split_vect:
-            if len(value) == 2:
+            if len(value) == 3:
                 trivial_ignored += 1
                 continue
             if ignore_uninteresting and value[0] == ntrees:
                 uninteresting_ignored += 1
                 continue
-            v.append(value[2:])
+            v.append(value[3:])
             splits_plotted += 1
             if splits_plotted == splits_to_plot:
                 break
@@ -301,13 +314,15 @@ class TreeSummarizer(CommonFunctions):
         #       number of trees sampled)
         #   - element 1 holds the sum of edge lengths for this split (this provides the posterior
         #       mean edge length corresponding to this split when divided by the value in element 0)
-        #   - elements 2... are, for internal nodes, the indices of trees in which the split was
+        #   - element 2 holds the sum of squared edge lengths for this split (this allows the variance
+        #       in edge lengths corresponding to this split to be computed)
+        #   - elements 3... are, for internal nodes, the indices of trees in which the split was
         #       found (this part is omitted for terminal nodes, which must appear in every tree)
-        #   From the tree index list we can compute the following quantities for internal splits:
-        #   1. the number of sojourns for each internal split (a sojourn is a series of consecutive
-        #      samples in which a split was found that is preceded and followed by at least one
-        #      sample not containing the split)
-        #   2. sliding window and cumulative plots, such as those produced by AWTY
+        #       From this tree index list we can compute the following quantities for internal splits:
+        #       1. the number of sojourns for each internal split (a sojourn is a series of consecutive
+        #          samples in which a split was found that is preceded and followed by at least one
+        #          sample not containing the split)
+        #       2. sliding window and cumulative plots, such as those produced by AWTY
         # Each distinct tree topology is associated with a similar list:
         #   - element 0 is again the number of times the tree topology was seen over all samples
         #   - element 1 holds the newick tree description
@@ -316,7 +331,6 @@ class TreeSummarizer(CommonFunctions):
         #       allows the number and extent of each sojourn to be computed
         nd = tree.getFirstPreorder()
         assert nd.isRoot(), 'the first preorder node should be the root'
-        #split_vec = []
         treelen = 0.0
         has_edge_lens = tree.hasEdgeLens()
         while True:
@@ -352,14 +366,15 @@ class TreeSummarizer(CommonFunctions):
             entry = split_map[ss]
             entry[0] += 1
             entry[1] += edge_len
+            entry[2] += math.pow(edge_len,2.0)
             if not is_tip_node:
                 entry.append(self.num_trees_considered)
         else:
             # split not yet seen
             if is_tip_node:
-                split_map[ss] = [1, edge_len]
+                split_map[ss] = [1, edge_len, math.pow(edge_len,2.0)]
             else:
-                split_map[ss] = [1, edge_len, self.num_trees_considered]
+                split_map[ss] = [1, edge_len, math.pow(edge_len,2.0), self.num_trees_considered]
 
     def consensus(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -388,10 +403,6 @@ class TreeSummarizer(CommonFunctions):
         num_stored_trees = len(self.stored_tree_defs)
         self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  str(input_trees))
 
-        # Build each tree and add the splits and tree topolgies found there to the
-        # dictionary of splits (split_map) and the dictionary of tree topologies
-        # (tree_map), respectively
-        self.stdout.info('Compiling lists of tree topologies and splits...')
         t = Phylogeny.Tree()
         if self.rooted_trees:
             t.setRooted()
@@ -400,6 +411,9 @@ class TreeSummarizer(CommonFunctions):
         split_field_width = 0
         sojourn_field_width = 2 + math.floor(math.log10(float(num_stored_trees)))
         
+        # Build each tree and add the splits and tree topolgies found there to the dictionary of splits (split_map) 
+        # and the dictionary of tree topologies (tree_map), respectively
+        self.stdout.info('Compiling lists of tree topologies and splits...')
         for tree_def in self.stored_tree_defs:
             if num_trees < self.opts.burnin:
                 num_trees += 1
@@ -414,7 +428,6 @@ class TreeSummarizer(CommonFunctions):
             # Build the tree
             tree_def.buildTree(t)
             t.rectifyNames(self.taxon_labels)
-            #ntips = t.getNTips()
             ntips = t.getNObservables()
             if ntips > split_field_width:
                 # this is necessary only if number of taxa varies from tree to tree
@@ -424,8 +437,14 @@ class TreeSummarizer(CommonFunctions):
             treelen = self.recordTreeInMaps(t, split_map, tree_key)
             
             # Update tree_map, which is a map with keys equal to lists of internal node splits
-            # and values equal to 2-element lists containing the frequency and newick tree
-            # description
+            # and values equal to lists containing
+            # 1. the frequency of the tree (i.e. count of number of times this tree topology has been seen)
+            # 2. newick tree description
+            # 3. sum of tree lengths
+            # 4. number of trees considered when this one was first encountered
+            # 5. number of trees considered when this one was encountered the second time
+            # ...
+            # n. number of trees considered when this one was encountered the last time
             tree_key.sort()
             k = tuple(tree_key)
             if k in tree_map.keys():
@@ -444,11 +463,11 @@ class TreeSummarizer(CommonFunctions):
         self.stdout.info('Total number of trees in file = %d' % num_trees)
         self.stdout.info('Number of trees considered = %d' % self.num_trees_considered)
         self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
-        #self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
         self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
         if self.num_trees_considered == 0:
             self.stdout.info('\nSumT finished.')
             return
+
         # Sort the splits from highest posterior probabilty to lowest        
         split_vect = split_map.items()
         c = lambda x,y: cmp(y[1][0], x[1][0])
@@ -476,7 +495,7 @@ class TreeSummarizer(CommonFunctions):
         for i,(k,v) in enumerate(split_vect):
             # len(v) is 2 in trivial splits because these splits are associated with tips, 
             # for which the sojourn history is omitted (v[0] is frequency and v[1] is edge length sum)
-            trivial_split = len(v) == 2 and True or False
+            trivial_split = len(v) == 3 and True or False
             if trivial_split:
                 num_trivial += 1
             
@@ -496,7 +515,7 @@ class TreeSummarizer(CommonFunctions):
                 first_below_50 = i
 
             # Determine first sojourn (the third element of the list)
-            first_sojourn_start = trivial_split and 1 or v[2]
+            first_sojourn_start = trivial_split and 1 or v[3]
 
             # Determine last sojourn (the final element of the list)
             last_sojourn_end = trivial_split and self.num_trees_considered or v[-1]
@@ -505,8 +524,8 @@ class TreeSummarizer(CommonFunctions):
             num_sojourns = 1
             if not trivial_split:
                 in_sojourn = True
-                prev = v[2]
-                for curr in v[3:]:
+                prev = v[3]
+                for curr in v[4:]:
                     if curr - prev > 1:
                         num_sojourns += 1
                     prev = curr
@@ -527,7 +546,7 @@ class TreeSummarizer(CommonFunctions):
         tm = Phylogeny.TreeManip(majrule)
         majrule_splits = []
         for k,v in split_vect[:first_below_50]:
-            if len(v) > 2:
+            if len(v) > 3:
                 majrule_splits.append(k)
         
         if len(majrule_splits) == 0:
@@ -616,6 +635,22 @@ class TreeSummarizer(CommonFunctions):
                 if self._splitsPdfWriter:
                     self.optsout.splits.close()
 
+        # Output reference prior information (note: do not be tempted to move this section up 
+        # because it depends on the fact that we are completely done with the tree majrule by this point)
+        if not self.opts.refdistfile is None:
+            # FIXME! need to have an output option for this
+            refdistf = open(self.opts.refdistfile, 'w')
+            self.assignEdgeLensAndSupportValues(majrule, split_map, self.num_trees_considered, True) # True means assign clade posteriors as edge lengths
+            refdistf.write('%s\n' % (majrule.makeNumberedNewick()))
+            for k,v in split_vect[:first_below_50]:
+                num_edgelens = float(v[0])
+                mean_edgelen = float(v[1])/num_edgelens
+                var_edgelen = (float(v[2]) - num_edgelens*math.pow(mean_edgelen, 2.0))/num_edgelens
+                gamma_b = var_edgelen/mean_edgelen
+                gamma_a = mean_edgelen/gamma_b
+                refdistf.write('split_%s = Gamma(%g,%g)\n' % (k,gamma_a,gamma_b))
+            refdistf.close()
+        
         self.stdout.info('\nSumT finished.')
         return split_info
         
