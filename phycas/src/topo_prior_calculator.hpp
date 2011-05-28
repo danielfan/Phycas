@@ -72,6 +72,8 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         
         double LnEdgeLenProbForSplit(const Split & s, const double b) const;
         //void buildScratchTree();
+        
+        void DoTreeChecks(Tree & destTree, bool doRefreshesFirst, const char * tag) const;
     };
 
 typedef boost::shared_ptr<FocalTreeTopoProbCalculator> FocalTreeTopoProbCalculatorShPtr;

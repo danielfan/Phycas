@@ -92,7 +92,7 @@ bool LargetSimonMove::update()
         const double prev_ln_ref_topo = treeprobs.first;
         const double prev_ln_ref_edges = treeprobs.second;
         prev_ln_ref_dist = prev_ln_ref_topo + prev_ln_ref_edges;
-        std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_edges=" << prev_ln_ref_edges << '\n'; 
+        //MTH@May2011 std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_edges=" << prev_ln_ref_edges << '\n'; 
         }
 
 	proposeNewState();
@@ -145,7 +145,7 @@ bool LargetSimonMove::update()
             const double curr_ln_ref_topo = treeprobs.first;
             const double curr_ln_ref_edges = treeprobs.second;
             curr_ln_ref_dist = curr_ln_ref_edges + curr_ln_ref_topo;
-            std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_edges=" << curr_ln_ref_edges << '\n'; 
+            //MTH@May2011 std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_edges=" << curr_ln_ref_edges << '\n'; 
             }
 		}
     

@@ -715,7 +715,6 @@ class MCMCImpl(CommonFunctions):
         
         # recalculate the likelihood
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
-        c = raw_input('Calling refreshLastLnLike. Enter input: ')
         cold_chain_manager.refreshLastLnLike()
         print 'Calling refreshLastLnPrior'
         cold_chain_manager.refreshLastLnPrior()
@@ -971,6 +970,9 @@ class MCMCImpl(CommonFunctions):
         
         CPP_UPDATER = True # using python obsoleteUpdateAllUpdaters
         
+        #print "DANGER!!!!\n\n\nDANGER!!!!\n\n\n"
+        #if explore_prior:
+        #    self.ncycles = 1000+self.ncycles # DEBUGGING HACK
         for cycle in xrange(self.burnin + self.ncycles):
             # Update all updaters
             if explore_prior and self.opts.draw_directly_from_prior:

@@ -1289,7 +1289,6 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	if (nodeCountsValid)
 		{
 		PHYCAS_ASSERT(countedNLeaves == expectedNLeaves);
-		std::cerr << "countedNNodes  expectedNNodes = " <<countedNNodes << " " << expectedNNodes << "\n";
 		PHYCAS_ASSERT(countedNNodes == expectedNNodes);
 		}
 	if (!preorderDirty)

@@ -34,12 +34,51 @@ const double kLog10 = 2.302585092994046;
 const double kLog68 = 4.219507705176107;
 const double kLog74 = 4.30406509320417;
 
+bool kAllowDegTwoInDebugCheck = false;
+
+bool verboseMode = false;
+void FocalTreeTopoProbCalculator::DoTreeChecks(Tree & destTree, bool doRefreshesFirst, const char * tag) const
+    {
+    if (verboseMode && tag)
+        std:: cerr << "DoTreeChecks " << tag << ":\n";
+    if (doRefreshesFirst)
+        {
+        destTree.preorderDirty = true;
+        destTree.RefreshPreorder();
+        if (verboseMode)
+            std::cerr << "Done Refreshing the preorder\n";
+        destTree.RefreshNodeCounts();        
+        if (verboseMode)
+            std::cerr << "Done Refreshing node counts\n";
+        }
+    destTree.debugMode(true);
+    destTree.DebugCheckTree(kAllowDegTwoInDebugCheck, false, (verboseMode ? 1 : 0));
+    if (verboseMode)
+        std::cerr << "Done DebugCheckTree\n";
+    }
 
 void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) const
     {
-    std::cerr << "Here we are in SampleTree\n";
+    if (verboseMode)
+        std::cerr << "Here we are in SampleTree\n";
+    DoTreeChecks(*destTree, true, "Incoming destTree");
+    DoTreeChecks(*focalTree, true, "focalTree");
+
     /// Get vector of tips sorted by the node number
     std::vector<TreeNode *> destTips = destTree->GetTips();
+    
+    if (verboseMode)
+        {
+        unsigned j = 0;
+        for (std::vector<TreeNode *>::const_iterator dtIt = destTips.begin(); dtIt != destTips.end(); ++dtIt, ++j)
+            {
+            std::cerr << " destTip[" << j << "] = ";
+            if (*dtIt)
+                std::cerr << (*dtIt)->GetNodeNumber() << "\n";
+            else
+                std::cerr << "NULL" << "\n";
+            }
+        }
     TreeNode * destNd = destTree->GetFirstPreorder();
     std::map<TreeNode *, TreeNode *> focalToDest;
     TreeNode * fnd = focalTree->GetFirstPreorder();
@@ -62,33 +101,42 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         toCollapse = nextDestNd;
         }
     destTree->nInternals = 1;
-    if (true)
-        {
-        destTree->preorderDirty = true;
-        std::cerr << "About to do an extra refresh of the preorder\n";
-        destTree->RefreshPreorder();
-        std::cerr << "Done FirstExtraRefreshing the preorder\n";
-        destTree->debugMode(true);
-        destTree->DebugCheckTree(false, false, 1);
-        std::cerr << "Done FirstExtraDebugCheckTree\n";
-        }
-    std::cerr << "About to do some harmless looking code...\n";
+
+    DoTreeChecks(*destTree, true, "after collapse");
 
     destNd->lChild = 0L;
     fnd = fnd->GetNextPreorder();
     std::map<TreeNode *, TreeNode *> polytomyMap;
-    std::cerr << "About to enter while loop...\n";
+    if (verboseMode)
+        std::cerr << "About to enter while loop...\n";
+    
+    kAllowDegTwoInDebugCheck = true;
     while (fnd)
         {
         TreeNode * newPar = focalToDest[fnd->GetParent()];
         PHYCAS_ASSERT(newPar);
-        std::cerr << "NewPar # = " << newPar->GetNodeNumber();
-        if (!fnd->IsExternalEdge()) 
+        if (verboseMode)
+            std::cerr << "NewPar # = " << newPar->GetNodeNumber();
+        if (fnd->IsExternalEdge()) 
+            {
+            if (verboseMode)
+                std::cerr << "looking for leaf # " << fnd->GetNodeNumber() << "\n";
+            TreeNode * leafNd = destTips.at(fnd->GetNodeNumber());
+            PHYCAS_ASSERT(leafNd);
+            if (verboseMode)
+                std::cerr << "add new leafNd " << leafNd->GetNodeNumber() << "\n";
+            leafNd->rSib = 0L;
+            newPar->AddChild(leafNd);
+            fnd->SetIsSelected(false);
+            }
+        else
             {
             double probInclusion = fnd->GetEdgeLen(); // hackety-hack
             if (rng->Uniform() < probInclusion)
                 {
                 TreeNode * newInternal = destTree->GetNewNode();
+                if (verboseMode)
+                    std::cerr << "add new internal " << newInternal->GetNodeNumber() << "\n";
                 newPar->AddChild(newInternal);
                 destNd = newInternal;
                 newInternal->split = fnd->split;
@@ -96,6 +144,8 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
                 }
             else
                 {
+                if (verboseMode)
+                    std::cerr << "skipping edge\n";
                 if (polytomyMap.find(newPar) == polytomyMap.end())
                     polytomyMap[newPar] = fnd->GetParent();
                 destNd = newPar;
@@ -103,44 +153,34 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
                 }
             focalToDest[fnd] = destNd;
             }
-        else
-            {
-            TreeNode * leafNd = destTips[fnd->GetNodeNumber()];
-            leafNd->rSib = 0L;
-            newPar->AddChild(leafNd);
-            fnd->SetIsSelected(false);
-            }
+        DoTreeChecks(*destTree, true, "after edge inclusion decision");
         fnd = fnd->GetNextPreorder();
-        std::cerr << "Moving to the next node...\n";
+        if (verboseMode)
+            std::cerr << "Moving to the next node...\n";
         }
-    std::cerr << "Done walking over the focal tree\n";
+    if (verboseMode)
+        std::cerr << "Done walking over the focal tree\n";
+    kAllowDegTwoInDebugCheck = false;
 
-    if (true)
-        {
-        destTree->preorderDirty = true;
-        std::cerr << "About to do an extra refresh of the preorder\n";
-        destTree->RefreshPreorder();
-        std::cerr << "Done SecondExtraRefreshing the preorder\n";
-        destTree->RefreshNodeCounts();
-        destTree->debugMode(true);
-        destTree->DebugCheckTree(false, false, 1);
-        std::cerr << "Done SecondExtraDebugCheckTree\n";
-        }
+    DoTreeChecks(*destTree, true, "after adding the split from focal tree");
+    
     for (std::map<TreeNode *, TreeNode *>::const_iterator pmIt = polytomyMap.begin(); pmIt != polytomyMap.end(); ++pmIt)
         {
         TreeNode * destPolytomy = pmIt->first;
         TreeNode * focalPolytomy = pmIt->second;
-        std::cerr << "resolving a polytomy...\n";
+        if (verboseMode)
+            std::cerr << "resolving a polytomy...\n";
         ResolveToAvoidSharedSplits(destTree, destPolytomy, focalPolytomy, rng);
         }
-    std::cerr << "Done resolving the variate\n";
+    if (verboseMode)
+        std::cerr << "Done resolving the variate\n";
     destTree->preorderDirty = true;
     destTree->RefreshPreorder();
-    std::cerr << "Done Refreshing the preorder\n";
+    if (verboseMode)
+        std::cerr << "Done Refreshing the preorder\n";
     destTree->RefreshNodeCounts();
-    destTree->debugMode(true);
-    destTree->DebugCheckTree(false, false, 1);
-    std::cerr << "Done DebugCheckTree\n";
+    DoTreeChecks(*destTree, true, "after topology is finished");
+
     preorder_iterator ndIt = destTree->begin();
     ++ndIt;
     for (; ndIt != destTree->end(); ++ndIt)
@@ -150,16 +190,23 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         PHYCAS_ASSERT(d);
         const double e = d->Sample();
         nd.SetEdgeLen(e);
-        std::cerr << "Drew " << e << " for node # = " << nd.GetNodeNumber() << "\n";
+        if (verboseMode)
+            std::cerr << "Drew " << e << " for node # = " << nd.GetNodeNumber() << "\n";
         }
-    std::cerr << "Returning from SampleTree\n";
+    if (verboseMode)
+        std::cerr << "Returning from SampleTree\n";
     }
+
 
 // inserts all "flagged" splits that are connected to correspondingFocalNode into
 //  splitSet
 void FocalTreeTopoProbCalculator::FindTabuSplitsFromSelectedNodes(TreeNode * correspondingFocalNode, std::set<Split> & splitSet) const
 {
+    if (verboseMode)
+        std::cerr << "in FindTabuSplitsFromSelectedNodes\n";        
+
     std::stack<TreeNode *> ndStack;
+    PHYCAS_ASSERT(correspondingFocalNode);
     TreeNode * curr = correspondingFocalNode->GetLeftChild();
     PHYCAS_ASSERT(curr);
     if (!curr)
@@ -175,10 +222,13 @@ void FocalTreeTopoProbCalculator::FindTabuSplitsFromSelectedNodes(TreeNode * cor
             curr = curr->GetLeftChild();
             PHYCAS_ASSERT(curr);
             PHYCAS_ASSERT(curr->rSib);
-            ndStack.push(curr->rSib);
+            if (curr->rSib)
+                ndStack.push(curr->rSib);
             }
         else
             {
+            if (ndStack.empty())
+                return;
             curr = ndStack.top();
             ndStack.pop();
             }
@@ -192,7 +242,8 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
         TreeNode * correspondingFocalNode,
         LotShPtr rng) const
 {
-    std::cerr << "Here we are in ResolveToAvoidSharedSplits\n";
+    if (verboseMode)
+        std::cerr << "Here we are in ResolveToAvoidSharedSplits\n";
     TreeNode * newInternal = destTree->GetNewNode();
     TreeNode * origLChild = destPolytomy->GetLeftChild();       
     const unsigned polytomyDeg = 1 + destPolytomy->CountChildren();
@@ -210,7 +261,13 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
         TreeNode * selRight = selLeft->GetRightSib();
         TreeNode * selToMoveDown = 0L;
         selToMoveDown = (rng->Uniform() < 0.5 ? selLeft : selRight);
-        
+        if (verboseMode)
+            {
+            std::cerr << "selToMoveDown.split = " << selToMoveDown->split.CreatePatternRepresentation() << '\n';
+            std::cerr << "origLChild.split = " << origLChild->split.CreatePatternRepresentation() << '\n';
+            std::cerr << "origLChild->rSib.split = " << origLChild->rSib->split.CreatePatternRepresentation() << '\n';
+            std::cerr << "origLChild->rSib->rSib.split = " << origLChild->rSib->rSib->split.CreatePatternRepresentation() << '\n';
+            }
         TreeNode *destLower, *destU1, *destU2;
         if (selToMoveDown->split == origLChild->split)
             {
@@ -228,9 +285,9 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
                 }
             else
                 {
-                PHYCAS_ASSERT(destU2->split == selToMoveDown->split);
                 destU2 = destU1->rSib;
                 destLower = destU2->rSib;
+                PHYCAS_ASSERT(destLower->split == selToMoveDown->split);
                 }
             }
         destLower->rSib = 0L;
@@ -241,18 +298,28 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
         destPolytomy->AddChild(newInternal);
         newInternal->AddChild(destU1);
         newInternal->AddChild(destU2);
-        std::cerr << "leaving ResolveToAvoidSharedSplits in the deg = 4 branch\n";
+        if (verboseMode)
+            std::cerr << "leaving ResolveToAvoidSharedSplits in the deg = 4 branch\n";
         return;
         }
+    if (verboseMode)
+        std::cerr << "not in the deg = 4 branch\n";        
     std::set<Split> tabuSplits;
     FindTabuSplitsFromSelectedNodes(correspondingFocalNode, tabuSplits);
-    
+    if (verboseMode)
+        std::cerr << "back from FindTabuSplitsFromSelectedNodes\n";        
+
     std::vector<TreeNode *> polytomyChildren = destPolytomy->GetChildren();
     for (;;)
         {
+        
         std::vector<TreeNode *> newNodes = RandomlyResolve(destTree, destPolytomy, polytomyChildren, rng);
         if (!HasTabuSplit(destTree, destPolytomy, newNodes, tabuSplits))
+            {
+            if (verboseMode)
+                std::cerr << "Returning a tree because RandomlyResolve did not create a tree with a tabu split.\n";
             return;
+            }
         std::vector<TreeNode *>::const_iterator nnIt = newNodes.begin();
         for (; nnIt != newNodes.end(); ++nnIt)
             {
@@ -260,7 +327,8 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
             nd->CollapseEdge();
             destTree->StoreInternalNode(nd);            
             }
-        std::cerr << "Tabu split generated trying again.\n";
+        if (verboseMode)
+            std::cerr << "Tabu split generated trying again.\n";
         }
 }
 
@@ -271,56 +339,95 @@ std::vector<TreeNode *> FocalTreeTopoProbCalculator::RandomlyResolve(
         const std::vector<TreeNode *> & polytomyChildren,
         LotShPtr rng) const
     {
+    if (verboseMode)
+        std::cerr << "Entering RandomlyResolve with " << polytomyChildren.size() << " polytomy children. destPolytomy= << "<< destPolytomy->GetNodeNumber() << "\n";
+    DoTreeChecks(*destTree, true, "rr");
+    
     std::vector<TreeNode *> newNodes;
     if (polytomyChildren.size() < 3)
         return newNodes;
-    destPolytomy->lChild = 0L;
     std::vector<TreeNode *> currentEdges;
     currentEdges.reserve(2*polytomyChildren.size() + 1);
     currentEdges.push_back(destPolytomy);
-    currentEdges.push_back(polytomyChildren[0]);
-    currentEdges.push_back(polytomyChildren[1]);
-    unsigned currentChildInd = 2;
-    while (currentChildInd < polytomyChildren.size())
+    destPolytomy->lChild = polytomyChildren[0];
+    destPolytomy->lChild->rSib = polytomyChildren[1];
+    TreeNode * firstAdded = destPolytomy->lChild;
+    TreeNode * secondAdded = firstAdded->rSib;
+    currentEdges.push_back(firstAdded);
+    currentEdges.push_back(secondAdded);
+    secondAdded->rSib = 0L;
+    DoTreeChecks(*destTree, true, "after trimming to 2 children");
+    
+    for (unsigned currentChildInd = 2; currentChildInd < polytomyChildren.size(); ++currentChildInd)
         {
         TreeNode * nextChild = polytomyChildren[currentChildInd];
-        currentChildInd++;
+        PHYCAS_ASSERT(nextChild);
+        PHYCAS_ASSERT(nextChild != secondAdded && nextChild != firstAdded);
+        
         unsigned edgeInd = rng->SampleUInt(currentEdges.size());
         TreeNode * newNd = destTree->GetNewNode();
+        PHYCAS_ASSERT(newNd);
+        if (verboseMode)
+            std::cerr << "Adding to edge " << edgeInd << "\n";
         if (edgeInd == 0)
             {
+            if (verboseMode)
+                std::cerr << "In adding to edge 0 branch\n";
             TreeNode * edgeToBisect = destPolytomy->lChild;
             newNd->lChild = edgeToBisect;
-            edgeToBisect->par = newNd;
-            edgeToBisect->rSib->par = newNd;
             newNd->rSib = nextChild;
             newNd->par = destPolytomy;
+
+            edgeToBisect->par = newNd;
+            edgeToBisect->rSib->par = newNd;
+            
             nextChild->par = destPolytomy;
+            nextChild->rSib = 0L;
+            
+            destPolytomy->lChild = newNd;
             }
         else
             {
             TreeNode * edgeToBisect = currentEdges[edgeInd];
+            PHYCAS_ASSERT(edgeToBisect);
             TreeNode * parent = edgeToBisect->GetParent();
+            PHYCAS_ASSERT(parent);
+            PHYCAS_ASSERT(parent->lChild);
             if (parent->lChild == edgeToBisect)
                 {
+                if (verboseMode)
+                    std::cerr << "  Was lchild\n";
                 parent->lChild = newNd;
-                newNd->lChild = edgeToBisect;
                 }
             else
                 {
+                if (verboseMode)
+                    std::cerr << "  Was rchild\n";
+                PHYCAS_ASSERT(parent->lChild->rSib);
+                PHYCAS_ASSERT(parent->lChild->rSib->rSib == 0L);
                 PHYCAS_ASSERT(parent->lChild->rSib == edgeToBisect);
                 parent->lChild->rSib = newNd;
-                newNd->lChild = edgeToBisect;
                 }
+            newNd->lChild = edgeToBisect;
             newNd->rSib = edgeToBisect->rSib;
+            newNd->par = parent;
+
             edgeToBisect->rSib = nextChild;
-            nextChild->par = newNd;
             edgeToBisect->par = newNd;    
+
+            nextChild->par = newNd;
+            nextChild->rSib = 0L;
             }
-        currentEdges.push_back(newNd);
-        newNodes.push_back(newNd);
+        
+        if (verboseMode)
+            std::cerr << "  resetting split\n";
         newNd->split.Reset();
+        if (verboseMode)
+            std::cerr << "  storing nodes\n";        
+        newNodes.push_back(newNd);
+        currentEdges.push_back(newNd);
         currentEdges.push_back(nextChild);
+        DoTreeChecks(*destTree, true, "another node added in RandomlyResolve");
         }
     
     std::vector<TreeNode *>::const_iterator pcIt = polytomyChildren.begin();
@@ -343,6 +450,9 @@ bool FocalTreeTopoProbCalculator::HasTabuSplit(
         const std::vector<TreeNode *> & newNodes,
         std::set<Split> & tabuSplits) const
     {
+    if (verboseMode)
+        std::cerr << "Entering HasTabuSplit.\n";
+    
     std::vector<TreeNode *>::const_iterator nnIt = newNodes.begin();
     for (; nnIt != newNodes.end(); ++nnIt)
         {
@@ -364,7 +474,10 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
     {
     assert(bool(focalTree));
     ntips = focalTree->GetNObservables();
+    focalTree->RefreshPreorder();
+    focalTree->RefreshNodeCounts();
     focalTree->RecalcAllSplits(ntips);
+    DoTreeChecks(*focalTree, false, "In FocalTreeTopoProbCalculator ctor");
     TreeNode * nd = focalTree->GetFirstPreorder();
     assert(nd->IsTipRoot());
     nd = nd->GetNextPreorder();
@@ -381,6 +494,8 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
             }
         nd = nd->GetNextPreorder();
         }
+    focalTree->RefreshPreorder();
+    focalTree->RefreshNodeCounts();
     //buildScratchTree();
     }
 
@@ -628,7 +743,8 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
             (*ndIt)->SetIsSelected(true);
         const unsigned numLeaves = 3 + vc.size();
         lnDenominator += CalcLnNumTreesMaxDistFromTreeInSelectedRegion(polytomyNd, numLeaves);
-        std::cerr << "lnDenominator = " << lnDenominator << "\t numLeaves = " << numLeaves << std::endl;
+        if (verboseMode)
+            std::cerr << "lnDenominator = " << lnDenominator << "\t numLeaves = " << numLeaves << std::endl;
         // "unflag" edges that are collapsed in the consensus
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             (*ndIt)->SetIsSelected(false);
