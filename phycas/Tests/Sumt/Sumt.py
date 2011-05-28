@@ -15,9 +15,9 @@ if __name__ == '__main__':
     sumt.out.trees.mode         = REPLACE
     sumt.out.splits.prefix      = "splits"
     sumt.out.splits.mode        = REPLACE
-    sumt.out.refdistfile        = False # "doof_ref_dist.txt"
-    #sumt.out.refdistfile.prefix = "doof_ref_dist"
-    #sumt.out.refdistfile.mode   = REPLACE
+    #sumt.out.refdistfile        = False
+    sumt.out.refdistfile.prefix = "ref_dist"
+    sumt.out.refdistfile.mode   = REPLACE
     sumt.burnin                 = 11
     sumt.outgroup_taxon         = '40 Cyanophora paradoxa'
     sumt.tree_credible_prob     = 1.0

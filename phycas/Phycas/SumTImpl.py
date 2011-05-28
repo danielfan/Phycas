@@ -643,12 +643,31 @@ class TreeSummarizer(CommonFunctions):
             self.assignEdgeLensAndSupportValues(majrule, split_map, self.num_trees_considered, True) # True means assign clade posteriors as edge lengths
             self.refdistf.write('%s\n' % (majrule.makeNumberedNewick()))
             for k,v in split_vect[:first_below_50]:
+                assert int(v[0]) > 0, 'Not able to estimate mean and variance of edge length reference distribution because sample size is 0 for split %s' % k
+                assert int(v[0]) > 1, 'Not able to estimate variance of edge length reference distribution because sample size is less than 2 for split %s' % k
                 num_edgelens = float(v[0])
                 mean_edgelen = float(v[1])/num_edgelens
-                var_edgelen = (float(v[2]) - num_edgelens*math.pow(mean_edgelen, 2.0))/num_edgelens
+                var_edgelen = (float(v[2]) - num_edgelens*math.pow(mean_edgelen, 2.0))/(num_edgelens - 1.0)
                 gamma_b = var_edgelen/mean_edgelen
                 gamma_a = mean_edgelen/gamma_b
                 self.refdistf.write('split_%s = Gamma(%g,%g)\n' % (k,gamma_a,gamma_b))
+            #self.refdistf.write('\n***** split_vect[first_below_50:] *****\n')	#temporary!
+            num_NA_edgelens = 0
+            sum_NA_edgelens = 0.0
+            sum_squared_NA_edgelens = 0.0
+            for k,v in split_vect[first_below_50:]:
+                num_NA_edgelens += float(v[0])
+                sum_NA_edgelens += float(v[1])
+                sum_squared_NA_edgelens += float(v[2])
+                #self.refdistf.write('NA split %s -> n = %g -> s = %g -> ss = %g\n' % (k, v[0], v[1], v[2]))  #temporary!
+            assert num_NA_edgelens > 0.0, 'Not able to estimate mean and variance of the "NA" edge length reference distribution because sample size is 0'
+            assert num_NA_edgelens > 1.0, 'Not able to estimate variance of the "NA" edge length reference distribution because sample size is less than 2'
+            mean_NA_edgelen = sum_NA_edgelens/float(num_NA_edgelens)
+            var_NA_edgelen = (float(sum_squared_NA_edgelens) - num_NA_edgelens*math.pow(mean_NA_edgelen, 2.0))/(num_NA_edgelens - 1.0)
+            gamma_b = var_NA_edgelen/mean_NA_edgelen
+            gamma_a = mean_NA_edgelen/gamma_b
+            #self.refdistf.write('split_NA = Gamma(%g,%g) -> n=%g -> s=%g -> ss=%g -> m=%g -> v=%g\n' % (gamma_a,gamma_b,num_NA_edgelens,sum_NA_edgelens,sum_squared_NA_edgelens,mean_NA_edgelen,var_NA_edgelen))
+            self.refdistf.write('split_NA = Gamma(%g,%g)\n' % (gamma_a,gamma_b))
             self.refDistFileClose()
         
         self.stdout.info('\nSumT finished.')
