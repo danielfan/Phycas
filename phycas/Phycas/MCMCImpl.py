@@ -1250,7 +1250,7 @@ class MCMCImpl(CommonFunctions):
                     self.output('\nReference distribution details:')
                     if self.opts.ssobj.refdist_definition_file is not None:
                         # User has specified a file containing the reference distribution definitions
-                        ref_dist_tree,ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
+                        ref_dist_tree, ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
                         # build focal tree
                         focal_tree = TreeCollection(newick=ref_dist_tree).trees[0]
                         ntips = focal_tree.getNObservables()
@@ -1289,6 +1289,19 @@ class MCMCImpl(CommonFunctions):
                             if u.computesTopologyPrior():
                                 if topo_ref_dist_calculator is None:
                                     topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
+                                prefix = 'split_edge_len_'
+                                default_edge_len = None
+                                for k, v in ref_dist_map.iteritems():
+                                    if k.lower().startswith(prefix):
+                                        split_rep = k[len(prefix):]
+                                        if split_rep.lower() == 'na':
+                                            assert(default_edge_len is None)
+                                            topo_ref_dist_calculator.setDefaultEdgeLenDist(v)
+                                        else:
+                                            s = Phylogeny.SplitBase()
+                                            s.createFromPattern(split_rep)
+                                            print split_rep, v, s.createPatternRepresentation()
+                                            topo_ref_dist_calculator.setEdgeLenDist(s, v)
                                 u.setReferenceDistribution(topo_ref_dist_calculator)
                     self.output()
                     ref_dist_calculated = True

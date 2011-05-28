@@ -85,12 +85,14 @@ bool LargetSimonMove::update()
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
 
 	double prev_ln_ref_dist = 0.0;
-    double prev_ln_ref_topo = 0.0;
     if (use_ref_dist)
         {
         assert(topo_prob_calc);
-        prev_ln_ref_topo = topo_prob_calc->CalcTopologyLnProb(*tree);
-        prev_ln_ref_dist += prev_ln_ref_topo;
+        std::pair<double, double> treeprobs = topo_prob_calc->CalcTopologyLnProb(*tree, true);
+        const double prev_ln_ref_topo = treeprobs.first;
+        const double prev_ln_ref_edges = treeprobs.second;
+        prev_ln_ref_dist = prev_ln_ref_topo + prev_ln_ref_edges;
+        std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_edges=" << prev_ln_ref_edges << '\n'; 
         }
 
 	proposeNewState();
@@ -99,15 +101,12 @@ bool LargetSimonMove::update()
 	
 	double prev_ln_prior = 0.0;
 	double curr_ln_ref_dist = 0.0;
-	double curr_ln_ref_topo = 0.0;
 	if (star_tree_proposal)
 		{
 		prev_ln_prior			= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
-		prev_ln_ref_dist	+= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
-
+		
         double curr_edgelen = orig_node->GetEdgeLen();
 		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
-		curr_ln_ref_dist	+= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
 		}
 	else
 		{
@@ -117,58 +116,36 @@ bool LargetSimonMove::update()
 			{
 			prev_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(x);
 			curr_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(xnew);
-			if (use_ref_dist)
-				{
-				prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
-				}
 			}
 		else 
 			{
 			prev_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(x);
 			curr_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(xnew);
-			if (use_ref_dist)
-				{
-				prev_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
-				}
 			}
 			
         double ynew = ndY->GetEdgeLen();
         prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(y);
         curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ynew);
-		if (use_ref_dist)
-			{
-			prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndY, y);
-			curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndY, ynew);
-			}
 		
         double znew = ndZ->GetEdgeLen();
 		if (ndZ->IsInternal())
 			{
     	    prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(z);
     	    curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(znew);
-			if (use_ref_dist)
-				{
-				prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndZ, z);
-				curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndZ, znew);
-				}
 			}
 		else 
 			{
 	        prev_ln_prior += p->calcExternalEdgeLenPriorUnnorm(z);
 	        curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(znew);
-			if (use_ref_dist)
-				{
-				prev_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndZ, z);
-				curr_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndZ, znew);
-				}
 			}
         if (use_ref_dist)
             {
             assert(topo_prob_calc);
-            curr_ln_ref_topo = topo_prob_calc->CalcTopologyLnProb(*tree);
-            curr_ln_ref_dist += curr_ln_ref_topo;
+            std::pair<double, double> treeprobs = topo_prob_calc->CalcTopologyLnProb(*tree, true);
+            const double curr_ln_ref_topo = treeprobs.first;
+            const double curr_ln_ref_edges = treeprobs.second;
+            curr_ln_ref_dist = curr_ln_ref_edges + curr_ln_ref_topo;
+            std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_edges=" << curr_ln_ref_edges << '\n'; 
             }
 		}
     
@@ -192,11 +169,6 @@ bool LargetSimonMove::update()
 		}
 	
 	
-	if (use_ref_dist)
-		{
-		std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_dist=" << curr_ln_ref_dist << '\n'; 
-    	std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_dist=" << prev_ln_ref_dist << '\n'; 
-    	}
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
     //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
     //bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);

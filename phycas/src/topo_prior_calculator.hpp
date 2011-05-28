@@ -34,6 +34,10 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot> LotShPtr;
 
+class ProbabilityDistribution;
+typedef boost::shared_ptr<ProbabilityDistribution> ProbDistShPtr;
+
+
 class TopoProbCalculator
     {
     };
@@ -46,9 +50,14 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         void SampleTree(TreeShPtr, LotShPtr) const;
 
         
-        double CalcTopologyLnProb(Tree &) const;
-        
+        std::pair<double, double> CalcTopologyLnProb(Tree &, bool calcEdgeLenLnProb) const;
         double CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *selectedFirstFork, unsigned numLeaves) const;
+        void SetEdgeLenDist(const Split &, ProbDistShPtr);
+        void SetDefaultEdgeLenDist(ProbDistShPtr d) 
+            {
+            this->defEdgeLenDist = d;
+            }
+        ProbDistShPtr GetEdgeLenProbDistForSplit(const Split & s) const;
     protected:
         TreeShPtr focalTree;
         std::map<Split, double> splitToProbMap;
@@ -58,6 +67,10 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         std::vector<TreeNode *> RandomlyResolve(TreeShPtr dest, TreeNode * destPolytomy, const std::vector<TreeNode *> & polytomyChildren, LotShPtr rng) const;
         bool HasTabuSplit(TreeShPtr dest, TreeNode * destPolytomy, const std::vector<TreeNode *> & polytomyChildren, std::set<Split> & tabuSplits) const;
 
+        ProbDistShPtr defEdgeLenDist;
+        std::map<Split, ProbDistShPtr> splitToEdgeLenDistMap;
+        
+        double LnEdgeLenProbForSplit(const Split & s, const double b) const;
         //void buildScratchTree();
     };
 

@@ -23,9 +23,16 @@
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/basic_lot.hpp"
 #include "phycas/src/tree_manip.hpp"
+#include "phycas/src/probability_distribution.hpp"
 
 namespace phycas
 {
+
+
+const double kLog2 = 0.6931471805599453; 
+const double kLog10 = 2.302585092994046;
+const double kLog68 = 4.219507705176107;
+const double kLog74 = 4.30406509320417;
 
 
 void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) const
@@ -83,8 +90,16 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         TreeNode * focalPolytomy = pmIt->second;
         ResolveToAvoidSharedSplits(destTree, destPolytomy, focalPolytomy, rng);
         }
-    
-    
+    destTree->RefreshPreorder();
+    preorder_iterator ndIt = destTree->begin();
+    ++ndIt;
+    for (; ndIt != destTree->end(); ++ndIt)
+        {
+        TreeNode & nd = *ndIt;
+        ProbDistShPtr d = GetEdgeLenProbDistForSplit(nd.split);
+        PHYCAS_ASSERT(d);
+        nd.SetEdgeLen(d->Sample());
+        }
     }
 
 // inserts all "flagged" splits that are connected to correspondingFocalNode into
@@ -282,7 +297,14 @@ bool FocalTreeTopoProbCalculator::HasTabuSplit(
     return false;
     }
 
-FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(TreeShPtr t)
+
+void FocalTreeTopoProbCalculator::SetEdgeLenDist(const Split &s, ProbDistShPtr edgeLenDist)
+    {
+    splitToEdgeLenDistMap[s] = edgeLenDist;
+    }
+
+FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
+        TreeShPtr t)
     :focalTree(t)
     {
     assert(bool(focalTree));
@@ -419,12 +441,6 @@ void TreeNode::CollapseEdge()
         }
     }
 
-const double kLog2 = log(2);
-const double kLog10 = log(10);
-const double kLog74 = log(74);
-const double kLog68 = log(68);
-
-
 double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *firstFork, unsigned numLeaves) const
 {
     PHYCAS_ASSERT(firstFork);
@@ -464,8 +480,27 @@ double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegio
     PHYCAS_ASSERT(false); // not implemented...
     return lnNumTrees;
 }
+        
+ProbDistShPtr FocalTreeTopoProbCalculator::GetEdgeLenProbDistForSplit(const Split & s) const
+    {
+    std::map<Split, ProbDistShPtr>::const_iterator sIt = splitToEdgeLenDistMap.find(s);
+    if (sIt == splitToEdgeLenDistMap.end())
+        {
+        if (defEdgeLenDist)
+            return defEdgeLenDist;
+        PHYCAS_ASSERT(false);
+    	throw XProbDist("Split not found, and no default edge length distribution has been specified");
+        }
+    return sIt->second;
+    }
 
-double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
+double FocalTreeTopoProbCalculator::LnEdgeLenProbForSplit(const Split & s, const double b) const
+    {
+    ProbDistShPtr p = GetEdgeLenProbDistForSplit(s);
+    return p->GetLnPDF(b);
+    }
+
+std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree, bool calcEdgeLenLnProb) const
     {
     testTree.RecalcAllSplits(ntips);
     const TreeID & testTreeID = testTree.getTreeID();
@@ -475,6 +510,7 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     fnd->SetIsSelected(false);
     fnd = fnd->GetNextPreorder();
     double lnProb = 0.0;
+    double lnEdgeLenProb = 0.0;
     
     std::map<TreeNode *, std::vector<TreeNode *> > polytomyToCollapsed;
     while (fnd)
@@ -482,7 +518,8 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
         fnd->SetIsSelected(false);
         if (!fnd->IsExternalEdge()) 
             {
-            if (testTreeID.find(fnd->GetSplitConst()) == ttIDIt)
+            const TreeID::const_iterator idIt = testTreeID.find(fnd->GetSplitConst());
+            if (idIt == ttIDIt)
                 {
                 lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
                 fnd->SetIsSelected(true);
@@ -495,9 +532,20 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
                 vc.push_back(fnd);
                 }
             else
+                {
                 lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
+                }
             }
         fnd = fnd->GetNextPreorder();
+        }
+    if (calcEdgeLenLnProb)
+        {
+        preorder_iterator testNdIt = testTree.begin();
+        ++testNdIt;
+        for (; testNdIt != testTree.end(); ++testNdIt)
+            {
+            lnEdgeLenProb += LnEdgeLenProbForSplit(testNdIt->split, testNdIt->GetEdgeLen());
+            }
         }
     
     double lnDenominator = 0.0;
@@ -531,7 +579,7 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
             (*ndIt)->SetIsSelected(false);
         }
     
-    return lnProb - lnDenominator;
+    return std::pair<double, double>(lnProb - lnDenominator, lnEdgeLenProb);
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

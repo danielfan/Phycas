@@ -40,6 +40,21 @@ using namespace phycas;
 
 #define INTERNAL_NODENUM_OFFSET 1000
 
+
+TreeNode * Tree::FindNodeBySplit(const Split & s)
+    {
+    std::vector<TreeNode *> leafVec;
+    leafVec.resize(nTips);
+    preorder_iterator ndIt = begin();
+    for (; ndIt != end(); ++ndIt) 
+        {
+        TreeNode & nd = (*ndIt);
+        if (nd.split == s)
+            return &nd;
+        }
+    return 0L;
+    }
+
 /// Get vector of tips sorted by the node number
 std::vector<TreeNode *> Tree::GetTips()
     {
