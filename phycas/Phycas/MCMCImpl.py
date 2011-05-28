@@ -677,7 +677,6 @@ class MCMCImpl(CommonFunctions):
 #                 new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
             elif name == 'larget_simon_local':
                 u.sampleWorkingPrior()
-                print 'LargetSimonLocal did do a topo update!'
                 edge_lens_need_updating = False
             else:
                 self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
@@ -707,18 +706,14 @@ class MCMCImpl(CommonFunctions):
                     continue
                 nd.setEdgeLen(new_edge_lens[i])
                 i += 1
-        print 'Calling prepareForLikelihood'
         # replace the model
         cold_chain.prepareForLikelihood()
-        print 'Calling replaceModel'
         cold_chain.likelihood.replaceModel(cold_chain.partition_model)
         
         # recalculate the likelihood
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         cold_chain_manager.refreshLastLnLike()
-        print 'Calling refreshLastLnPrior'
         cold_chain_manager.refreshLastLnPrior()
-        print 'done with exploreWorkingPrior'
         # what about polytomies?
                                             
         ############################ end exploreWorkingPrior ############################
@@ -1290,7 +1285,6 @@ class MCMCImpl(CommonFunctions):
                             if u.computesUnivariatePrior() or u.computesMultivariatePrior():
                                 if self.opts.ssobj.refdist_definition_file is not None:
                                     # User has specified a file containing the reference distribution definitions
-                                    print u.getName()
                                     if u.computesUnivariatePrior():
                                         u.setWorkingPrior(ref_dist_map[u.getName()])
                                     else:
@@ -1303,7 +1297,7 @@ class MCMCImpl(CommonFunctions):
                             if u.computesTopologyPrior():
                                 if topo_ref_dist_calculator is None:
                                     topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
-                                prefix = 'split_edge_len_'
+                                prefix = 'split_'
                                 default_edge_len = None
                                 for k, v in ref_dist_map.iteritems():
                                     if k.lower().startswith(prefix):
