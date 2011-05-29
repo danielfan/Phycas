@@ -846,16 +846,18 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 						double beta_ratio = bs_beta(k)/bs_beta(k-1);
 
 						double sum1 = 0.0;
-						for (int s1 = 0; s1 <= s-1; s1++)
+						if (k-1 <= n_v2)
 							{
-							double sum_v1 = 0.0;
-							if (s1 <= n_v1)
+							for (int s1 = 0; s1 <= std::min(s - 1, n_v1); s1++)
 								{
-								for (int k1 = 0; k1 <= n_v1; k1++)
-									sum_v1 += r_v1[s1][k1];
+								if (s-1-s1 <= n_v2)
+									{
+									double sum_v1 = 0.0;
+									for (int k1 = 0; k1 <= n_v1; k1++)
+										sum_v1 += r_v1[s1][k1];
+									sum1 += sum_v1 * r_v2[s-1-s1][k-1] * beta_ratio;
+									}
 								}
-							if ((s-1-s1 <= n_v2) && (k-1 <= n_v2))
-								sum1 += sum_v1 * r_v2[s-1-s1][k-1] * beta_ratio;
 							}
 
 						double sum2 = 0.0;
@@ -874,9 +876,9 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 							}
 							
 						double sum3 = 0.0;
-						for (int s1 = 0; s1 <= s; s1++)
+						for (int s1 = 0; s1 <= std::min(s, n_v1); s1++)
 							{
-							if ((s1 <= n_v1) && (s-s1 <= n_v2))
+							if (s-s1 <= n_v2)
 								{
 								for (int k1 = 0; k1 <= k-2; k1++)
 									{
