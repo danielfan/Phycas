@@ -917,45 +917,52 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 
 
 double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *firstFork, unsigned numLeaves) const
-{
+	{
     PHYCAS_ASSERT(firstFork);
     double lnNumTrees = 0.0;
     
     if (numLeaves < 7) 
         {
         if (numLeaves == 4)
-            return kLog2;
-        if (numLeaves == 5)
-            return kLog10;
-        const TreeNode * lc = firstFork->lChild;
-        const TreeNode * rc = lc->rSib;
-        if (lc->IsSelected())
-            {
-            if (rc->IsSelected())
-                return kLog74; // pectinate 6-leaf
-            lc = lc->lChild;
-            rc = lc->rSib;
-            if (lc->IsSelected() && rc->IsSelected())
-                return kLog68; // symmetric 6-leaf
-            else
-                return kLog74; // pectinate 6-leaf
-            }
-        else
-            {
-            PHYCAS_ASSERT(rc->IsSelected());
-            lc = rc->lChild;
-            rc = lc->rSib;
-            if (lc->IsSelected() && rc->IsSelected())
-                return kLog68; // symmetric 6-leaf
-            else
-                return kLog74; // pectinate 6-leaf
-            }
-        
+            lnNumTrees = kLog2;
+        else if (numLeaves == 5)
+            lnNumTrees = kLog10;
+		else
+			{
+			const TreeNode * lc = firstFork->lChild;
+			const TreeNode * rc = lc->rSib;
+			if (lc->IsSelected())
+				{
+				if (rc->IsSelected())
+					lnNumTrees = kLog74; // pectinate 6-leaf
+				else
+					{
+					lc = lc->lChild;
+					rc = lc->rSib;
+					if (lc->IsSelected() && rc->IsSelected())
+						lnNumTrees = kLog68; // symmetric 6-leaf
+					else
+						lnNumTrees = kLog74; // pectinate 6-leaf
+					}
+				}
+			else
+				{
+				PHYCAS_ASSERT(rc->IsSelected());
+				lc = rc->lChild;
+				rc = lc->rSib;
+				if (lc->IsSelected() && rc->IsSelected())
+					lnNumTrees = kLog68; // symmetric 6-leaf
+				else
+					lnNumTrees = kLog74; // pectinate 6-leaf
+				}
+			}
+		PHYCAS_ASSERT(fabs(lnNumTrees - countDistancesUsingBryantSteel(firstFork, numLeaves)) < 1.0e-6);	//TEMP
         }
-    //PHYCAS_ASSERT(false); // not implemented...
-	
-    return lnNumTrees;
-}
+	else
+		lnNumTrees = countDistancesUsingBryantSteel(firstFork, numLeaves);
+		
+	return lnNumTrees;
+	}
         
 ProbDistShPtr FocalTreeTopoProbCalculator::GetEdgeLenProbDistForSplit(const Split & s) const
     {

@@ -78,7 +78,7 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
 
 		double countDistancesUsingBryantSteel(TreeNode *ff, unsigned n);
 		
-		std::stack<TreeNode *> postorderNodeStack;
+		mutable std::stack<TreeNode *> postorderNodeStack;
     };
 
 typedef boost::shared_ptr<FocalTreeTopoProbCalculator> FocalTreeTopoProbCalculatorShPtr;

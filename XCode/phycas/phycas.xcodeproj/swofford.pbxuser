@@ -453,9 +453,9 @@
 	};
 	7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1275, 2576}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1871}";
+			sepNavIntBoundsRect = "{{0, 0}, {963, 3107}}";
+			sepNavSelRange = "{7320, 0}";
+			sepNavVisRange = "{7230, 307}";
 		};
 	};
 	7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */ = {
@@ -2359,7 +2359,7 @@
 			rooted.py,
 		);
 		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
+		breakpointsEnabled = 0;
 		configStateDict = {
 			"PBXLSLaunchAction-0" = {
 				PBXLSLaunchAction = 0;
