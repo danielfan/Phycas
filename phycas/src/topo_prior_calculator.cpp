@@ -496,6 +496,23 @@ struct bs_data
 #define NV(p)	((bs_data *)((p)->ptr))->nv
 #define R(p)	((bs_data *)((p)->ptr))->r
 
+
+void zeroRMatrix(TreeNode *p)
+    {
+    unsigned nv1 = NV(p) + 1;
+    //nv1 = nmax + 1; //@TEMP
+    R(p).Initialize(nv1, nv1);
+    double ** alias = R(p).GetAlias();
+    for (unsigned i = 0; i < nv1 ; ++i)
+        {
+        for (unsigned j = 0; j < nv1 ; ++j)
+            {
+            alias[i][j] = 0.0;
+            }    			    
+        }
+    std::cerr << "Zeroed matrix for node " << p->GetNodeNumber() << " ptr R(p)= " << R(p).GetAlias() << "\n" ;
+    }
+
 FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
         TreeShPtr t)
     :focalTree(t)
@@ -549,12 +566,8 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
 			TreeNode * q = p->GetLeftChild();
 			TreeNode * r = q->GetRightSib();
 			NV(p) = NV(q) + NV(r) + !q->IsTip() + !r->IsTip();
-
-			int nv1 = NV(p) + 1;
-			//nv1 = nmax + 1; //@TEMP
-			R(p).Initialize(nv1, nv1);
-			std::cerr << "Init matrix for node " << p->GetNodeNumber() << " ptr R(p)= " << R(p).GetAlias() << "\n" ;
-			}
+			zeroRMatrix(p);
+            }
 		}
     }
 
@@ -769,9 +782,11 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 	int n_max = n - 3;
 
 	PHYCAS_ASSERT(postorderNodeStack.empty());
+    std::cerr << " pushing " << ff->GetNodeNumber() << '\n';
 	postorderNodeStack.push(ff);
 	for (TreeNode *v = ff->GetNextPreorder(); v != NULL; v = v->GetNextPreorder())
 		{
+		std::cerr << " pushing " << v->GetNodeNumber() << '\n';
 		postorderNodeStack.push(v);
 		if (isLogicalExternalEdge(v) && v->IsInternal())
 			v = v->FindLastPreorderInClade();
@@ -781,22 +796,28 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 		{
 		TreeNode *v = postorderNodeStack.top();
 		postorderNodeStack.pop();
+		std::cerr << " popped " << v->GetNodeNumber() << '\n';
 		if ((v == ff) || isLogicalInternalEdge(v))
 			{
+        
+			TreeNode * v1 = v->GetLeftChild();
+			TreeNode * v2 = v1->GetRightSib();
+			NV(v) = NV(v1) + NV(v2) + isLogicalInternalEdge(v1) + isLogicalInternalEdge(v2);
+            zeroRMatrix(v);
 			int       n_v = NV(v);
 			double ** r_v = R(v).GetAlias();
 
-			TreeNode * v1 = v->GetLeftChild();
-			TreeNode * v2 = v1->GetRightSib();
-
 			unsigned nNonleafChildren = isLogicalInternalEdge(v1) + isLogicalInternalEdge(v2);
+    		std::cerr << " is an logical internal node with nNonleafChildren = " << nNonleafChildren<<"\n";
 
 			/* Lemma 1 */
 			r_v[0][n_v] = bs_beta(n_v);
+    		std::cerr << "     n_v = " << n_v << " NV(v1)= " << NV(v1) << " NV(v2) = " << NV(v2) << " bs_beta(n_v) = " << bs_beta(n_v)  << "\n";
 			if (nNonleafChildren == 1)
 				{
 				if (isLogicalExternalEdge(v1))
 					v1 = v2;
+				PHYCAS_ASSERT(isLogicalInternalEdge(v1));
 
 				int       n_v1 = NV(v1);
 				double ** r_v1 = R(v1).GetAlias();
@@ -902,6 +923,11 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 					}
 				}
 			}
+		else
+		    {
+		    NV(v) = 0;
+		    }
+		    
 		}
 
 	double ** r_v0 = R(v0).GetAlias();
@@ -1033,13 +1059,12 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
                     fnd->prevPreorder = p->prevPreorder; // @PELIGROSO  - MUY ESTUPIDO overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
                 else
                     fnd->prevPreorder = p;
-                std::cerr << "Adding node " << fnd->GetLeftChild()->GetNodeNumber() 
-                        << " and " << fnd->GetLeftChild()->GetRightSib()->GetNodeNumber() 
-                        << " to polytomy at " << fnd->prevPreorder->GetNodeNumber() << '\n';
+                std::cerr << "Adding node " << fnd->GetNodeNumber() << " to polytomy at " << fnd->prevPreorder->GetNodeNumber() << '\n';
                 std::vector<TreeNode *> & vc = polytomyToCollapsed[fnd->prevPreorder];
                 
-                vc.push_back(fnd->GetLeftChild());
-                vc.push_back(fnd->GetLeftChild()->GetRightSib());
+                vc.push_back(fnd);
+                //vc.push_back(fnd->GetLeftChild());
+                //vc.push_back(fnd->GetLeftChild()->GetRightSib());
                 }
             else
                 {
@@ -1066,7 +1091,6 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
         PHYCAS_ASSERT(!polytomyNd->IsTip());
         const std::vector<TreeNode *> & vc = pNdIt->second;
 
-        // flag edges that are collapsed in the consensus
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             {
             TreeNode * adj = (*ndIt)->GetLeftChild();
@@ -1080,7 +1104,6 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
             if (adj)
                 adj->SetIsSelected(false);
             }
-        // flag edges that are collapsed in the consensus
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             (*ndIt)->SetIsSelected(true);
         const unsigned numLeaves = 3 + vc.size();

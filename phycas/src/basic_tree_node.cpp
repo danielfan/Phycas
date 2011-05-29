@@ -422,5 +422,10 @@ std::string	TreeNode::oneLineDebugReport() const
 		prev_str = prevPreorder->briefDebugReport();
 	else
 		prev_str = "NULL";
-	return str(boost::format("%s | lchild=%s | par=%s | rsib=%s | next=%s | prev=%s") % self_str % lch_str % par_str % sib_str % n_str % prev_str);
+	std::string sel_str;
+	if (IsSelected())
+		sel_str = "true";
+	else
+		sel_str = "false";
+	return str(boost::format("%s | lchild=%s | par=%s | rsib=%s | next=%s | prev=%s | selected=%s") % self_str % lch_str % par_str % sib_str % n_str % prev_str % sel_str);
 	}
