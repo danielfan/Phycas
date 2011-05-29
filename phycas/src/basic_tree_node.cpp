@@ -282,6 +282,11 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only) const
 			s << nm;
 			s << "\'";
 			}
+		
+		if (IsSelected())
+		    s << " True  ";
+		else
+		    s << " False ";
 		}
 	else
 		{
@@ -351,6 +356,10 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only) const
 			}
 		else
 			s << "<no edge length>";
+		if (IsSelected())
+		    s << " Selected=True  ";
+		else
+		    s << " Selected=False ";
 		}
 	}
 
