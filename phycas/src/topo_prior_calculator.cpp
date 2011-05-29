@@ -916,7 +916,7 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 
 
 
-double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *firstFork, unsigned numLeaves) const
+double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(TreeNode *firstFork, unsigned numLeaves)
 	{
     PHYCAS_ASSERT(firstFork);
     double lnNumTrees = 0.0;
@@ -983,7 +983,7 @@ double FocalTreeTopoProbCalculator::LnEdgeLenProbForSplit(const Split & s, const
     return p->GetLnPDF(b);
     }
 
-std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree, bool calcEdgeLenLnProb) const
+std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree, bool calcEdgeLenLnProb)
     {
     testTree.RecalcAllSplits(ntips);
     const TreeID & testTreeID = testTree.getTreeID();
