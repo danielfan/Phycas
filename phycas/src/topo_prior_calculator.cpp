@@ -497,11 +497,12 @@ struct bs_data
 #define R(p)	((bs_data *)((p)->ptr))->r
 
 
-void zeroRMatrix(TreeNode *p)
+void zeroRMatrix(TreeNode *p, unsigned prevNV)
     {
     unsigned nv1 = NV(p) + 1;
     //nv1 = nmax + 1; //@TEMP
-    R(p).Initialize(nv1, nv1);
+    if (prevNV < nv1)
+        R(p).Initialize(nv1, nv1);
     double ** alias = R(p).GetAlias();
     for (unsigned i = 0; i < nv1 ; ++i)
         {
@@ -555,6 +556,7 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
 
     verboseMode = true;
     DoTreeChecks(*focalTree, true, "ctor");
+    verboseMode = false;
 	for (TreeNode *p = focalTree->GetLastPreorder(); p != NULL; p = p->GetNextPostorder())
 		{
 		PHYCAS_ASSERT(p->ptr == NULL);
@@ -566,7 +568,7 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
 			TreeNode * q = p->GetLeftChild();
 			TreeNode * r = q->GetRightSib();
 			NV(p) = NV(q) + NV(r) + !q->IsTip() + !r->IsTip();
-			zeroRMatrix(p);
+			zeroRMatrix(p, 0);
             }
 		}
     }
@@ -777,6 +779,7 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 	std::cerr << "v0->num = " << v0->GetNodeNumber() <<'\n';
 	verboseMode = true;
     DoTreeChecks(*focalTree, true, "countDistancesUsingBryantSteel");
+	verboseMode = false;
 	
 	PHYCAS_ASSERT(!v0->IsTip());
 	int n_max = n - 3;
@@ -799,11 +802,11 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 		std::cerr << " popped " << v->GetNodeNumber() << '\n';
 		if ((v == ff) || isLogicalInternalEdge(v))
 			{
-        
+            unsigned prevNV = NV(v);
 			TreeNode * v1 = v->GetLeftChild();
 			TreeNode * v2 = v1->GetRightSib();
 			NV(v) = NV(v1) + NV(v2) + isLogicalInternalEdge(v1) + isLogicalInternalEdge(v2);
-            zeroRMatrix(v);
+            zeroRMatrix(v, prevNV);
 			int       n_v = NV(v);
 			double ** r_v = R(v).GetAlias();
 
@@ -997,7 +1000,8 @@ double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegio
 			}
         PHYCAS_ASSERT(firstFork);
         PHYCAS_ASSERT(!firstFork->IsTip());
-        std::cerr << "lnNumTrees = " << lnNumTrees << '\n';
+        return lnNumTrees;
+/*        std::cerr << "lnNumTrees = " << lnNumTrees << '\n';
         const double countedLnNumTrees = countDistancesUsingBryantSteel(firstFork, numLeaves);  
         std::cerr << "countedLnNumTrees = " << countedLnNumTrees << '\n';
         std::cerr << "kLog2 = " << kLog2 << '\n';
@@ -1005,6 +1009,7 @@ double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegio
         std::cerr << "kLog68 = " << kLog68 << '\n';
         std::cerr << "kLog74 = " << kLog74 << '\n';
 		PHYCAS_ASSERT(fabs(lnNumTrees - countedLnNumTrees) < 1.0e-6);	//TEMP
+*/
         }
 	else
 		lnNumTrees = countDistancesUsingBryantSteel(firstFork, numLeaves);
@@ -1059,7 +1064,8 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
                     fnd->prevPreorder = p->prevPreorder; // @PELIGROSO  - MUY ESTUPIDO overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
                 else
                     fnd->prevPreorder = p;
-                std::cerr << "Adding node " << fnd->GetNodeNumber() << " to polytomy at " << fnd->prevPreorder->GetNodeNumber() << '\n';
+                if (verboseMode)
+                    std::cerr << "Adding node " << fnd->GetNodeNumber() << " to polytomy at " << fnd->prevPreorder->GetNodeNumber() << '\n';
                 std::vector<TreeNode *> & vc = polytomyToCollapsed[fnd->prevPreorder];
                 
                 vc.push_back(fnd);
