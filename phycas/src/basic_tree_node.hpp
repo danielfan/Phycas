@@ -141,6 +141,7 @@ class TreeNode
 		TreeNode *		FindNextSib();
 		TreeNode *      FindRightmostChild();
 		TreeNode *      FindLeftSib();
+		TreeNode * 		FindLastPreorderInClade();
 		void CollapseEdge();
 
 		std::string		briefDebugReport(unsigned verbosity = 1) const;
@@ -192,6 +193,8 @@ class TreeNode
 		static const double		edgeLenDefault;		/**< default edge length */
 		static const unsigned	nodeNumInitValue;	/**< default number for newly-created nodes */
 		static const double		edgeLenInitValue;	/**< default edge length for newly-created nodes */
+
+		void *				ptr;					/**< pointer to temporary data */
 
 		friend class Tree;
 		friend class FocalTreeTopoProbCalculator;

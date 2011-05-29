@@ -170,55 +170,6 @@ void TreeManip::setRandomInternalExternalEdgeLens(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Begins with left child of parent of `this' and calls GetRightSib() until the left sibling of `this' is located.
-*/
-TreeNode * TreeNode::FindLeftSib()
-	{
-	TreeNode * nd = this->GetParent();
-
-	// If this has no parent, then there's no way it can have a left sibling
-	if (nd == NULL)
-		return NULL;	
-
-	nd = nd->GetLeftChild();
-
-	// Parent of this should have at least one child
-	PHYCAS_ASSERT(nd != NULL); 
-
-	// If left child of this's parent equals this, then this is an only child and has no siblings
-	if (nd == this)
-		return NULL;	
-
-	TreeNode * leftsib = NULL;
-	while (nd != this)
-		{
-		if (nd == NULL)
-			{
-			throw XPhylogeny("pointer inconsistency in FindLeftSib");
-			}
-		leftsib = nd;
-		nd = nd->GetRightSib();
-		}
-	return leftsib;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Begins with left child of `this'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
-|	the left child of `this'
-*/
-TreeNode * TreeNode::FindRightmostChild()	/**< is the parent node whose children will be searched */
-	{
-	TreeNode * curr = GetLeftChild();
-	TreeNode * rightmost = NULL;
-	while (curr != NULL)
-		{
-		rightmost = curr;
-		curr = curr->GetRightSib();
-		}
-	return rightmost;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Zig-zags up the right side of the clade starting with the node `start' until reaching a tip. This tip node is the 
 |	last node in the clade according to the preorder sequence. Zig-zagging is necessary because there is no pointer to
 |	the right-most child of a node, so we must use FindRightmostChild to move up the clade. Assumes `start' is non-NULL.

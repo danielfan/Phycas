@@ -24,6 +24,7 @@
 #include "phycas/src/basic_lot.hpp"
 #include "phycas/src/tree_manip.hpp"
 #include "phycas/src/probability_distribution.hpp"
+#include "ncl/nxsallocatematrix.h"
 
 namespace phycas
 {
@@ -33,6 +34,9 @@ const double kLog2 = 0.6931471805599453;
 const double kLog10 = 2.302585092994046;
 const double kLog68 = 4.219507705176107;
 const double kLog74 = 4.30406509320417;
+
+std::vector<double> bs_b;
+std::vector<double> bs_rs;
 
 bool kAllowDegTwoInDebugCheck = false;
 
@@ -468,6 +472,30 @@ void FocalTreeTopoProbCalculator::SetEdgeLenDist(const Split &s, ProbDistShPtr e
     splitToEdgeLenDistMap[s] = edgeLenDist;
     }
 
+/*----------------------------------------------------------------------------------------------------------------------
+|
+|	Computes the number of possible rooted trees for 1, 2, ..., taxa.n taxa, storing the results as logs.
+|
+|	Make sure that 'b' is allocated for n+1 elements.
+*/
+static void enumTrees(double *b, unsigned n, bool rooted)
+	{
+	unsigned k, m;
+
+	b[1] = b[2] = b[3] = 0.0;
+	for (k = 3 + !rooted, m = 3; k <= n; k++, m += 2)
+		b[k] = log((double)m) + b[k-1];
+	}
+	
+struct bs_data
+	{
+	int							nv;		/**< number of internal edges above node v */
+	ScopedTwoDMatrix<double>	r;		/**< R(v,.,.) for recursion */
+	};
+
+#define NV(p)	((bs_data *)((p)->ptr))->nv
+#define R(p)	((bs_data *)((p)->ptr))->r
+
 FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
         TreeShPtr t)
     :focalTree(t)
@@ -497,7 +525,43 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
     focalTree->RefreshPreorder();
     focalTree->RefreshNodeCounts();
     //buildScratchTree();
+
+	int n = focalTree->GetNObservables();
+	int nmax = n - 3;
+
+	bs_b.resize(n + 2);
+	bs_rs.resize(nmax + 1);
+
+	enumTrees(&bs_b[0], n, false);
+	for (unsigned i = 0; i <= n; i++)
+		bs_b[i] = exp(bs_b[i]);
+
+	for (TreeNode *p = focalTree->GetLastPreorder(); p != NULL; p = p->GetNextPostorder())
+		{
+		if (p->IsTip())
+			NV(p) = 0;
+		else
+			{
+			TreeNode * q = p->GetLeftChild();
+			TreeNode * r = q->GetRightSib();
+			NV(p) = NV(q) + NV(r) + !q->IsTip() + !r->IsTip();
+
+			int n = NV(p) + 1;
+			R(p).Initialize(n, n);
+			}
+		}
     }
+
+FocalTreeTopoProbCalculator::~FocalTreeTopoProbCalculator()
+	{
+	for (preorder_iterator p = focalTree->begin(); p != focalTree->end(); p++)
+		{
+		delete (bs_data *)p->ptr;
+		p->ptr = NULL;
+		}
+	bs_b.clear();
+	bs_rs.clear();
+	}
 
 /*
 void FocalTreeTopoProbCalculator::buildScratchTree() 
@@ -613,112 +677,59 @@ void TreeNode::CollapseEdge()
 	
 #if 1 //begin new DLS code
 
-#define COMPUTE_FULL_DISTRIBUTION		/* define this for full distribution rather than just d_max */
+//#include "paup_util.h"
 
-#include "paup_util.h"
-
-static double *bs_b, *bs_rs;
-
-#define NV(p)	(p)->node.u1.bs_nv
-#define R(p)	(p)->node.u2.bs_r
-
-/*----------------------------------------------------------------------------------------------------------------------
-|
-|	Deallocates memory allocated by initializeBryantSteel.
-*/
-PRIVATE void finalizeBryantSteel(Tree *tree)
-	{
-	for (Node *p = tree->lastPreorder; p != NULL; p = p->prevPreorder)
-		if (!Is_Tip(p))
-			deleteMatrix(&R(p));
-	deallocBlks(&bs_b, &bs_rs, NULLPTR);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|
-|	Allocates memory for determining distribution of Robinson-Foulds distances using Bryant-Steel method.
-*/
-PRIVATE int initializeBryantSteel(Tree *tree)
-	{
-	unsigned nmax = taxa.n - 3;
-
-	if (allocBlks(&bs_b,  taxa.n + 2, sizeof(double),
-				  &bs_rs, nmax + 1,   sizeof(double),  NULLPTR) != RC_OK)
-		goto errorExit;
-
-	enumTrees(bs_b, taxa.n, FALSE);
-	for (unsigned i = 0; i <= taxa.n; i++)
-		bs_b[i] = exp(bs_b[i]);
-
-	for (Node *p = tree->lastPreorder; p != NULL; p = p->prevPreorder)
-		{
-		if (Is_Tip(p))
-			NV(p) = 0;
-		else
-			{
-			Node * q = p->lchild;
-			Node * r = q->rsib;
-			NV(p) = NV(q) + NV(r) + !Is_Tip(q) + !Is_Tip(r);
-
-			int n = NV(p) + 1;
-			R(p) = newMatrix(sizeof(double), n, n);
-			if (R(p) == NULL)
-				goto errorExit;
-			}
-		}
-
-	return RC_OK;
-	
-	errorExit:
-		finalizeBryantSteel(tree);
-		return RC_Error;
-	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |
 |	Returns beta(m) as defined by Bryant and Steel.
 */
-PRIVATE_INLINE_FUNCTION double bs_beta(unsigned m)
+inline double bs_beta(unsigned m)
 	{
 	return bs_b[m + 3];
 	}
 	
-#if defined(COMPUTE_FULL_DISTRIBUTION)
-
-/*----------------------------------------------------------------------------------------------------------------------
-|
-|	Returns number of combinations of n objects k at a time.
-*/
-PRIVATE double nChooseK(unsigned n, unsigned k)
-	{
-	return exp(lgamma(n+1)-lgamma(k+1)-lgamma(n-k+1));
-	}
-
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |
 |	Returns -1 raised to the power of k.
 */
-PRIVATE_INLINE_FUNCTION double powerOfMinusOne(int k)
+inline double powerOfMinusOne(int k)
 	{
 	return (k & 1) ? -1.0 : 1.0;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|
+|	Returns true iff p's edge either terminates at a leaf or at a node that is not selected.
+*/
+inline bool isLogicalExternalEdge(TreeNode *p)
+	{
+	return p->IsTip() || !p->IsSelected();
+	}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+inline bool isLogicalInternalEdge(TreeNode *p)
+	{
+	return p->IsInternal() && p->IsSelected();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |
 |	Counts the number of cherries (pairs of leaves on adjecent external edges) on a tree.
 */
-PRIVATE int countCherries(Tree *tree)
+static int countCherries(TreeNode *pStart)
 	{
 	int ncherries = 0;
-	for (Node *p = tree->lastPreorder; p != NULL; p = p->prevPreorder)
+	for (TreeNode *p = pStart; p != NULL; p = p->GetNextPreorder())
 		{
-		if (!Is_Tip(p) && Is_Tip(p->lchild) && Is_Tip(p->lchild->rsib))
+		if (!isLogicalExternalEdge(p) && isLogicalExternalEdge(p->GetLeftChild())
+		  && isLogicalExternalEdge(p->GetLeftChild()->GetRightSib()))
 			ncherries++;
 		}
-	Node *ff = tree->root->lchild;
-	if (Is_Leaf(ff->lchild) || Is_Leaf(ff->lchild->rsib))
+	if (isLogicalExternalEdge(pStart->GetLeftChild()) || isLogicalExternalEdge(pStart->GetLeftChild()->GetRightSib()))
 		ncherries++;
 
 	return ncherries;
@@ -730,48 +741,55 @@ PRIVATE int countCherries(Tree *tree)
 |	The tree information is contained in the lambdaT value, which is a function of the number of cherries on the
 |	tree.
 */
-PRIVATE double poissonApprox(double m, double lambdaT)		/* m = RF distance, multiple of 2 */
+static double poissonApprox(unsigned n, double m, double lambdaT)		/* m = RF distance, multiple of 2 */
 	{
-	double exp_minus_lambdaT = exp(-lambdaT);
-	double s = taxa.n - 3 - m/2;
-	double pow_lambdaT_s = pow(lambdaT, s);
+	double s = n - 3 - m/2;
 	double s_factorial = exp(lgamma(s + 1.0));
-	return exp_minus_lambdaT*pow_lambdaT_s/s_factorial;
+	return exp(-lambdaT)*pow(lambdaT, s)/s_factorial;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |
 |	Computes distribution of Robinson-Foulds tree distances using method of Bryant and Steel (2009).
 */
-PRIVATE int countDistancesUsingBryantSteel(Tree *tree)
+double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff, unsigned n)
 	{
-	Node *v;
-	Node * v0 = tree->root->lchild;
+	TreeNode * v0 = ff->GetLeftChild();
 	
-	int n_max = taxa.n - 3;
-	int d_max = 2*n_max;
+	int n_max = n - 3;
 
-	for (v = tree->lastPreorder; v != NULL; v = v->prevPreorder)
+	PHYCAS_ASSERT(postorderNodeStack.empty());
+	postorderNodeStack.push(ff);
+	for (TreeNode *v = ff->GetNextPreorder(); v != NULL; v = v->GetNextPreorder())
 		{
-		if (Is_Internal_Node(v))
+		postorderNodeStack.push(v);
+		if (isLogicalExternalEdge(v) && v->IsInternal())
+			v = v->FindLastPreorderInClade();
+		}
+
+	while (!postorderNodeStack.empty())
+		{
+		TreeNode *v = postorderNodeStack.top();
+		postorderNodeStack.pop();
+		if ((v == ff) || isLogicalInternalEdge(v))
 			{
 			int       n_v = NV(v);
-			double ** r_v = R(v);
+			double ** r_v = R(v).GetAlias();
 
-			Node * v1 = v->lchild;
-			Node * v2 = v1->rsib;
+			TreeNode * v1 = v->GetLeftChild();
+			TreeNode * v2 = v1->GetRightSib();
 
-			unsigned nNonleafChildren = !Is_Leaf(v1) + !Is_Leaf(v2);
+			unsigned nNonleafChildren = isLogicalInternalEdge(v1) + isLogicalInternalEdge(v2);
 
 			/* Lemma 1 */
 			r_v[0][n_v] = bs_beta(n_v);
 			if (nNonleafChildren == 1)
 				{
-				if (Is_Leaf(v1))
+				if (isLogicalExternalEdge(v1))
 					v1 = v2;
 
 				int       n_v1 = NV(v1);
-				double ** r_v1 = R(v1);
+				double ** r_v1 = R(v1).GetAlias();
 				
 				for (int s = 1; s <= n_v; s++)
 					{
@@ -796,8 +814,8 @@ PRIVATE int countDistancesUsingBryantSteel(Tree *tree)
 				{
 				int       n_v1 = NV(v1);
 				int       n_v2 = NV(v2);
-				double ** r_v1 = R(v1);
-				double ** r_v2 = R(v2);
+				double ** r_v1 = R(v1).GetAlias();
+				double ** r_v2 = R(v2).GetAlias();
 				
 				for (int s = 1; s <= n_v; s++)
 					{
@@ -841,7 +859,7 @@ PRIVATE int countDistancesUsingBryantSteel(Tree *tree)
 						double sum2 = 0.0;
 						if (k-1 <= n_v1)
 							{
-							for (int s2 = 0; s2 <= intMin(s-1, n_v2); s2++)
+							for (int s2 = 0; s2 <= std::min(s-1, n_v2); s2++)	//min probably not needed
 								{
 								if (s-1-s2 <= n_v1)
 									{
@@ -874,7 +892,7 @@ PRIVATE int countDistancesUsingBryantSteel(Tree *tree)
 			}
 		}
 
-	double ** r_v0 = R(v0);
+	double ** r_v0 = R(v0).GetAlias();
 	for (int s = 0; s <= n_max; s++)
 		{
 		double rs = 0.0;
@@ -884,45 +902,14 @@ PRIVATE int countDistancesUsingBryantSteel(Tree *tree)
 		bs_rs[s] = rs;
 		}
 		
-#	if defined(COMPUTE_FULL_DISTRIBUTION)
+	double bmT = 0.0;
+	for (int s = 0; s <= n_max; s++)
+		bmT += bs_rs[s]*powerOfMinusOne(s);
 
-		double ntrees = bs_b[taxa.n];
-		double lambdaT = countCherries(tree)/(2.0*taxa.n);
+//	myprintf("\nNumber of trees at maximum R-F distance calculated using Bryant-Steel method:\n\n");
+//	myprintf("%4d%12g\n", d_max, bmT);
 
-		myprintf("\nNumber of trees at each R-F distance calculated using Bryant-Steel method:\n\n");
-		myprintf("      --------- exact ---------    --------- Poisson ---------\n");
-		myprintf("%4s  %12s %12s      %12s %12s\n", "d", "proportion", "number", "proportion", "number");
-		myprintf("--------------------------------------------------------------\n");
-		for (int m = 0; m <= d_max; m += 2)
-			{
-			int mm = n_max - m/2;
-			double bmT = 0.0;
-			for (int s = mm; s <= n_max; s++)
-				{
-				#if 0
-				bmT += nChooseK(s, mm)*bs_rs[s]*powerOfMinusOne(s-mm);
-				#else
-				double nCk = nChooseK(s, mm);
-				double bs_rs_s = bs_rs[s];
-				bmT += nCk*bs_rs_s*powerOfMinusOne(s-mm);
-				myprintf("nChooseK(s, mm)=%g bs_rs[s]=%g bmT => %g\n", nCk, bs_rs_s, bmT);//
-				#endif
-				}
-			double p_approx = poissonApprox(m, lambdaT);
-			myprintf("%4d  %12g %12g      %12g %12g\n", m, bmT/ntrees, bmT, p_approx, p_approx*ntrees);
-			}
-#	else
-
-		double bmT = 0.0;
-		for (int s = 0; s <= n_max; s++)
-			bmT += bs_rs[s]*powerOfMinusOne(s);
-
-		myprintf("\nNumber of trees at maximum R-F distance calculated using Bryant-Steel method:\n\n");
-		myprintf("%4d%12g\n", d_max, bmT);
-
-#	endif
-
-	return RC_OK;
+	return log(bmT);
 	}
 
 #endif	//end new DLS code

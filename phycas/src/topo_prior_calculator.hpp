@@ -46,6 +46,7 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
     {
     public:
         FocalTreeTopoProbCalculator(TreeShPtr);
+        ~FocalTreeTopoProbCalculator();
 
         void SampleTree(TreeShPtr, LotShPtr) const;
 
@@ -74,6 +75,10 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         //void buildScratchTree();
         
         void DoTreeChecks(Tree & destTree, bool doRefreshesFirst, const char * tag) const;
+
+		double countDistancesUsingBryantSteel(TreeNode *ff, unsigned n);
+		
+		std::stack<TreeNode *> postorderNodeStack;
     };
 
 typedef boost::shared_ptr<FocalTreeTopoProbCalculator> FocalTreeTopoProbCalculatorShPtr;

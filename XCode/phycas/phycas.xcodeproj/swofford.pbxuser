@@ -422,10 +422,17 @@
 	};
 	7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1244, 4172}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1699}";
+			sepNavIntBoundsRect = "{{0, 0}, {1221, 4095}}";
+			sepNavSelRange = "{2873, 0}";
+			sepNavVisRange = "{1459, 1876}";
 			sepNavWindowFrame = "{{737, 602}, {1823, 976}}";
+		};
+	};
+	7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1013, 2522}}";
+			sepNavSelRange = "{7728, 0}";
+			sepNavVisRange = "{6529, 1347}";
 		};
 	};
 	7A0945B710CAEFB900CEFDE0 /* basic_tree_node.inl */ = {
@@ -438,7 +445,7 @@
 	};
 	7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {965, 35425}}";
+			sepNavIntBoundsRect = "{{0, 0}, {965, 35061}}";
 			sepNavSelRange = "{93102, 0}";
 			sepNavVisRange = "{0, 2074}";
 			sepNavWindowFrame = "{{896, 466}, {1024, 712}}";
@@ -892,22 +899,29 @@
 	};
 	7A09464010CAEFB900CEFDE0 /* topo_prior_calculator.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1170, 8749}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 2694}";
+			sepNavIntBoundsRect = "{{0, 0}, {963, 18837}}";
+			sepNavSelRange = "{26382, 0}";
+			sepNavVisRange = "{25919, 302}";
 			sepNavWindowFrame = "{{15, 148}, {1229, 1025}}";
+		};
+	};
+	7A09464110CAEFB900CEFDE0 /* topo_prior_calculator.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1196, 2158}}";
+			sepNavSelRange = "{1967, 27}";
+			sepNavVisRange = "{1630, 2627}";
 		};
 	};
 	7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {852, 1183}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 1595}";
+			sepNavVisRange = "{0, 1594}";
 		};
 	};
 	7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {965, 55419}}";
+			sepNavIntBoundsRect = "{{0, 0}, {965, 55601}}";
 			sepNavSelRange = "{161876, 0}";
 			sepNavVisRange = "{146660, 1824}";
 			sepNavWindowFrame = "{{896, 466}, {1024, 712}}";
@@ -965,10 +979,10 @@
 	};
 	7A09465410CAEFB900CEFDE0 /* unimap_fast_nni_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1244, 10738}}";
-			sepNavSelRange = "{16118, 0}";
-			sepNavVisRange = "{15603, 630}";
-			sepNavWindowFrame = "{{84, 258}, {1696, 1252}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1221, 10764}}";
+			sepNavSelRange = "{19160, 113}";
+			sepNavVisRange = "{18098, 1610}";
+			sepNavWindowFrame = "{{62, -571}, {1280, 963}}";
 		};
 	};
 	7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */ = {
@@ -1228,7 +1242,7 @@
 		fRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */;
 		name = "basic_tree.cpp: 2705";
 		rLen = 0;
-		rLoc = 93102;
+		rLoc = 91500;
 		rType = 0;
 		vrLen = 2074;
 		vrLoc = 0;
@@ -2345,7 +2359,7 @@
 			rooted.py,
 		);
 		autoAttachOnCrash = 1;
-		breakpointsEnabled = 0;
+		breakpointsEnabled = 1;
 		configStateDict = {
 			"PBXLSLaunchAction-0" = {
 				PBXLSLaunchAction = 0;

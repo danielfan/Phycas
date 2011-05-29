@@ -172,8 +172,6 @@ class Tree : public boost::enable_shared_from_this<Tree>
 		//void					RefreshTreeID();
 
 		TreeNode *				FindLeftSib(TreeNode * start);
-		TreeNode *				FindRightmostChild(TreeNode * start);
-		TreeNode *				FindLastPreorderInClade(TreeNode * start);
 		void					DetachSubtree(TreeNode * s);
 		void					InsertSubtree(TreeNode * s, TreeNode * u, bool on_right,  TreeNode * targetSib = NULL);
 		
@@ -184,7 +182,21 @@ class Tree : public boost::enable_shared_from_this<Tree>
             assert(firstPreorder == 0L);
             firstPreorder = nd;
             }
-            
+  
+		TreeNode * FindRightmostChild(TreeNode * start)
+			{
+			//@POL This function was stolen from the TreeManip class - makes more sense here
+			PHYCAS_ASSERT(start != NULL);
+			return start->FindRightmostChild();
+			}
+
+		TreeNode * FindLastPreorderInClade(TreeNode * start)
+			{
+			//@POL This function was stolen from the TreeManip class - makes more sense here
+			PHYCAS_ASSERT(start != NULL);
+			return start->FindLastPreorderInClade();
+			}
+           
         TreeNode * FindNodeBySplit(const Split & s);
 //        void MirrorTopology(Tree &source); 
 //        void RebuildTopologyFromMirror(const Tree & source);

@@ -585,26 +585,6 @@ TreeNode * Tree::FindMRCA(unsigned tip1, unsigned tip2)
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Zig-zags up the right side of the clade starting with the node `start' until reaching a tip. This tip node is the 
-|	last node in the clade according to the preorder sequence. Zig-zagging is necessary because there is no pointer to
-|	the right-most child of a node, so we must use FindRightmostChild to move up the clade. Assumes `start' is non-NULL.
-*/
-TreeNode * Tree::FindLastPreorderInClade(
-  TreeNode * start)	/**< is the deepest node belonging to the clade in question */
-	{
-	//@POL This function was stolen from the TreeManip class - makes more sense here
-	PHYCAS_ASSERT(start != NULL);
-	TreeNode * curr = start;
-	TreeNode * rChild = FindRightmostChild(curr);
-	while (rChild != NULL)
-		{
-		curr = rChild;
-		rChild = FindRightmostChild(curr);
-		}
-	return curr;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.
 |	Assumes `start' is non-NULL.
 */
@@ -639,25 +619,6 @@ TreeNode * Tree::FindLeftSib(
 		nd = nd->GetRightSib();
 		}
 	return leftsib;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Begins with left child of `start'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
-|	the left child of `start'. Assumes `start' is non-NULL.
-*/
-TreeNode * Tree::FindRightmostChild(
-  TreeNode * start)	/**< is the parent node whose children will be searched */
-	{
-	//@POL This function was stolen from the TreeManip class - makes more sense here
-	PHYCAS_ASSERT(start != NULL);
-	TreeNode * curr = start->GetLeftChild();
-	TreeNode * rightmost = NULL;
-	while (curr != NULL)
-		{
-		rightmost = curr;
-		curr = curr->GetRightSib();
-		}
-	return rightmost;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

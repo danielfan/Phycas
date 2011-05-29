@@ -48,6 +48,72 @@ void TreeNode::AddChild(TreeNode *nd)
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Begins with left child of parent of `this' and calls GetRightSib() until the left sibling of `this' is located.
+*/
+TreeNode * TreeNode::FindLeftSib()
+	{
+	TreeNode * nd = this->GetParent();
+
+	// If this has no parent, then there's no way it can have a left sibling
+	if (nd == NULL)
+		return NULL;	
+
+	nd = nd->GetLeftChild();
+
+	// Parent of this should have at least one child
+	PHYCAS_ASSERT(nd != NULL); 
+
+	// If left child of this's parent equals this, then this is an only child and has no siblings
+	if (nd == this)
+		return NULL;	
+
+	TreeNode * leftsib = NULL;
+	while (nd != this)
+		{
+		if (nd == NULL)
+			{
+			throw XPhylogeny("pointer inconsistency in FindLeftSib");
+			}
+		leftsib = nd;
+		nd = nd->GetRightSib();
+		}
+	return leftsib;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Begins with left child of `start'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
+|	the left child of `start'. Assumes `start' is non-NULL.
+*/
+TreeNode * TreeNode::FindRightmostChild()
+	{
+	TreeNode * curr = this->GetLeftChild();
+	TreeNode * rightmost = NULL;
+	while (curr != NULL)
+		{
+		rightmost = curr;
+		curr = curr->GetRightSib();
+		}
+	return rightmost;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Zig-zags up the right side of the clade starting with the node `start' until reaching a tip. This tip node is the 
+|	last node in the clade according to the preorder sequence. Zig-zagging is necessary because there is no pointer to
+|	the right-most child of a node, so we must use FindRightmostChild to move up the clade. Assumes `start' is non-NULL.
+*/
+TreeNode * TreeNode::FindLastPreorderInClade()
+	{
+	TreeNode * curr = this;
+	TreeNode * rChild = curr->FindRightmostChild();
+	while (rChild != NULL)
+		{
+		curr = rChild;
+		rChild = curr->FindRightmostChild();
+		}
+	return curr;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
 */
 TreeNode::TreeNode() 
@@ -67,7 +133,8 @@ TreeNode::TreeNode()
   tipData(0),
   tipDataDeleter(0),
   internalData(0),
-  internalDataDeleter(0)
+  internalDataDeleter(0),
+  ptr(NULL)
   	{
   	//std::cerr << "=====> creating TreeNode " << (++debug_treenode_number) << std::endl;
 	}
