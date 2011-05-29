@@ -538,6 +538,8 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
 
 	for (TreeNode *p = focalTree->GetLastPreorder(); p != NULL; p = p->GetNextPostorder())
 		{
+		PHYCAS_ASSERT(p->ptr == NULL);
+		p->ptr = new bs_data();
 		if (p->IsTip())
 			NV(p) = 0;
 		else
