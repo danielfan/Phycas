@@ -583,7 +583,7 @@ class ParamSummarizer(CommonFunctions):
         
         """
         self.output('\nCPO analysis')
-        
+		
         # Each line in lines comprises nsites log-site-likelihood values (one sample from the chain)
         nsites = len(lines[0].split())
         loglikes = [[] for i in range(nsites)]
@@ -594,22 +594,30 @@ class ParamSummarizer(CommonFunctions):
             for i,logx in enumerate(parts):
                 loglikes[i].append(float(logx))
             
+        # Create the default partition if none has been defined
+        partition.validate(nsites)
+		
         # Compute the log-CPO measure for each site, and the sum over all sites
         # Sites that have been excluded will have lognm = 0.0 and thus will not
         # contribute to total_cpo
-        yvect = []
+        cpovect = []
         total_cpo = 0.0
-        for i in range(nsites):
-            loghm = self.calcLogHM(loglikes[i])
-            total_cpo += loghm
-            yvect.append(loghm)
+        for subset_index,(subset_name,subset_sitelist,subset_model) in enumerate(partition.subset):
+            for i in subset_sitelist:
+                loghm = self.calcLogHM(loglikes[i-1])
+                total_cpo += loghm
+                cpovect.append(loghm)
+        #for i in range(nsites):
+        #    loghm = self.calcLogHM(loglikes[i])
+        #    total_cpo += loghm
+        #    cpovect.append(loghm)
         self.output('Model CPO = %.5f' % total_cpo)
         
         # Identify the worst sites in terms of CPO, placing these in cpo_worst
         cpo_worst = []
         for i in range(nsites):
-            if yvect[i] < 0.0:
-                cpo_worst.append((i,yvect[i]))
+            if cpovect[i] < 0.0:
+                cpo_worst.append((i,cpovect[i]))
         cpo_worst.sort(cmp=lambda x,y: cmp(x[1], y[1]))
         nincluded = len(cpo_worst)
         last_of_worst = int(math.ceil(self.opts.cpo_cutoff*nincluded))
@@ -620,10 +628,10 @@ class ParamSummarizer(CommonFunctions):
         for i,j in cpo_worst:
             mask[i] = '*'
         for i in range(nsites):
-            if yvect[i] == 0.0:
+            if cpovect[i] == 0.0:
                 mask[i] = 'x'
         maskstr = ''.join(mask)
-        # begin again here: need to print out maskstr in output...
+        # begin again here: need to print out maskstr in output...note: mask invalid except for default partition
 
         # Use nearest neighbor smoother to produce a more easily-interpreted plot
         
@@ -650,7 +658,7 @@ class ParamSummarizer(CommonFunctions):
                 low = 0
             if high > nsites - 1:
                 high = nsites - 1
-            yvalues = yvect[low:high+1]
+            yvalues = cpovect[low:high+1]
             xvalues = range(low, high+1)
             assert len(xvalues) == len(yvalues), '%d != %d for i = %d' % (len(xvalues),len(yvalues),i)
             weights = [math.exp(-math.pow(-(float(x) - float(i)), 2.0)/denom) for x in xvalues]
@@ -667,13 +675,20 @@ class ParamSummarizer(CommonFunctions):
                 self._cpoRFile.write('# plot of log(CPO) across sites\n')
                 #self._cpoRFile.write('quartz(bg="white")\n')
                 self._cpoRFile.write('x = c(%s)\n' % ','.join(['%d' % x for x in range(nsites)]))
-                self._cpoRFile.write('y = c(%s)\n' % ','.join(['%g' % y for y in yvect]))
+                self._cpoRFile.write('y = c(%s)\n' % ','.join(['%g' % y for y in cpovect]))
                 #self._cpoRFile.write("plot(x, y, type='l', main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
                 #self._cpoRFile.write('quartz(bg="white")\n')
                 self._cpoRFile.write('colvec = rep("black",%d)\n' % nsites)
                 self._cpoRFile.write('z = c(%s)\n' % ','.join(['%d' % (zz[0]+1) for zz in cpo_worst]))
                 self._cpoRFile.write('colvec[z] = "red"\n')
                 self._cpoRFile.write("plot(x, y, type='h', col=colvec, main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+
+                cum = 0
+                self._cpoRFile.write('abline(v=1)\n')
+                for subset_index,(subset_name,subset_sitelist,subset_model) in enumerate(partition.subset):
+                    cum += len(subset_sitelist)
+                    self._cpoRFile.write('abline(v=%d)\n' % cum)
+
                 self._cpoRFile.write('\n# plot of estimated probability density of log(CPO) values\n')
                 self._cpoRFile.write('quartz(bg="white")\n')
                 self._cpoRFile.write('plot(density(y))\n')
