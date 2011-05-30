@@ -1,6 +1,7 @@
 import sys
 from phycas import *
 testing_sample = '-t' in sys.argv
+larget_simon = '-l' in sys.argv
 short = '-e' in sys.argv
 skip_regular = '-s' in sys.argv
 regular_mcmc = '-m' in sys.argv
@@ -41,7 +42,11 @@ mcmc.out.trees.mode = REPLACE
 mcmc.out.params.prefix = 'params.%d' % (jobid,)
 mcmc.out.params.mode = REPLACE
 if testing_sample:
-    mcmc.ncycles = 1000000
+    mcmc.ncycles = 100000
+    if larget_simon:
+        mcmc.draw_directly_from_prior = False
+    else:
+        mcmc.draw_directly_from_prior = True
 elif debugging:
     mcmc.ncycles = 10
 elif short:
@@ -208,8 +213,12 @@ else:
     if testing_sample:
         sumt.trees = 'trees.106.t'
         sumt.out.splits = False
-        sumt.out.log = 'trees_from_refdist.%d.txt' % (jobid,)
+        if larget_simon:
+            sumt.out.log = 'trees_from_refdist_larget_simon.%d.txt' % (jobid,)
+        else:
+            sumt.out.log = 'trees_from_refdist_direct_draw.%d.txt' % (jobid,)
         sumt.out.log.mode = REPLACE
+        sumt.tree_credible_prob = 1.0
         sumt()
     else:
         sump.out.log = 'ss.sump.%d.txt' % (jobid,)
