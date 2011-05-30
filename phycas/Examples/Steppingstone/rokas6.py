@@ -63,6 +63,8 @@ mcmc.report_every = 1000
 mcmc.state_freq_psi = 3000.0
 mcmc.rel_rate_psi   = 3000.0
 
+mcmc.draw_directly_from_prior = True
+
 if not regular_mcmc and jobid < 106:
     mcmc.fix_topology = True
 else:
