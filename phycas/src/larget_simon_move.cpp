@@ -33,6 +33,7 @@
 
 namespace phycas
 {
+bool verbose = false;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
@@ -133,7 +134,9 @@ bool LargetSimonMove::update()
         const double prev_ln_ref_topo = treeprobs.first;
         const double prev_ln_ref_edges = treeprobs.second;
         prev_ln_ref_dist = prev_ln_ref_topo + prev_ln_ref_edges;
-        //MTH@May2011 std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_edges=" << prev_ln_ref_edges << '\n'; 
+        //MTH@May2011
+        if (verbose)
+	        std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_edges=" << prev_ln_ref_edges << '\n'; 
         }
 
 	proposeNewState();
@@ -186,7 +189,9 @@ bool LargetSimonMove::update()
             const double curr_ln_ref_topo = treeprobs.first;
             const double curr_ln_ref_edges = treeprobs.second;
             curr_ln_ref_dist = curr_ln_ref_edges + curr_ln_ref_topo;
-            //MTH@May2011 std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_edges=" << curr_ln_ref_edges << '\n'; 
+            //MTH@May2011
+            if (verbose)
+	            std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_edges=" << curr_ln_ref_edges << '\n'; 
             }
 		}
     
@@ -718,6 +723,8 @@ void LargetSimonMove::defaultProposeNewState()
 */
 void LargetSimonMove::revert()
 	{
+	if (verbose)
+	    std::cerr << "Reject\n";
 	MCMCUpdater::revert();
 	if (star_tree_proposal)
 		{
@@ -779,6 +786,8 @@ void LargetSimonMove::revert()
 */
 void LargetSimonMove::accept()
 	{
+	if (verbose)
+	    std::cerr << "Accept\n";
 	MCMCUpdater::accept();
 	if (star_tree_proposal)
 		{
