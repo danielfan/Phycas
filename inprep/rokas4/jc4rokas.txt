@@ -1,0 +1,8 @@
+(1:1.00000,2:1.00000,(3:1.00000,4:1.00000):0.3333)
+master_edgelen = Gamma(.1, 10)
+split_-*** = Gamma(.1, 10)
+split_--*- = Gamma(.1, 10)
+split_-*-- = Gamma(.1, 10)
+split_---* = Gamma(.1, 10)
+split_--** = Gamma(.1, 10)
+split_NA = Gamma(.1, 10)
