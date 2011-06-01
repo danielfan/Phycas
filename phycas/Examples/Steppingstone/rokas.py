@@ -66,7 +66,7 @@ else:
     if regular_mcmc:
         mcmc.ncycles = 10000
     else:
-        mcmc.ncycles = 50000
+        mcmc.ncycles = 5000
 
 if skip_regular:
     ss.xcycles = -(mcmc.ncycles - 1)
@@ -204,7 +204,8 @@ else:
         '(1:0.063233,(2:0.050563,3:0.111184):0.03100,4:0.144445)',
     ]    
 if jobid > ntrees:
-    mcmc.starting_tree_source = TreeCollection(newick=tree_descriptions[95])
+    best_ind = ntax != '4' and 95 or 0
+    mcmc.starting_tree_source = TreeCollection(newick=tree_descriptions[best_ind])
     ss.refdist_definition_file = model.type + ntax + 'rokas.txt'
 else:
     mcmc.starting_tree_source = TreeCollection(newick=tree_descriptions[jobid-1])
