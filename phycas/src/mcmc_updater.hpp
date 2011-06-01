@@ -95,7 +95,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 		// Predicates
 		bool					isFixed() const;
-		bool					isPriorSteward() const;
+		virtual bool			isPriorSteward() const;
 		bool					useWorkingPrior() const;
 		bool					isParameter() const;
 		bool					isMasterParameter() const;

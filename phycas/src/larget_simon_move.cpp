@@ -34,13 +34,6 @@
 namespace phycas
 {
 
-double  LargetSimonMove::sampleWorkingPrior() const
-{
-    PHYCAS_ASSERT(topo_prob_calc);
-    topo_prob_calc->SampleTree(tree, rng);
-    return 0.0;
-}
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
 |	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
@@ -63,6 +56,54 @@ LargetSimonMove::LargetSimonMove() : MCMCUpdater()
 LargetSimonMove::~LargetSimonMove()
 	{
 	//std::cerr << "\n>>>>> LargetSimonMove dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class (MCMCUpdater) version. Returns log(1/ntrees), where ntrees is the number of possible binary 
+|	tree topologies. Note that this assumes a flat prior on tree topologies.
+*/
+double LargetSimonMove::recalcPrior()
+	{
+    double ntips = (double)(tree->GetNObservables());
+    PHYCAS_ASSERT(ntips >= 4.0);
+    double ntips_minus_three = ntips - 3.0;
+    double numer = lgamma(2.0*ntips - 5.0 + 1.0);
+    double denom1 = ntips_minus_three*log(2.0);
+    double denom2 = lgamma(ntips_minus_three + 1.0);
+    double log_num_binary_trees = numer - denom1 - denom2;
+    //std::cerr << boost::str(boost::format("POLPOL: log_num_binary_trees = %g, num_binary_trees = %g") % log_num_binary_trees % exp(log_num_binary_trees)) << std::endl;
+    return -log_num_binary_trees;
+	}
+        
+/*----------------------------------------------------------------------------------------------------------------------
+|	Samples a tree from Mark's reference distribution.
+*/
+double LargetSimonMove::recalcWorkingPrior() const
+	{
+    PHYCAS_ASSERT(topo_prob_calc);
+    std::pair<double, double> treeprobs = topo_prob_calc->CalcTopologyLnProb(*tree, true);
+    const double ln_ref_topo = treeprobs.first;
+    const double ln_ref_edges = treeprobs.second;
+    double ln_ref_dist = ln_ref_topo + ln_ref_edges;
+    return ln_ref_dist;
+	}
+        
+/*----------------------------------------------------------------------------------------------------------------------
+|	Samples a tree from Mark's reference distribution.
+*/
+double LargetSimonMove::sampleWorkingPrior() const
+	{
+    PHYCAS_ASSERT(topo_prob_calc);
+    topo_prob_calc->SampleTree(tree, rng);
+    return 0.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true, overriding the base class (MCMCUpdater) version.
+*/
+bool LargetSimonMove::isPriorSteward() const
+	{
+	return true;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

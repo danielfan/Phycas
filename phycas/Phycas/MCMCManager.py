@@ -258,7 +258,6 @@ class MCMCManager:
             self.parent.treef.flush()
 
         # If we are saving site-likelihoods, and if the sitelikes file exists, add line to sitelikes file 
-        #raw_input('POLPOL: self.parent = %s' % self.parent.__class__.__name__)
         if self.parent.sitelikef:
             #raw_input('%s.sitelikef is True' % self.parent.__class__.__name__)
             cold_chain.likelihood.storeSiteLikelihoods(True)

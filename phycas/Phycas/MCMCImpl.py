@@ -87,7 +87,6 @@ class MCMCImpl(CommonFunctions):
             nexcluded = 0
             self.phycassert(len(v) == self.nchar,'Number of sites returned by coldchain.likelihood.getCharIndexToPatternIndex (%d) differs from MCMCImpl.nchar (%d) in MCMCImpl.siteLikeFileSetup()' % (len(v), self.nchar))
             npatterns = coldchain.likelihood.getNPatterns()
-            #raw_input('POLPOL: len(v) = %d, self.nchar = %d, npatterns = %d' % (len(v), self.nchar, npatterns))
             self.siteIndicesForPatternIndex = []
             for i in range(npatterns):
                 self.siteIndicesForPatternIndex.append([])
@@ -96,7 +95,6 @@ class MCMCImpl(CommonFunctions):
                     self.siteIndicesForPatternIndex[p].append(i)
                 else:
                     nexcluded += 1;
-        #raw_input('POLPOL: leaving MCMCImpl.siteLikeFileSetup(): nexcluded = %d' % nexcluded)
 
     def unsetSiteLikeFile(self):
         self.sitelikef = None
@@ -524,8 +522,8 @@ class MCMCImpl(CommonFunctions):
         for u in all_updaters:      # good candidate for moving into C++
             name = u.getName()
             if u.isFixed() or not u.isPriorSteward():
-                if name != 'larget_simon_local':
-                    continue
+                #POLPOL if name != 'larget_simon_local':
+                continue
             # Open issue: can we completely ignore hyperparameters in stepping stone analyses?
             # For now, I'm assuming we can (edge length parameters, or master edge length parameters,
             # each have their own reference distributions that can be used for sampling, and the 
@@ -1282,6 +1280,8 @@ class MCMCImpl(CommonFunctions):
                     for u in all_updaters:
                         if not u.isFixed():
                             u.setUseWorkingPrior(True)
+                            if u.getName() in ['master_edgelen','external_edgelen','internal_edgelen'] and not self.opts.fix_topology:
+	                            u.setUseWorkingPrior(False)	# larget_simon_local takes over this role for variable topology steppingstone analyses
                             if u.computesUnivariatePrior() or u.computesMultivariatePrior():
                                 if self.opts.ssobj.refdist_definition_file is not None:
                                     # User has specified a file containing the reference distribution definitions
@@ -1291,7 +1291,6 @@ class MCMCImpl(CommonFunctions):
                                         u.setMultivariateWorkingPrior(ref_dist_map[u.getName()])
                                 else:                           
                                     # Compute reference distributions from samples already stored
-                                    #raw_input('POLPOL: calling finalizeWorkingPrior for %s' % u.getName())
                                     u.finalizeWorkingPrior()
                                 self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
                             if u.computesTopologyPrior():

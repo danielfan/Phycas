@@ -188,7 +188,7 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 			{
 			double this_ln_prior = s->recalcWorkingPrior();
 			ln_ref_dist += this_ln_prior;
-			//std::cerr << boost::str(boost::format("@@@@@@@@@@ this working prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % ln_ref_dist % s->getName()) << std::endl;
+			//std::cerr << boost::str(boost::format("POLPOL: @@@@@@@@@@ this working prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % ln_ref_dist % s->getName()) << std::endl;
 			}
 		}
 	return ln_ref_dist;
@@ -303,6 +303,7 @@ void MCMCChainManager::refreshLastLnPrior()
 		}
 		
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
+	//std::cerr << "POLPOL: @@@@@@@@@@ begin MCMCChainManager::refreshLastLnPrior loop" << std::endl;
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
@@ -310,9 +311,10 @@ void MCMCChainManager::refreshLastLnPrior()
 			{
 			double this_ln_prior = s->recalcPrior();
 			last_ln_prior += this_ln_prior;
-			//std::cerr << boost::str(boost::format("@@@@@@@@@@ Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
+			//std::cerr << boost::str(boost::format("POLPOL: @@@@@@@@@@   current prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
 			}
 		}
+	//std::cerr << boost::str(boost::format("POLPOL: @@@@@@@@@@ end MCMCChainManager::refreshLastLnPrior loop: cumulative = %g") % last_ln_prior) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

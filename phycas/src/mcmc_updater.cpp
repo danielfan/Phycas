@@ -65,7 +65,8 @@ MCMCUpdater::~MCMCUpdater()
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if either `prior' or `mv_prior' exist. If either of these exists, then this updater is responsible for
-|	calculating some component of the joint prior (i.e. it is a prior steward).
+|	calculating some component of the joint prior (i.e. it is a prior steward). Note: this is a virtual function, so some
+|	updaters may have overridden it (e.g. LargetSimonMove)
 */
 bool MCMCUpdater::isPriorSteward() const
 	{
@@ -645,7 +646,6 @@ void MCMCUpdater::setMultivariateWorkingPrior(MultivarProbDistShPtr p)
 	{
 	mv_ref_dist = p;
 	}
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `mv_ref_dist' data member to the supplied MultivariateProbabilityDistribution shared pointer.

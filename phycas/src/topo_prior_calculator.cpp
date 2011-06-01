@@ -466,6 +466,15 @@ bool FocalTreeTopoProbCalculator::HasTabuSplit(
     return false;
     }
 
+double FocalTreeTopoProbCalculator::LnNumBinaryTrees()
+	{
+    PHYCAS_ASSERT(ntips > 3);
+    double ntips_minus_three = (double)(ntips-3);
+    double numer = lgamma(2.0*ntips - 5.0);
+    double denom1 = ntips_minus_three*log(2.0);
+    double denom2 = lgamma(ntips_minus_three);
+    return numer - denom1 - denom2;
+	}
 
 void FocalTreeTopoProbCalculator::SetEdgeLenDist(const Split &s, ProbDistShPtr edgeLenDist)
     {

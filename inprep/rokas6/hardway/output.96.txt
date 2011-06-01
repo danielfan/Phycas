@@ -1,0 +1,3506 @@
+Partition report:
+      subset         size        model   name
+           1         1000           JC   default
+
+Key to the edges (preorder traversal):
+edge	bipartition
+1	-*****
+2	-*----
+3	--****
+4	--*---
+5	---***
+6	---*--
+7	----**
+8	----*-
+9	-----*
+
+Data source:	 Character matrix in memory (id 47124893776208) with 1000 characters for 6 taxa.	 Characters from the file rokas6first1000.nex
+  No. taxa:                6
+  No. included characters: 1000
+Starting tree:	 (1:0.06419,2:0.03738,(3:0.08817,(4:0.08743,(5:0.08158,6:0.83668):0.04223):0.04239):0.03530)
+
+Tree topology fixed.
+
+
+Performing steppingstone sampling to estimate marginal likelihood.
+Likelihood will be raised to the power beta, and beta will be
+decremented from 1.0 to 0.0 in a series of steps.
+  No. steps:				41
+  No. cycles per step:		10000
+  Sample every:			10
+  No. samples per step:	1000
+
+
+Sampled trees will be saved in Filestream to trees.96.t
+Sampled parameters will be saved in Filestream to params.96.p
+Using standard MCMC (i.e. no uniformized mapping)
+Tip node numbers were set using the names in the tree description
+Creating one chain (i.e. not using heated chains to improve mixing)
+Starting log-likelihood = -4302.77998838
+Starting log-prior = 7.56987583695
+
+Parameter starting values and prior densities:
+  Parameter name:	   edgelen_1003
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.064188
+  Prior log-density:  1.66070509299
+
+  Parameter name:	   edgelen_1
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.037378
+  Prior log-density:  1.92880509299
+
+  Parameter name:	   edgelen_1002
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.035303
+  Prior log-density:  1.94955509299
+
+  Parameter name:	   edgelen_2
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.088169
+  Prior log-density:  1.42089509299
+
+  Parameter name:	   edgelen_1001
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.042388
+  Prior log-density:  1.87870509299
+
+  Parameter name:	   edgelen_3
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.087427
+  Prior log-density:  1.42831509299
+
+  Parameter name:	   edgelen_1000
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.04223
+  Prior log-density:  1.88028509299
+
+  Parameter name:	   edgelen_4
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.081579
+  Prior log-density:  1.48679509299
+
+  Parameter name:	   edgelen_5
+  Prior distribution: Exponential(10.00000)
+  Current value:	   0.836677
+  Prior log-density:  -6.06418490701
+
+
+Here is a list of all updaters that will be used for this analysis:
+  edgelen_1003 (slice sampler)
+  edgelen_1 (slice sampler)
+  edgelen_1002 (slice sampler)
+  edgelen_2 (slice sampler)
+  edgelen_1001 (slice sampler)
+  edgelen_3 (slice sampler)
+  edgelen_1000 (slice sampler)
+  edgelen_4 (slice sampler)
+  edgelen_5 (slice sampler)
+
+Topology prior:
+  flat across all fully-resolved tree topologies (polytomies not allowed)
+
+Sampling (10000 cycles for each of the 41 values of beta)...
+41 values were chosen from a discrete
+Beta(1.00000, 1.00000) distribution:
+     1      1.00000
+     2      0.97500
+     3      0.95000
+     4      0.92500
+     5      0.90000
+     6      0.87500
+     7      0.85000
+     8      0.82500
+     9      0.80000
+    10      0.77500
+    11      0.75000
+    12      0.72500
+    13      0.70000
+    14      0.67500
+    15      0.65000
+    16      0.62500
+    17      0.60000
+    18      0.57500
+    19      0.55000
+    20      0.52500
+    21      0.50000
+    22      0.47500
+    23      0.45000
+    24      0.42500
+    25      0.40000
+    26      0.37500
+    27      0.35000
+    28      0.32500
+    29      0.30000
+    30      0.27500
+    31      0.25000
+    32      0.22500
+    33      0.20000
+    34      0.17500
+    35      0.15000
+    36      0.12500
+    37      0.10000
+    38      0.07500
+    39      0.05000
+    40      0.02500
+    41      0.00000
+An MCMC analysis will be performed exploring each of the
+power posteriors defined by these values.
+
+Setting chain boldness to 0 based on beta = 1
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 9.5%, mode=0.06243 (edgelen_1003)
+ * efficiency = 9.6%, mode=0.03525 (edgelen_1)
+ * efficiency = 9.4%, mode=0.03784 (edgelen_1002)
+ * efficiency = 10.4%, mode=0.08200 (edgelen_2)
+ * efficiency = 10.2%, mode=0.04194 (edgelen_1001)
+ * efficiency = 10.2%, mode=0.04959 (edgelen_3)
+ * efficiency = 10.7%, mode=0.03236 (edgelen_1000)
+ * efficiency = 10.7%, mode=0.08860 (edgelen_4)
+ * efficiency = 11.9%, mode=0.27666 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.3%, mode=0.06219 (edgelen_1003)
+ * efficiency = 15.9%, mode=0.03525 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03784 (edgelen_1002)
+ * efficiency = 15.9%, mode=0.08200 (edgelen_2)
+ * efficiency = 16.3%, mode=0.04194 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04596 (edgelen_3)
+ * efficiency = 15.5%, mode=0.04029 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.10202 (edgelen_4)
+ * efficiency = 16.5%, mode=0.27065 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.05461 (edgelen_1003)
+ * efficiency = 17.3%, mode=0.03388 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03784 (edgelen_1002)
+ * efficiency = 17.3%, mode=0.08200 (edgelen_2)
+ * efficiency = 17.0%, mode=0.04194 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.04596 (edgelen_3)
+ * efficiency = 17.0%, mode=0.04029 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.10202 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29380 (edgelen_5)
+
+beta = 1.00000, cycle = 1000, lnL = -4166.86791 (11 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.05712 (edgelen_1003)
+ * efficiency = 17.3%, mode=0.02817 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03387 (edgelen_1002)
+ * efficiency = 17.2%, mode=0.08886 (edgelen_2)
+ * efficiency = 17.1%, mode=0.04194 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.04791 (edgelen_3)
+ * efficiency = 17.2%, mode=0.03598 (edgelen_1000)
+ * efficiency = 17.1%, mode=0.09934 (edgelen_4)
+ * efficiency = 16.9%, mode=0.29380 (edgelen_5)
+
+beta = 1.00000, cycle = 2000, lnL = -4160.06615 (11 minutes remaining)
+beta = 1.00000, cycle = 3000, lnL = -4163.91437 (11 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06337 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03403 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03965 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09848 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04231 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05332 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03598 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09549 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28255 (edgelen_5)
+
+beta = 1.00000, cycle = 4000, lnL = -4162.91075 (11 minutes remaining)
+beta = 1.00000, cycle = 5000, lnL = -4162.47489 (11 minutes remaining)
+beta = 1.00000, cycle = 6000, lnL = -4160.44086 (11 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06337 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03403 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03660 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08626 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04231 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05332 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03598 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09549 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28255 (edgelen_5)
+
+beta = 1.00000, cycle = 7000, lnL = -4160.15276 (11 minutes remaining)
+beta = 1.00000, cycle = 8000, lnL = -4161.65901 (10 minutes remaining)
+beta = 1.00000, cycle = 9000, lnL = -4161.82486 (10 minutes remaining)
+beta = 1.00000, cycle = 10000, lnL = -4161.29460 (10 minutes remaining)
+
+Reference distribution details:
+  edgelen_1003 = Gamma(53.94841, 0.00116)
+  edgelen_1 = Gamma(25.43606, 0.00130)
+  edgelen_1002 = Gamma(30.21331, 0.00118)
+  edgelen_2 = Gamma(77.51640, 0.00118)
+  edgelen_1001 = Gamma(25.52571, 0.00170)
+  edgelen_3 = Gamma(33.92934, 0.00153)
+  edgelen_1000 = Gamma(17.87053, 0.00211)
+  edgelen_4 = Gamma(63.23979, 0.00150)
+  edgelen_5 = Gamma(173.60092, 0.00164)
+
+Setting chain boldness to 2.5 based on beta = 0.975
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05625 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03438 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08756 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04309 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05544 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03475 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09463 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27431 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06274 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03438 (edgelen_1002)
+ * efficiency = 17.2%, mode=0.08756 (edgelen_2)
+ * efficiency = 16.2%, mode=0.04309 (edgelen_1001)
+ * efficiency = 17.3%, mode=0.05544 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03475 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.08934 (edgelen_4)
+ * efficiency = 17.1%, mode=0.28088 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06274 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03438 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08756 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04309 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05544 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03475 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.08934 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28088 (edgelen_5)
+
+beta = 0.97500, cycle = 1000, lnL = -4161.36194 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06274 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03438 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08756 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04309 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05544 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03475 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.08934 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28088 (edgelen_5)
+
+beta = 0.97500, cycle = 2000, lnL = -4160.76175 (10 minutes remaining)
+beta = 0.97500, cycle = 3000, lnL = -4163.29541 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06274 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03472 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08877 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04056 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05166 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03777 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09684 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27297 (edgelen_5)
+
+beta = 0.97500, cycle = 4000, lnL = -4159.26727 (10 minutes remaining)
+beta = 0.97500, cycle = 5000, lnL = -4161.58854 (10 minutes remaining)
+beta = 0.97500, cycle = 6000, lnL = -4159.85966 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06274 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03472 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08877 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04056 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05166 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03777 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09684 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28433 (edgelen_5)
+
+beta = 0.97500, cycle = 7000, lnL = -4160.50777 (10 minutes remaining)
+beta = 0.97500, cycle = 8000, lnL = -4161.21228 (10 minutes remaining)
+beta = 0.97500, cycle = 9000, lnL = -4160.46355 (10 minutes remaining)
+beta = 0.97500, cycle = 10000, lnL = -4160.20053 (10 minutes remaining)
+Setting chain boldness to 5 based on beta = 0.95
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06241 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03189 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03479 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08658 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04441 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04658 (edgelen_3)
+ * efficiency = 16.8%, mode=0.04413 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08924 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29197 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.1%, mode=0.05960 (edgelen_1003)
+ * efficiency = 17.2%, mode=0.03460 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03303 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09476 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04438 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04324 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03643 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.09106 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27884 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06504 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03460 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03198 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09476 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04438 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05394 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03643 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.10204 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28769 (edgelen_5)
+
+beta = 0.95000, cycle = 1000, lnL = -4163.35708 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05984 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03172 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03198 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09476 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04350 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05302 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03643 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09035 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28328 (edgelen_5)
+
+beta = 0.95000, cycle = 2000, lnL = -4165.22746 (10 minutes remaining)
+beta = 0.95000, cycle = 3000, lnL = -4163.09486 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05984 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03140 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03198 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08878 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04159 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.04951 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03329 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09816 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29004 (edgelen_5)
+
+beta = 0.95000, cycle = 4000, lnL = -4165.19805 (10 minutes remaining)
+beta = 0.95000, cycle = 5000, lnL = -4160.47270 (10 minutes remaining)
+beta = 0.95000, cycle = 6000, lnL = -4162.25286 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06609 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03140 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03198 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09072 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04159 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04951 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03329 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.08992 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27390 (edgelen_5)
+
+beta = 0.95000, cycle = 7000, lnL = -4161.35914 (10 minutes remaining)
+beta = 0.95000, cycle = 8000, lnL = -4159.74757 (10 minutes remaining)
+beta = 0.95000, cycle = 9000, lnL = -4162.62031 (10 minutes remaining)
+beta = 0.95000, cycle = 10000, lnL = -4162.12568 (10 minutes remaining)
+Setting chain boldness to 7.5 based on beta = 0.925
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05947 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03253 (edgelen_1)
+ * efficiency = 16.7%, mode=0.02955 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08845 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04069 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05370 (edgelen_3)
+ * efficiency = 16.6%, mode=0.04140 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09515 (edgelen_4)
+ * efficiency = 16.7%, mode=0.30054 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.2%, mode=0.05768 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.03603 (edgelen_1)
+ * efficiency = 16.5%, mode=0.02955 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08625 (edgelen_2)
+ * efficiency = 16.3%, mode=0.04069 (edgelen_1001)
+ * efficiency = 17.2%, mode=0.05370 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03786 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09515 (edgelen_4)
+ * efficiency = 16.5%, mode=0.29885 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06040 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03603 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03758 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09419 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04015 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05371 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03786 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09237 (edgelen_4)
+ * efficiency = 16.2%, mode=0.28476 (edgelen_5)
+
+beta = 0.92500, cycle = 1000, lnL = -4161.28883 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06040 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03322 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03209 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09633 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04236 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04806 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03780 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09247 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28476 (edgelen_5)
+
+beta = 0.92500, cycle = 2000, lnL = -4160.95178 (10 minutes remaining)
+beta = 0.92500, cycle = 3000, lnL = -4165.63399 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06195 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02910 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03206 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09254 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04236 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04665 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03856 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09094 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28880 (edgelen_5)
+
+beta = 0.92500, cycle = 4000, lnL = -4162.31819 (10 minutes remaining)
+beta = 0.92500, cycle = 5000, lnL = -4162.40839 (10 minutes remaining)
+beta = 0.92500, cycle = 6000, lnL = -4166.02493 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06146 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03456 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03135 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09254 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04236 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04665 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03856 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09094 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28880 (edgelen_5)
+
+beta = 0.92500, cycle = 7000, lnL = -4160.03805 (10 minutes remaining)
+beta = 0.92500, cycle = 8000, lnL = -4162.72988 (10 minutes remaining)
+beta = 0.92500, cycle = 9000, lnL = -4161.64235 (10 minutes remaining)
+beta = 0.92500, cycle = 10000, lnL = -4161.08881 (10 minutes remaining)
+Setting chain boldness to 10 based on beta = 0.9
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06265 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03093 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03928 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08902 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04195 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04920 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03427 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08492 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28293 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.05992 (edgelen_1003)
+ * efficiency = 17.1%, mode=0.03067 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03666 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09498 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04920 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03427 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09225 (edgelen_4)
+ * efficiency = 17.3%, mode=0.26816 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06380 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03067 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03659 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09498 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04893 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03944 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09661 (edgelen_4)
+ * efficiency = 16.5%, mode=0.27513 (edgelen_5)
+
+beta = 0.90000, cycle = 1000, lnL = -4160.84871 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06321 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03229 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03689 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09038 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05151 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03647 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09103 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27513 (edgelen_5)
+
+beta = 0.90000, cycle = 2000, lnL = -4160.23688 (10 minutes remaining)
+beta = 0.90000, cycle = 3000, lnL = -4161.34783 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06845 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03256 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03689 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09038 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04240 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05060 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03647 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09523 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28959 (edgelen_5)
+
+beta = 0.90000, cycle = 4000, lnL = -4159.64228 (10 minutes remaining)
+beta = 0.90000, cycle = 5000, lnL = -4162.17338 (10 minutes remaining)
+beta = 0.90000, cycle = 6000, lnL = -4159.26608 (10 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06060 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03290 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03357 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09038 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03866 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05060 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03647 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09523 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28863 (edgelen_5)
+
+beta = 0.90000, cycle = 7000, lnL = -4167.89536 (10 minutes remaining)
+beta = 0.90000, cycle = 8000, lnL = -4159.22664 (9 minutes remaining)
+beta = 0.90000, cycle = 9000, lnL = -4162.48741 (9 minutes remaining)
+beta = 0.90000, cycle = 10000, lnL = -4159.56730 (9 minutes remaining)
+Setting chain boldness to 12.5 based on beta = 0.875
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05730 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03017 (edgelen_1)
+ * efficiency = 16.8%, mode=0.04147 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09443 (edgelen_2)
+ * efficiency = 16.6%, mode=0.03765 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05820 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03335 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09559 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27305 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.3%, mode=0.06132 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03501 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03326 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09443 (edgelen_2)
+ * efficiency = 17.3%, mode=0.03794 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05589 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03161 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09509 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27305 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06349 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03073 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03391 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08902 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03734 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04973 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03484 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08446 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27603 (edgelen_5)
+
+beta = 0.87500, cycle = 1000, lnL = -4163.10700 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06379 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02921 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03304 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08902 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04369 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04973 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03484 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08868 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28668 (edgelen_5)
+
+beta = 0.87500, cycle = 2000, lnL = -4160.85536 (9 minutes remaining)
+beta = 0.87500, cycle = 3000, lnL = -4164.02851 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06379 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02921 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03304 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08902 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03927 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05338 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03956 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.08988 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27803 (edgelen_5)
+
+beta = 0.87500, cycle = 4000, lnL = -4161.10726 (9 minutes remaining)
+beta = 0.87500, cycle = 5000, lnL = -4163.54299 (9 minutes remaining)
+beta = 0.87500, cycle = 6000, lnL = -4161.06360 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06666 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02952 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03521 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09216 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04109 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04851 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03956 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09160 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27687 (edgelen_5)
+
+beta = 0.87500, cycle = 7000, lnL = -4163.90237 (9 minutes remaining)
+beta = 0.87500, cycle = 8000, lnL = -4162.59291 (9 minutes remaining)
+beta = 0.87500, cycle = 9000, lnL = -4162.09410 (9 minutes remaining)
+beta = 0.87500, cycle = 10000, lnL = -4163.66879 (9 minutes remaining)
+Setting chain boldness to 15 based on beta = 0.85
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06739 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02711 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03693 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08835 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04466 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05262 (edgelen_3)
+ * efficiency = 16.7%, mode=0.04197 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.10048 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27507 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06019 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.02890 (edgelen_1)
+ * efficiency = 16.1%, mode=0.03585 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09294 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04874 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03586 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09874 (edgelen_4)
+ * efficiency = 17.0%, mode=0.29137 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06019 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03410 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03434 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09472 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05362 (edgelen_3)
+ * efficiency = 16.3%, mode=0.03586 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09874 (edgelen_4)
+ * efficiency = 17.0%, mode=0.29137 (edgelen_5)
+
+beta = 0.85000, cycle = 1000, lnL = -4164.04396 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06019 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03410 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03434 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09472 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05362 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03586 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09874 (edgelen_4)
+ * efficiency = 16.6%, mode=0.29137 (edgelen_5)
+
+beta = 0.85000, cycle = 2000, lnL = -4160.71817 (9 minutes remaining)
+beta = 0.85000, cycle = 3000, lnL = -4161.38527 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06019 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03410 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03451 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09472 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05281 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03586 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09485 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28281 (edgelen_5)
+
+beta = 0.85000, cycle = 4000, lnL = -4163.73789 (9 minutes remaining)
+beta = 0.85000, cycle = 5000, lnL = -4164.26565 (9 minutes remaining)
+beta = 0.85000, cycle = 6000, lnL = -4167.74588 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06019 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03410 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03451 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08915 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04315 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04935 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03739 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.08868 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28195 (edgelen_5)
+
+beta = 0.85000, cycle = 7000, lnL = -4159.94589 (9 minutes remaining)
+beta = 0.85000, cycle = 8000, lnL = -4161.04337 (9 minutes remaining)
+beta = 0.85000, cycle = 9000, lnL = -4163.35127 (9 minutes remaining)
+beta = 0.85000, cycle = 10000, lnL = -4159.99075 (9 minutes remaining)
+Setting chain boldness to 17.5 based on beta = 0.825
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05482 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02769 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03564 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08544 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04345 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04946 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03762 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09220 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28711 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06160 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02974 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03456 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09830 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03798 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04896 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03243 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09436 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28711 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06160 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.02931 (edgelen_1)
+ * efficiency = 17.2%, mode=0.03567 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08741 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04076 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05117 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03937 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09547 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28711 (edgelen_5)
+
+beta = 0.82500, cycle = 1000, lnL = -4162.03166 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06160 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02931 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03567 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08741 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04076 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05117 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03937 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09547 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28711 (edgelen_5)
+
+beta = 0.82500, cycle = 2000, lnL = -4160.82002 (9 minutes remaining)
+beta = 0.82500, cycle = 3000, lnL = -4159.49850 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06467 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03315 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03567 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08741 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04423 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04751 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03559 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08955 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27820 (edgelen_5)
+
+beta = 0.82500, cycle = 4000, lnL = -4161.62987 (9 minutes remaining)
+beta = 0.82500, cycle = 5000, lnL = -4160.55854 (9 minutes remaining)
+beta = 0.82500, cycle = 6000, lnL = -4161.99708 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06254 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03315 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03406 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08741 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03885 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04751 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03826 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08960 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28488 (edgelen_5)
+
+beta = 0.82500, cycle = 7000, lnL = -4160.82473 (9 minutes remaining)
+beta = 0.82500, cycle = 8000, lnL = -4164.00810 (9 minutes remaining)
+beta = 0.82500, cycle = 9000, lnL = -4162.37585 (9 minutes remaining)
+beta = 0.82500, cycle = 10000, lnL = -4160.56106 (9 minutes remaining)
+Setting chain boldness to 20 based on beta = 0.8
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06141 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03522 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03137 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08996 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03986 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04649 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03188 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09283 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27451 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.05911 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.02827 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03814 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08814 (edgelen_2)
+ * efficiency = 16.6%, mode=0.03989 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04466 (edgelen_3)
+ * efficiency = 17.0%, mode=0.04004 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09277 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28622 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06172 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03151 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03440 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09117 (edgelen_2)
+ * efficiency = 16.4%, mode=0.03989 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05001 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03648 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09422 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28666 (edgelen_5)
+
+beta = 0.80000, cycle = 1000, lnL = -4161.89673 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06565 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03580 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03496 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09487 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03682 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05001 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03648 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08811 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28666 (edgelen_5)
+
+beta = 0.80000, cycle = 2000, lnL = -4160.17135 (9 minutes remaining)
+beta = 0.80000, cycle = 3000, lnL = -4166.32758 (9 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06223 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03442 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03496 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09487 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03682 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04537 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03580 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09199 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27070 (edgelen_5)
+
+beta = 0.80000, cycle = 4000, lnL = -4163.00309 (9 minutes remaining)
+beta = 0.80000, cycle = 5000, lnL = -4159.81026 (8 minutes remaining)
+beta = 0.80000, cycle = 6000, lnL = -4162.58932 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06223 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03442 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03382 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09057 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03991 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05299 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03652 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09013 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28363 (edgelen_5)
+
+beta = 0.80000, cycle = 7000, lnL = -4160.81548 (8 minutes remaining)
+beta = 0.80000, cycle = 8000, lnL = -4161.95809 (8 minutes remaining)
+beta = 0.80000, cycle = 9000, lnL = -4160.81289 (8 minutes remaining)
+beta = 0.80000, cycle = 10000, lnL = -4162.88663 (8 minutes remaining)
+Setting chain boldness to 22.5 based on beta = 0.775
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05948 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02852 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03365 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09192 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04366 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05319 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03301 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09987 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28621 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05918 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.02852 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03715 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09192 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04366 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.05716 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03220 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09623 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28404 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06322 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03049 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03913 (edgelen_1002)
+ * efficiency = 17.1%, mode=0.09192 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04366 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05716 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03482 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09947 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28404 (edgelen_5)
+
+beta = 0.77500, cycle = 1000, lnL = -4160.83153 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.05991 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03049 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03647 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09201 (edgelen_2)
+ * efficiency = 16.5%, mode=0.03703 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05178 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03661 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09947 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28404 (edgelen_5)
+
+beta = 0.77500, cycle = 2000, lnL = -4163.39759 (8 minutes remaining)
+beta = 0.77500, cycle = 3000, lnL = -4161.12053 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05991 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03049 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03647 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09201 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04146 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04968 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03482 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09069 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28404 (edgelen_5)
+
+beta = 0.77500, cycle = 4000, lnL = -4161.13664 (8 minutes remaining)
+beta = 0.77500, cycle = 5000, lnL = -4163.00596 (8 minutes remaining)
+beta = 0.77500, cycle = 6000, lnL = -4160.83893 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05991 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03049 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03371 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09201 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04146 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04968 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03482 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09019 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28467 (edgelen_5)
+
+beta = 0.77500, cycle = 7000, lnL = -4162.39056 (8 minutes remaining)
+beta = 0.77500, cycle = 8000, lnL = -4166.54338 (8 minutes remaining)
+beta = 0.77500, cycle = 9000, lnL = -4161.79700 (8 minutes remaining)
+beta = 0.77500, cycle = 10000, lnL = -4164.13489 (8 minutes remaining)
+Setting chain boldness to 25 based on beta = 0.75
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06471 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03572 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03937 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09401 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04350 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04922 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03158 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09185 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28197 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06471 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03364 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03543 (edgelen_1002)
+ * efficiency = 16.0%, mode=0.09401 (edgelen_2)
+ * efficiency = 17.2%, mode=0.04661 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04922 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03158 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09185 (edgelen_4)
+ * efficiency = 17.0%, mode=0.28197 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06672 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03243 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03730 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08730 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04693 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04910 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03629 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.08844 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28197 (edgelen_5)
+
+beta = 0.75000, cycle = 1000, lnL = -4165.90390 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05612 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03428 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03605 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09375 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04144 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04971 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03138 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09672 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28197 (edgelen_5)
+
+beta = 0.75000, cycle = 2000, lnL = -4165.89205 (8 minutes remaining)
+beta = 0.75000, cycle = 3000, lnL = -4162.93414 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06247 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03261 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03208 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09120 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04144 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04971 (edgelen_3)
+ * efficiency = 16.8%, mode=0.04078 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09157 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27784 (edgelen_5)
+
+beta = 0.75000, cycle = 4000, lnL = -4162.42976 (8 minutes remaining)
+beta = 0.75000, cycle = 5000, lnL = -4164.20109 (8 minutes remaining)
+beta = 0.75000, cycle = 6000, lnL = -4161.17656 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06247 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03261 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03208 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09120 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04144 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04971 (edgelen_3)
+ * efficiency = 16.8%, mode=0.04078 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09157 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27815 (edgelen_5)
+
+beta = 0.75000, cycle = 7000, lnL = -4161.39175 (8 minutes remaining)
+beta = 0.75000, cycle = 8000, lnL = -4161.30959 (8 minutes remaining)
+beta = 0.75000, cycle = 9000, lnL = -4163.97718 (8 minutes remaining)
+beta = 0.75000, cycle = 10000, lnL = -4163.85408 (8 minutes remaining)
+Setting chain boldness to 27.5 based on beta = 0.725
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06742 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03217 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03056 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08613 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04899 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04667 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03843 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09609 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27186 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06079 (edgelen_1003)
+ * efficiency = 16.3%, mode=0.03035 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03541 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09438 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04346 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05367 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03843 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09609 (edgelen_4)
+ * efficiency = 17.2%, mode=0.28793 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05979 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03231 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03541 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09438 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04346 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05367 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03257 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09949 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27140 (edgelen_5)
+
+beta = 0.72500, cycle = 1000, lnL = -4160.84130 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05979 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03231 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03541 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09438 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04346 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05367 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03257 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.08997 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27140 (edgelen_5)
+
+beta = 0.72500, cycle = 2000, lnL = -4160.10283 (8 minutes remaining)
+beta = 0.72500, cycle = 3000, lnL = -4161.29956 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05979 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03480 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03541 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09438 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04346 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05061 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03558 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09363 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28421 (edgelen_5)
+
+beta = 0.72500, cycle = 4000, lnL = -4161.37315 (8 minutes remaining)
+beta = 0.72500, cycle = 5000, lnL = -4164.23670 (8 minutes remaining)
+beta = 0.72500, cycle = 6000, lnL = -4164.95784 (8 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06223 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03347 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03541 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09438 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04232 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05061 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03594 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09363 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27174 (edgelen_5)
+
+beta = 0.72500, cycle = 7000, lnL = -4160.56367 (8 minutes remaining)
+beta = 0.72500, cycle = 8000, lnL = -4159.00992 (8 minutes remaining)
+beta = 0.72500, cycle = 9000, lnL = -4160.82383 (8 minutes remaining)
+beta = 0.72500, cycle = 10000, lnL = -4163.66023 (8 minutes remaining)
+Setting chain boldness to 30 based on beta = 0.7
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02716 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03330 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08661 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05128 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03201 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.10022 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28395 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06115 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.02716 (edgelen_1)
+ * efficiency = 17.1%, mode=0.03330 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08997 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04140 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05128 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03201 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.10022 (edgelen_4)
+ * efficiency = 17.1%, mode=0.28395 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03277 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03330 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08997 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04483 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05128 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03230 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.10022 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28395 (edgelen_5)
+
+beta = 0.70000, cycle = 1000, lnL = -4161.15960 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03277 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03434 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09431 (edgelen_2)
+ * efficiency = 17.0%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05125 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03645 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09060 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28395 (edgelen_5)
+
+beta = 0.70000, cycle = 2000, lnL = -4159.18119 (7 minutes remaining)
+beta = 0.70000, cycle = 3000, lnL = -4158.51570 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03277 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03583 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09027 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05565 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03810 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08858 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28395 (edgelen_5)
+
+beta = 0.70000, cycle = 4000, lnL = -4161.47142 (7 minutes remaining)
+beta = 0.70000, cycle = 5000, lnL = -4167.07737 (7 minutes remaining)
+beta = 0.70000, cycle = 6000, lnL = -4161.18464 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03159 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03583 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09027 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05232 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03810 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09322 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28119 (edgelen_5)
+
+beta = 0.70000, cycle = 7000, lnL = -4162.99652 (7 minutes remaining)
+beta = 0.70000, cycle = 8000, lnL = -4159.86789 (7 minutes remaining)
+beta = 0.70000, cycle = 9000, lnL = -4164.20037 (7 minutes remaining)
+beta = 0.70000, cycle = 10000, lnL = -4159.37795 (7 minutes remaining)
+Setting chain boldness to 32.5 based on beta = 0.675
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05920 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03405 (edgelen_1)
+ * efficiency = 16.7%, mode=0.04115 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09282 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04027 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05319 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03306 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09168 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27879 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.06158 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.03405 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03384 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09427 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04478 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04727 (edgelen_3)
+ * efficiency = 16.3%, mode=0.03580 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09111 (edgelen_4)
+ * efficiency = 16.3%, mode=0.29879 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06158 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03312 (edgelen_1)
+ * efficiency = 16.4%, mode=0.03362 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09382 (edgelen_2)
+ * efficiency = 16.4%, mode=0.04360 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05025 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03580 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09111 (edgelen_4)
+ * efficiency = 16.3%, mode=0.28736 (edgelen_5)
+
+beta = 0.67500, cycle = 1000, lnL = -4160.48183 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06158 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03002 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03343 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09366 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04360 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05091 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03580 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09111 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27346 (edgelen_5)
+
+beta = 0.67500, cycle = 2000, lnL = -4164.52398 (7 minutes remaining)
+beta = 0.67500, cycle = 3000, lnL = -4162.05297 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06077 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03470 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03573 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09012 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04331 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05159 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03580 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09111 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28315 (edgelen_5)
+
+beta = 0.67500, cycle = 4000, lnL = -4167.57355 (7 minutes remaining)
+beta = 0.67500, cycle = 5000, lnL = -4163.10879 (7 minutes remaining)
+beta = 0.67500, cycle = 6000, lnL = -4158.44365 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06077 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03044 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03573 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09635 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04331 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04827 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03392 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09111 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29071 (edgelen_5)
+
+beta = 0.67500, cycle = 7000, lnL = -4163.40807 (7 minutes remaining)
+beta = 0.67500, cycle = 8000, lnL = -4160.37705 (7 minutes remaining)
+beta = 0.67500, cycle = 9000, lnL = -4159.96309 (7 minutes remaining)
+beta = 0.67500, cycle = 10000, lnL = -4161.16676 (7 minutes remaining)
+Setting chain boldness to 35 based on beta = 0.65
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05559 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02941 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03939 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09287 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04230 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04633 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03642 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09673 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28564 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.2%, mode=0.05351 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.02941 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03939 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08704 (edgelen_2)
+ * efficiency = 16.4%, mode=0.04230 (edgelen_1001)
+ * efficiency = 17.2%, mode=0.04633 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03282 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09159 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28693 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06127 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03335 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03309 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08633 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03853 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05493 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03282 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09159 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28693 (edgelen_5)
+
+beta = 0.65000, cycle = 1000, lnL = -4159.34419 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06259 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03302 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03309 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08633 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04553 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05196 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03282 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09209 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28986 (edgelen_5)
+
+beta = 0.65000, cycle = 2000, lnL = -4164.22483 (7 minutes remaining)
+beta = 0.65000, cycle = 3000, lnL = -4161.04763 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06259 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03302 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03309 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08633 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04274 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05196 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03282 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09209 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28986 (edgelen_5)
+
+beta = 0.65000, cycle = 4000, lnL = -4160.25291 (7 minutes remaining)
+beta = 0.65000, cycle = 5000, lnL = -4161.72763 (7 minutes remaining)
+beta = 0.65000, cycle = 6000, lnL = -4163.91311 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06259 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03302 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03309 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08633 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04274 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05135 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03588 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09209 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28986 (edgelen_5)
+
+beta = 0.65000, cycle = 7000, lnL = -4167.56757 (7 minutes remaining)
+beta = 0.65000, cycle = 8000, lnL = -4161.19464 (7 minutes remaining)
+beta = 0.65000, cycle = 9000, lnL = -4160.41681 (7 minutes remaining)
+beta = 0.65000, cycle = 10000, lnL = -4164.03805 (7 minutes remaining)
+Setting chain boldness to 37.5 based on beta = 0.625
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06268 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02992 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03798 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09440 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03796 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04900 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03668 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09079 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29454 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06268 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03078 (edgelen_1)
+ * efficiency = 16.3%, mode=0.03798 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09202 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03819 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04858 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03880 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09079 (edgelen_4)
+ * efficiency = 17.2%, mode=0.29165 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06729 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03778 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03628 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08911 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04211 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05194 (edgelen_3)
+ * efficiency = 16.1%, mode=0.03138 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09492 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28633 (edgelen_5)
+
+beta = 0.62500, cycle = 1000, lnL = -4160.99831 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06729 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03247 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03272 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08911 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04211 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05194 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03138 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09492 (edgelen_4)
+ * efficiency = 17.0%, mode=0.28633 (edgelen_5)
+
+beta = 0.62500, cycle = 2000, lnL = -4162.61026 (7 minutes remaining)
+beta = 0.62500, cycle = 3000, lnL = -4163.61872 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06362 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03092 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03496 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08864 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04211 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05194 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03138 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09492 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28633 (edgelen_5)
+
+beta = 0.62500, cycle = 4000, lnL = -4159.52429 (7 minutes remaining)
+beta = 0.62500, cycle = 5000, lnL = -4163.34355 (7 minutes remaining)
+beta = 0.62500, cycle = 6000, lnL = -4161.97059 (7 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06362 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03092 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03496 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09127 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04211 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05194 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03138 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09283 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28735 (edgelen_5)
+
+beta = 0.62500, cycle = 7000, lnL = -4170.24648 (7 minutes remaining)
+beta = 0.62500, cycle = 8000, lnL = -4160.44370 (6 minutes remaining)
+beta = 0.62500, cycle = 9000, lnL = -4165.96339 (6 minutes remaining)
+beta = 0.62500, cycle = 10000, lnL = -4161.15013 (6 minutes remaining)
+Setting chain boldness to 40 based on beta = 0.6
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06622 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03169 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03615 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08215 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03614 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04861 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03311 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09281 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29172 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06234 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03189 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03318 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.08660 (edgelen_2)
+ * efficiency = 17.2%, mode=0.04022 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05031 (edgelen_3)
+ * efficiency = 17.1%, mode=0.03366 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09096 (edgelen_4)
+ * efficiency = 16.2%, mode=0.27303 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06058 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03121 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03516 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09479 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04024 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.05106 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03885 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09263 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28685 (edgelen_5)
+
+beta = 0.60000, cycle = 1000, lnL = -4164.03649 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06058 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03121 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03516 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09479 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04024 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05106 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03885 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09263 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28685 (edgelen_5)
+
+beta = 0.60000, cycle = 2000, lnL = -4160.57543 (6 minutes remaining)
+beta = 0.60000, cycle = 3000, lnL = -4169.56707 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06371 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03149 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03620 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09479 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04353 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05106 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03885 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09263 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27706 (edgelen_5)
+
+beta = 0.60000, cycle = 4000, lnL = -4160.83886 (6 minutes remaining)
+beta = 0.60000, cycle = 5000, lnL = -4160.00100 (6 minutes remaining)
+beta = 0.60000, cycle = 6000, lnL = -4162.88973 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06471 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03189 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03620 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08659 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04353 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05397 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03885 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09432 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28898 (edgelen_5)
+
+beta = 0.60000, cycle = 7000, lnL = -4163.59418 (6 minutes remaining)
+beta = 0.60000, cycle = 8000, lnL = -4160.68106 (6 minutes remaining)
+beta = 0.60000, cycle = 9000, lnL = -4160.17489 (6 minutes remaining)
+beta = 0.60000, cycle = 10000, lnL = -4162.40278 (6 minutes remaining)
+Setting chain boldness to 42.5 based on beta = 0.575
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06741 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03207 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03595 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08847 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04238 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05020 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03761 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09655 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28206 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.06056 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03377 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03779 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.09243 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04495 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04953 (edgelen_3)
+ * efficiency = 17.2%, mode=0.03822 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09496 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28759 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06056 (edgelen_1003)
+ * efficiency = 17.1%, mode=0.03377 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03779 (edgelen_1002)
+ * efficiency = 17.1%, mode=0.09243 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04154 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04953 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03822 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09496 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28759 (edgelen_5)
+
+beta = 0.57500, cycle = 1000, lnL = -4160.47412 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.06071 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03377 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03779 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09349 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04249 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04901 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03822 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09496 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28759 (edgelen_5)
+
+beta = 0.57500, cycle = 2000, lnL = -4158.81206 (6 minutes remaining)
+beta = 0.57500, cycle = 3000, lnL = -4160.78723 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06071 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03317 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03414 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08828 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04249 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04992 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03822 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09496 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28759 (edgelen_5)
+
+beta = 0.57500, cycle = 4000, lnL = -4158.89267 (6 minutes remaining)
+beta = 0.57500, cycle = 5000, lnL = -4159.58317 (6 minutes remaining)
+beta = 0.57500, cycle = 6000, lnL = -4160.37131 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06231 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03091 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03654 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08964 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04211 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05112 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03703 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09496 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28759 (edgelen_5)
+
+beta = 0.57500, cycle = 7000, lnL = -4158.96874 (6 minutes remaining)
+beta = 0.57500, cycle = 8000, lnL = -4163.60902 (6 minutes remaining)
+beta = 0.57500, cycle = 9000, lnL = -4162.23997 (6 minutes remaining)
+beta = 0.57500, cycle = 10000, lnL = -4165.13807 (6 minutes remaining)
+Setting chain boldness to 45 based on beta = 0.55
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06248 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03215 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03848 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08911 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04068 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05201 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03434 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09929 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29396 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.3%, mode=0.06175 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02967 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03304 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09388 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03885 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04640 (edgelen_3)
+ * efficiency = 17.1%, mode=0.03703 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09929 (edgelen_4)
+ * efficiency = 16.4%, mode=0.27050 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06175 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.02967 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03304 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.09388 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03885 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04640 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03703 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09929 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27050 (edgelen_5)
+
+beta = 0.55000, cycle = 1000, lnL = -4165.12482 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06175 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.02967 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03733 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09063 (edgelen_2)
+ * efficiency = 16.6%, mode=0.03976 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04996 (edgelen_3)
+ * efficiency = 16.8%, mode=0.04015 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09813 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27050 (edgelen_5)
+
+beta = 0.55000, cycle = 2000, lnL = -4160.60329 (6 minutes remaining)
+beta = 0.55000, cycle = 3000, lnL = -4161.29454 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06175 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02967 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03733 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09063 (edgelen_2)
+ * efficiency = 16.6%, mode=0.03976 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04996 (edgelen_3)
+ * efficiency = 16.6%, mode=0.04015 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09745 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28442 (edgelen_5)
+
+beta = 0.55000, cycle = 4000, lnL = -4165.93878 (6 minutes remaining)
+beta = 0.55000, cycle = 5000, lnL = -4163.53416 (6 minutes remaining)
+beta = 0.55000, cycle = 6000, lnL = -4161.70885 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06429 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03163 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03733 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09063 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03976 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04996 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03917 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09615 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28442 (edgelen_5)
+
+beta = 0.55000, cycle = 7000, lnL = -4161.50297 (6 minutes remaining)
+beta = 0.55000, cycle = 8000, lnL = -4159.20272 (6 minutes remaining)
+beta = 0.55000, cycle = 9000, lnL = -4162.71063 (6 minutes remaining)
+beta = 0.55000, cycle = 10000, lnL = -4161.96936 (6 minutes remaining)
+Setting chain boldness to 47.5 based on beta = 0.525
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05929 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03366 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03374 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08928 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04274 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04886 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03659 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.08960 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27883 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06800 (edgelen_1003)
+ * efficiency = 17.1%, mode=0.03472 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03486 (edgelen_1002)
+ * efficiency = 16.2%, mode=0.09355 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04274 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04886 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03625 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09800 (edgelen_4)
+ * efficiency = 17.0%, mode=0.29924 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06800 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03472 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03486 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08869 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04274 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05070 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03916 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09072 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29564 (edgelen_5)
+
+beta = 0.52500, cycle = 1000, lnL = -4161.46072 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06327 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03472 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03486 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08869 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04209 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05070 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03916 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09072 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29564 (edgelen_5)
+
+beta = 0.52500, cycle = 2000, lnL = -4161.37663 (6 minutes remaining)
+beta = 0.52500, cycle = 3000, lnL = -4163.14307 (6 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06325 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03123 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03486 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08973 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04393 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05178 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03566 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09267 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28200 (edgelen_5)
+
+beta = 0.52500, cycle = 4000, lnL = -4161.06617 (5 minutes remaining)
+beta = 0.52500, cycle = 5000, lnL = -4162.99309 (5 minutes remaining)
+beta = 0.52500, cycle = 6000, lnL = -4161.84209 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06325 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03123 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03486 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08973 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04393 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05178 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03566 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09267 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28200 (edgelen_5)
+
+beta = 0.52500, cycle = 7000, lnL = -4162.34019 (5 minutes remaining)
+beta = 0.52500, cycle = 8000, lnL = -4161.73140 (5 minutes remaining)
+beta = 0.52500, cycle = 9000, lnL = -4159.63184 (5 minutes remaining)
+beta = 0.52500, cycle = 10000, lnL = -4161.12026 (5 minutes remaining)
+Setting chain boldness to 50 based on beta = 0.5
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06055 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03284 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03519 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08548 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04162 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04745 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03094 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09691 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28401 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06618 (edgelen_1003)
+ * efficiency = 16.4%, mode=0.03372 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03765 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08956 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03840 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05294 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03614 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09596 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28090 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06618 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03372 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03765 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08956 (edgelen_2)
+ * efficiency = 17.1%, mode=0.03840 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05294 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03614 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09596 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28090 (edgelen_5)
+
+beta = 0.50000, cycle = 1000, lnL = -4164.21154 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06618 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03372 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03765 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08956 (edgelen_2)
+ * efficiency = 16.6%, mode=0.03840 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05294 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03584 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09596 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28090 (edgelen_5)
+
+beta = 0.50000, cycle = 2000, lnL = -4164.73061 (5 minutes remaining)
+beta = 0.50000, cycle = 3000, lnL = -4161.59320 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06109 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03372 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03765 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08956 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03848 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05290 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03584 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09596 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28090 (edgelen_5)
+
+beta = 0.50000, cycle = 4000, lnL = -4161.90238 (5 minutes remaining)
+beta = 0.50000, cycle = 5000, lnL = -4159.50266 (5 minutes remaining)
+beta = 0.50000, cycle = 6000, lnL = -4159.70828 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06179 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03213 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03448 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09033 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03848 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05290 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03584 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09002 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28090 (edgelen_5)
+
+beta = 0.50000, cycle = 7000, lnL = -4164.13517 (5 minutes remaining)
+beta = 0.50000, cycle = 8000, lnL = -4162.38596 (5 minutes remaining)
+beta = 0.50000, cycle = 9000, lnL = -4162.76310 (5 minutes remaining)
+beta = 0.50000, cycle = 10000, lnL = -4159.76526 (5 minutes remaining)
+Setting chain boldness to 52.5 based on beta = 0.475
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05966 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03202 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03305 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08459 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04506 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05225 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03375 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09325 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27784 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05966 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03202 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03305 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09538 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03988 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05225 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03303 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09138 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28142 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05966 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03202 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03519 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.08808 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04337 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04904 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03869 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09138 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28142 (edgelen_5)
+
+beta = 0.47500, cycle = 1000, lnL = -4160.31109 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.05998 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03157 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03302 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09210 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04373 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05032 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03869 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09138 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28171 (edgelen_5)
+
+beta = 0.47500, cycle = 2000, lnL = -4160.42615 (5 minutes remaining)
+beta = 0.47500, cycle = 3000, lnL = -4165.55806 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05998 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03157 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03302 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09210 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04373 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05130 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03869 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09718 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28171 (edgelen_5)
+
+beta = 0.47500, cycle = 4000, lnL = -4160.65578 (5 minutes remaining)
+beta = 0.47500, cycle = 5000, lnL = -4163.27014 (5 minutes remaining)
+beta = 0.47500, cycle = 6000, lnL = -4168.09071 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06185 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03369 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03554 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09231 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04015 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05130 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03869 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09718 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28911 (edgelen_5)
+
+beta = 0.47500, cycle = 7000, lnL = -4160.70609 (5 minutes remaining)
+beta = 0.47500, cycle = 8000, lnL = -4164.19487 (5 minutes remaining)
+beta = 0.47500, cycle = 9000, lnL = -4161.16416 (5 minutes remaining)
+beta = 0.47500, cycle = 10000, lnL = -4164.78853 (5 minutes remaining)
+Setting chain boldness to 55 based on beta = 0.45
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05952 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03269 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03294 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09400 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05816 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03671 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09067 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28292 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.05952 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03269 (edgelen_1)
+ * efficiency = 17.1%, mode=0.03306 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09400 (edgelen_2)
+ * efficiency = 17.1%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05033 (edgelen_3)
+ * efficiency = 16.3%, mode=0.03850 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.08863 (edgelen_4)
+ * efficiency = 17.0%, mode=0.27593 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05952 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03132 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03306 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09400 (edgelen_2)
+ * efficiency = 16.4%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.05033 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03791 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.08863 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27593 (edgelen_5)
+
+beta = 0.45000, cycle = 1000, lnL = -4165.65103 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06465 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03132 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03306 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09400 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04370 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05033 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03755 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.08863 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28483 (edgelen_5)
+
+beta = 0.45000, cycle = 2000, lnL = -4160.52050 (5 minutes remaining)
+beta = 0.45000, cycle = 3000, lnL = -4161.82532 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06228 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03132 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03661 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08810 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03851 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04766 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03755 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09473 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28483 (edgelen_5)
+
+beta = 0.45000, cycle = 4000, lnL = -4159.91108 (5 minutes remaining)
+beta = 0.45000, cycle = 5000, lnL = -4164.46142 (5 minutes remaining)
+beta = 0.45000, cycle = 6000, lnL = -4160.58391 (5 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06228 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03040 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03500 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09549 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03851 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05029 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03755 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09225 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27970 (edgelen_5)
+
+beta = 0.45000, cycle = 7000, lnL = -4161.10530 (5 minutes remaining)
+beta = 0.45000, cycle = 8000, lnL = -4163.70625 (5 minutes remaining)
+beta = 0.45000, cycle = 9000, lnL = -4161.35432 (5 minutes remaining)
+beta = 0.45000, cycle = 10000, lnL = -4166.22857 (4 minutes remaining)
+Setting chain boldness to 57.5 based on beta = 0.425
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06297 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03355 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03597 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09247 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03931 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05190 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03728 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09965 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27380 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06084 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03134 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03603 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09515 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04052 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04832 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03701 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09126 (edgelen_4)
+ * efficiency = 16.5%, mode=0.27922 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.06084 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03236 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03603 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.09515 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04052 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04832 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03701 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09126 (edgelen_4)
+ * efficiency = 16.5%, mode=0.27922 (edgelen_5)
+
+beta = 0.42500, cycle = 1000, lnL = -4159.80941 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06084 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03236 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03603 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09515 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04052 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04832 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03446 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09226 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27786 (edgelen_5)
+
+beta = 0.42500, cycle = 2000, lnL = -4160.44576 (4 minutes remaining)
+beta = 0.42500, cycle = 3000, lnL = -4160.65812 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06131 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03186 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03543 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.09289 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04052 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05256 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03411 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09568 (edgelen_4)
+ * efficiency = 16.7%, mode=0.29053 (edgelen_5)
+
+beta = 0.42500, cycle = 4000, lnL = -4159.79793 (4 minutes remaining)
+beta = 0.42500, cycle = 5000, lnL = -4165.01785 (4 minutes remaining)
+beta = 0.42500, cycle = 6000, lnL = -4164.40036 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06131 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03186 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03348 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09238 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04293 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05249 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03409 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09218 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27972 (edgelen_5)
+
+beta = 0.42500, cycle = 7000, lnL = -4158.76474 (4 minutes remaining)
+beta = 0.42500, cycle = 8000, lnL = -4161.62570 (4 minutes remaining)
+beta = 0.42500, cycle = 9000, lnL = -4163.89953 (4 minutes remaining)
+beta = 0.42500, cycle = 10000, lnL = -4162.20031 (4 minutes remaining)
+Setting chain boldness to 60 based on beta = 0.4
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06361 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02981 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03726 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09030 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04148 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04845 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03090 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09131 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28746 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06541 (edgelen_1003)
+ * efficiency = 16.3%, mode=0.03245 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03376 (edgelen_1002)
+ * efficiency = 16.3%, mode=0.09168 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04191 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04723 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03539 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09563 (edgelen_4)
+ * efficiency = 17.1%, mode=0.27889 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06149 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03145 (edgelen_1)
+ * efficiency = 17.2%, mode=0.03376 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09168 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04191 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04723 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03539 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09563 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27889 (edgelen_5)
+
+beta = 0.40000, cycle = 1000, lnL = -4162.10823 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06265 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03344 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03376 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09168 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04191 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04723 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03827 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09563 (edgelen_4)
+ * efficiency = 17.0%, mode=0.27889 (edgelen_5)
+
+beta = 0.40000, cycle = 2000, lnL = -4161.71055 (4 minutes remaining)
+beta = 0.40000, cycle = 3000, lnL = -4159.30770 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06272 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03344 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03376 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09168 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04060 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04883 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03827 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09395 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27889 (edgelen_5)
+
+beta = 0.40000, cycle = 4000, lnL = -4166.39864 (4 minutes remaining)
+beta = 0.40000, cycle = 5000, lnL = -4160.75761 (4 minutes remaining)
+beta = 0.40000, cycle = 6000, lnL = -4158.32228 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06272 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03193 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03497 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08744 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04349 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04877 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03827 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09402 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28357 (edgelen_5)
+
+beta = 0.40000, cycle = 7000, lnL = -4161.08581 (4 minutes remaining)
+beta = 0.40000, cycle = 8000, lnL = -4163.11356 (4 minutes remaining)
+beta = 0.40000, cycle = 9000, lnL = -4159.64471 (4 minutes remaining)
+beta = 0.40000, cycle = 10000, lnL = -4160.65553 (4 minutes remaining)
+Setting chain boldness to 62.5 based on beta = 0.375
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06520 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03369 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03580 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08844 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03926 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04663 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03527 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09203 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28378 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06167 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03140 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03331 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09172 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04479 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05342 (edgelen_3)
+ * efficiency = 16.1%, mode=0.04261 (edgelen_1000)
+ * efficiency = 16.3%, mode=0.09634 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28297 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06167 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03140 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03518 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08758 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04479 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05342 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03560 (edgelen_1000)
+ * efficiency = 17.1%, mode=0.09220 (edgelen_4)
+ * efficiency = 16.5%, mode=0.27002 (edgelen_5)
+
+beta = 0.37500, cycle = 1000, lnL = -4169.75406 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06205 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03276 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03182 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09320 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04410 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04783 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03705 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09220 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27662 (edgelen_5)
+
+beta = 0.37500, cycle = 2000, lnL = -4160.16591 (4 minutes remaining)
+beta = 0.37500, cycle = 3000, lnL = -4159.80327 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06205 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03276 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03231 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09320 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04410 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04783 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03705 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09220 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28766 (edgelen_5)
+
+beta = 0.37500, cycle = 4000, lnL = -4161.23733 (4 minutes remaining)
+beta = 0.37500, cycle = 5000, lnL = -4161.45972 (4 minutes remaining)
+beta = 0.37500, cycle = 6000, lnL = -4160.54931 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06303 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03276 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03231 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09320 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04410 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04783 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03705 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09220 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28766 (edgelen_5)
+
+beta = 0.37500, cycle = 7000, lnL = -4163.78576 (4 minutes remaining)
+beta = 0.37500, cycle = 8000, lnL = -4160.77755 (4 minutes remaining)
+beta = 0.37500, cycle = 9000, lnL = -4161.08056 (4 minutes remaining)
+beta = 0.37500, cycle = 10000, lnL = -4164.10730 (4 minutes remaining)
+Setting chain boldness to 65 based on beta = 0.35
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06451 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03254 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03621 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08842 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04238 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05319 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03289 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08783 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27388 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06451 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03254 (edgelen_1)
+ * efficiency = 17.1%, mode=0.03311 (edgelen_1002)
+ * efficiency = 16.1%, mode=0.09265 (edgelen_2)
+ * efficiency = 17.0%, mode=0.04238 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05094 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03289 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09617 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28020 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06095 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03254 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03311 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09039 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04289 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.05094 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03697 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.09321 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28020 (edgelen_5)
+
+beta = 0.35000, cycle = 1000, lnL = -4162.69645 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06008 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03456 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03476 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08930 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04221 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04849 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03697 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09199 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28739 (edgelen_5)
+
+beta = 0.35000, cycle = 2000, lnL = -4162.32181 (4 minutes remaining)
+beta = 0.35000, cycle = 3000, lnL = -4160.44471 (4 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05991 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03456 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03476 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08930 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04221 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04849 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03632 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.08983 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28982 (edgelen_5)
+
+beta = 0.35000, cycle = 4000, lnL = -4160.62949 (4 minutes remaining)
+beta = 0.35000, cycle = 5000, lnL = -4159.66070 (4 minutes remaining)
+beta = 0.35000, cycle = 6000, lnL = -4162.89248 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06113 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03302 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03484 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08930 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04221 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04849 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03632 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09375 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27669 (edgelen_5)
+
+beta = 0.35000, cycle = 7000, lnL = -4161.76460 (3 minutes remaining)
+beta = 0.35000, cycle = 8000, lnL = -4160.23492 (3 minutes remaining)
+beta = 0.35000, cycle = 9000, lnL = -4161.45538 (3 minutes remaining)
+beta = 0.35000, cycle = 10000, lnL = -4159.97615 (3 minutes remaining)
+Setting chain boldness to 67.5 based on beta = 0.325
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06125 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03283 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03540 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09429 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04794 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04679 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03007 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09803 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29154 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06125 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03084 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03295 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09099 (edgelen_2)
+ * efficiency = 16.3%, mode=0.04290 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04679 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03243 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09459 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27574 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06311 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.02996 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03378 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09099 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04289 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.05439 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03243 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.09459 (edgelen_4)
+ * efficiency = 17.0%, mode=0.28152 (edgelen_5)
+
+beta = 0.32500, cycle = 1000, lnL = -4161.76967 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06311 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03321 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03378 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08879 (edgelen_2)
+ * efficiency = 16.7%, mode=0.03775 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05135 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03243 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.09459 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28152 (edgelen_5)
+
+beta = 0.32500, cycle = 2000, lnL = -4161.81304 (3 minutes remaining)
+beta = 0.32500, cycle = 3000, lnL = -4162.86232 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06311 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03321 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03448 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08951 (edgelen_2)
+ * efficiency = 16.9%, mode=0.03775 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05135 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03243 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09459 (edgelen_4)
+ * efficiency = 16.8%, mode=0.29158 (edgelen_5)
+
+beta = 0.32500, cycle = 4000, lnL = -4160.76514 (3 minutes remaining)
+beta = 0.32500, cycle = 5000, lnL = -4163.93348 (3 minutes remaining)
+beta = 0.32500, cycle = 6000, lnL = -4160.50771 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06203 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03344 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03448 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09151 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04199 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05142 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03479 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09419 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28047 (edgelen_5)
+
+beta = 0.32500, cycle = 7000, lnL = -4160.18114 (3 minutes remaining)
+beta = 0.32500, cycle = 8000, lnL = -4161.57634 (3 minutes remaining)
+beta = 0.32500, cycle = 9000, lnL = -4160.73502 (3 minutes remaining)
+beta = 0.32500, cycle = 10000, lnL = -4160.92909 (3 minutes remaining)
+Setting chain boldness to 70 based on beta = 0.3
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06063 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03142 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03590 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08980 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04248 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04966 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03496 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.08589 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27227 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06063 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03142 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03590 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08980 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04248 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.04966 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03496 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09755 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27227 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06102 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03012 (edgelen_1)
+ * efficiency = 16.4%, mode=0.03590 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08980 (edgelen_2)
+ * efficiency = 17.1%, mode=0.04248 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04966 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03496 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09755 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28424 (edgelen_5)
+
+beta = 0.30000, cycle = 1000, lnL = -4158.96542 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06214 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03189 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03496 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09221 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04392 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05117 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03702 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09733 (edgelen_4)
+ * efficiency = 17.1%, mode=0.28426 (edgelen_5)
+
+beta = 0.30000, cycle = 2000, lnL = -4162.55853 (3 minutes remaining)
+beta = 0.30000, cycle = 3000, lnL = -4163.07164 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06210 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03189 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03406 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09221 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04392 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05117 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03702 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09733 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28426 (edgelen_5)
+
+beta = 0.30000, cycle = 4000, lnL = -4159.26959 (3 minutes remaining)
+beta = 0.30000, cycle = 5000, lnL = -4167.00975 (3 minutes remaining)
+beta = 0.30000, cycle = 6000, lnL = -4160.16237 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06210 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03098 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03373 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09376 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04257 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05355 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03702 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09356 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28229 (edgelen_5)
+
+beta = 0.30000, cycle = 7000, lnL = -4162.11852 (3 minutes remaining)
+beta = 0.30000, cycle = 8000, lnL = -4160.96261 (3 minutes remaining)
+beta = 0.30000, cycle = 9000, lnL = -4163.11575 (3 minutes remaining)
+beta = 0.30000, cycle = 10000, lnL = -4161.05028 (3 minutes remaining)
+Setting chain boldness to 72.5 based on beta = 0.275
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05809 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03390 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03168 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09275 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04122 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04767 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03712 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09347 (edgelen_4)
+ * efficiency = 16.8%, mode=0.27633 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06390 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03365 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03678 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.08511 (edgelen_2)
+ * efficiency = 16.4%, mode=0.04363 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04739 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03480 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09673 (edgelen_4)
+ * efficiency = 16.4%, mode=0.27633 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06109 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03130 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03602 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08692 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04064 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04739 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03480 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09673 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28705 (edgelen_5)
+
+beta = 0.27500, cycle = 1000, lnL = -4158.54815 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06109 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03365 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03575 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09360 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04381 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04834 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03480 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09756 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28869 (edgelen_5)
+
+beta = 0.27500, cycle = 2000, lnL = -4162.80729 (3 minutes remaining)
+beta = 0.27500, cycle = 3000, lnL = -4159.74482 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06373 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03365 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03510 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09360 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04183 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04834 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03480 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09756 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28869 (edgelen_5)
+
+beta = 0.27500, cycle = 4000, lnL = -4161.16047 (3 minutes remaining)
+beta = 0.27500, cycle = 5000, lnL = -4160.81880 (3 minutes remaining)
+beta = 0.27500, cycle = 6000, lnL = -4160.00744 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06373 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03054 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03510 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08882 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04261 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05106 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03480 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09495 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28869 (edgelen_5)
+
+beta = 0.27500, cycle = 7000, lnL = -4162.47298 (3 minutes remaining)
+beta = 0.27500, cycle = 8000, lnL = -4159.91131 (3 minutes remaining)
+beta = 0.27500, cycle = 9000, lnL = -4159.69545 (3 minutes remaining)
+beta = 0.27500, cycle = 10000, lnL = -4165.05996 (3 minutes remaining)
+Setting chain boldness to 75 based on beta = 0.25
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06245 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03104 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03394 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09405 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04185 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05152 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03666 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09446 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27789 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06325 (edgelen_1003)
+ * efficiency = 17.1%, mode=0.03250 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03461 (edgelen_1002)
+ * efficiency = 16.4%, mode=0.09116 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04098 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.05152 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03582 (edgelen_1000)
+ * efficiency = 17.4%, mode=0.09109 (edgelen_4)
+ * efficiency = 17.0%, mode=0.27364 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06325 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03250 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03461 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09116 (edgelen_2)
+ * efficiency = 17.0%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05061 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03496 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09592 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27364 (edgelen_5)
+
+beta = 0.25000, cycle = 1000, lnL = -4163.06002 (3 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06075 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03250 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03461 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09116 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04098 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05061 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03496 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09592 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28584 (edgelen_5)
+
+beta = 0.25000, cycle = 2000, lnL = -4164.91259 (2 minutes remaining)
+beta = 0.25000, cycle = 3000, lnL = -4161.64190 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06092 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03250 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03453 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09116 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04259 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04853 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03725 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08972 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28423 (edgelen_5)
+
+beta = 0.25000, cycle = 4000, lnL = -4160.80045 (2 minutes remaining)
+beta = 0.25000, cycle = 5000, lnL = -4159.00378 (2 minutes remaining)
+beta = 0.25000, cycle = 6000, lnL = -4158.87223 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06092 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03184 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03453 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09116 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04071 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04853 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03647 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.08972 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28320 (edgelen_5)
+
+beta = 0.25000, cycle = 7000, lnL = -4161.86392 (2 minutes remaining)
+beta = 0.25000, cycle = 8000, lnL = -4159.36142 (2 minutes remaining)
+beta = 0.25000, cycle = 9000, lnL = -4161.25470 (2 minutes remaining)
+beta = 0.25000, cycle = 10000, lnL = -4162.50545 (2 minutes remaining)
+Setting chain boldness to 77.5 based on beta = 0.225
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06734 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03287 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03216 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08892 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04460 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05131 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03618 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09503 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28561 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06133 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03387 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03216 (edgelen_1002)
+ * efficiency = 17.1%, mode=0.08892 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04460 (edgelen_1001)
+ * efficiency = 16.3%, mode=0.05131 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03703 (edgelen_1000)
+ * efficiency = 17.1%, mode=0.09326 (edgelen_4)
+ * efficiency = 16.2%, mode=0.28709 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06565 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03252 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03546 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08971 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04537 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05131 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03424 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09267 (edgelen_4)
+ * efficiency = 17.0%, mode=0.28814 (edgelen_5)
+
+beta = 0.22500, cycle = 1000, lnL = -4163.28485 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.06145 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03252 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03546 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09101 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04455 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05043 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03603 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09302 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28020 (edgelen_5)
+
+beta = 0.22500, cycle = 2000, lnL = -4160.12629 (2 minutes remaining)
+beta = 0.22500, cycle = 3000, lnL = -4164.39090 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06145 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03252 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03529 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09101 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04455 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05043 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03603 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09302 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28020 (edgelen_5)
+
+beta = 0.22500, cycle = 4000, lnL = -4165.21356 (2 minutes remaining)
+beta = 0.22500, cycle = 5000, lnL = -4160.98153 (2 minutes remaining)
+beta = 0.22500, cycle = 6000, lnL = -4163.78715 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06145 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03252 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03529 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09101 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04010 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04933 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03603 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09302 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28020 (edgelen_5)
+
+beta = 0.22500, cycle = 7000, lnL = -4162.93295 (2 minutes remaining)
+beta = 0.22500, cycle = 8000, lnL = -4161.79661 (2 minutes remaining)
+beta = 0.22500, cycle = 9000, lnL = -4161.92261 (2 minutes remaining)
+beta = 0.22500, cycle = 10000, lnL = -4166.68896 (2 minutes remaining)
+Setting chain boldness to 80 based on beta = 0.2
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06087 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03335 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03289 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09369 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04466 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05244 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03422 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09507 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28974 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06087 (edgelen_1003)
+ * efficiency = 17.1%, mode=0.03335 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03289 (edgelen_1002)
+ * efficiency = 17.1%, mode=0.09369 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04466 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05044 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03656 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09507 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28974 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06087 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03335 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03289 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09152 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04466 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05041 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03656 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09071 (edgelen_4)
+ * efficiency = 17.0%, mode=0.27977 (edgelen_5)
+
+beta = 0.20000, cycle = 1000, lnL = -4162.04944 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06136 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.02994 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03289 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09152 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04031 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05057 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03702 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.08992 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28324 (edgelen_5)
+
+beta = 0.20000, cycle = 2000, lnL = -4163.68825 (2 minutes remaining)
+beta = 0.20000, cycle = 3000, lnL = -4161.62757 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06136 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02994 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03566 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08844 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04463 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05269 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03585 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.08992 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28324 (edgelen_5)
+
+beta = 0.20000, cycle = 4000, lnL = -4160.83308 (2 minutes remaining)
+beta = 0.20000, cycle = 5000, lnL = -4162.17860 (2 minutes remaining)
+beta = 0.20000, cycle = 6000, lnL = -4161.31369 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06145 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03566 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08844 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04463 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05269 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03556 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09266 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28567 (edgelen_5)
+
+beta = 0.20000, cycle = 7000, lnL = -4161.07878 (2 minutes remaining)
+beta = 0.20000, cycle = 8000, lnL = -4163.26185 (2 minutes remaining)
+beta = 0.20000, cycle = 9000, lnL = -4166.62944 (2 minutes remaining)
+beta = 0.20000, cycle = 10000, lnL = -4162.27574 (2 minutes remaining)
+Setting chain boldness to 82.5 based on beta = 0.175
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06202 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03147 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03578 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08869 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04006 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04913 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03853 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09677 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28025 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06202 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03153 (edgelen_1)
+ * efficiency = 16.2%, mode=0.03324 (edgelen_1002)
+ * efficiency = 17.1%, mode=0.08869 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04006 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04716 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03498 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09454 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28039 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06202 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03179 (edgelen_1)
+ * efficiency = 17.0%, mode=0.03511 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09041 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04006 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04716 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03599 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09454 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28660 (edgelen_5)
+
+beta = 0.17500, cycle = 1000, lnL = -4159.90549 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06154 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03179 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03511 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.09041 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04269 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.04885 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03484 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09098 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28660 (edgelen_5)
+
+beta = 0.17500, cycle = 2000, lnL = -4164.79673 (2 minutes remaining)
+beta = 0.17500, cycle = 3000, lnL = -4159.67133 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06154 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03334 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03511 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09080 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04269 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04885 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03399 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09098 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28434 (edgelen_5)
+
+beta = 0.17500, cycle = 4000, lnL = -4161.92489 (2 minutes remaining)
+beta = 0.17500, cycle = 5000, lnL = -4161.99598 (2 minutes remaining)
+beta = 0.17500, cycle = 6000, lnL = -4162.39604 (2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06154 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03152 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03453 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09081 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04056 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04885 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03513 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09354 (edgelen_4)
+ * efficiency = 16.6%, mode=0.27961 (edgelen_5)
+
+beta = 0.17500, cycle = 7000, lnL = -4164.31837 (2 minutes remaining)
+beta = 0.17500, cycle = 8000, lnL = -4160.00429 (less than 2 minutes remaining)
+beta = 0.17500, cycle = 9000, lnL = -4162.81585 (less than 2 minutes remaining)
+beta = 0.17500, cycle = 10000, lnL = -4161.05154 (less than 2 minutes remaining)
+Setting chain boldness to 85 based on beta = 0.15
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06222 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03011 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03267 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08962 (edgelen_2)
+ * efficiency = 16.8%, mode=0.03978 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04809 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03784 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09179 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28222 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06222 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03011 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03465 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09157 (edgelen_2)
+ * efficiency = 17.1%, mode=0.03978 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05184 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03685 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09553 (edgelen_4)
+ * efficiency = 16.9%, mode=0.27689 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06345 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03161 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03539 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09179 (edgelen_2)
+ * efficiency = 16.4%, mode=0.04258 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.05021 (edgelen_3)
+ * efficiency = 16.4%, mode=0.03544 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09401 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28769 (edgelen_5)
+
+beta = 0.15000, cycle = 1000, lnL = -4161.27745 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06345 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03288 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03539 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.09179 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04258 (edgelen_1001)
+ * efficiency = 16.9%, mode=0.05021 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03544 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09401 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28040 (edgelen_5)
+
+beta = 0.15000, cycle = 2000, lnL = -4160.99738 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 3000, lnL = -4160.73377 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.05978 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03265 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03539 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09179 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04258 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05021 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03544 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09401 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28410 (edgelen_5)
+
+beta = 0.15000, cycle = 4000, lnL = -4164.31116 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 5000, lnL = -4163.85253 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 6000, lnL = -4161.50766 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.05978 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03265 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03539 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09044 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04083 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05021 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03544 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09401 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28410 (edgelen_5)
+
+beta = 0.15000, cycle = 7000, lnL = -4162.39996 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 8000, lnL = -4164.36086 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 9000, lnL = -4159.78134 (less than 2 minutes remaining)
+beta = 0.15000, cycle = 10000, lnL = -4161.60397 (less than 2 minutes remaining)
+Setting chain boldness to 87.5 based on beta = 0.125
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06212 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03243 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03507 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09211 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04297 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05105 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03668 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09273 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28179 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.1%, mode=0.06062 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.02987 (edgelen_1)
+ * efficiency = 16.9%, mode=0.03647 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08970 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04052 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04982 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03563 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09273 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28039 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06083 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03267 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03612 (edgelen_1002)
+ * efficiency = 16.5%, mode=0.08895 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04399 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04982 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03596 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09239 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28460 (edgelen_5)
+
+beta = 0.12500, cycle = 1000, lnL = -4160.95548 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06083 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03148 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03612 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.08895 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04399 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05001 (edgelen_3)
+ * efficiency = 16.9%, mode=0.03596 (edgelen_1000)
+ * efficiency = 16.3%, mode=0.09370 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28460 (edgelen_5)
+
+beta = 0.12500, cycle = 2000, lnL = -4161.44307 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 3000, lnL = -4161.78521 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06083 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03148 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03334 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08937 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04296 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05001 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03465 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09370 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28402 (edgelen_5)
+
+beta = 0.12500, cycle = 4000, lnL = -4160.68400 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 5000, lnL = -4160.49719 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 6000, lnL = -4159.96674 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06083 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03148 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03575 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08937 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04296 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04943 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03564 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09370 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28402 (edgelen_5)
+
+beta = 0.12500, cycle = 7000, lnL = -4163.00225 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 8000, lnL = -4162.08671 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 9000, lnL = -4164.45006 (less than 2 minutes remaining)
+beta = 0.12500, cycle = 10000, lnL = -4162.44810 (less than 2 minutes remaining)
+Setting chain boldness to 90 based on beta = 0.1
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06054 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03207 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03717 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09109 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04033 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05208 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03212 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09223 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28762 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.5%, mode=0.06054 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03193 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03385 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09117 (edgelen_2)
+ * efficiency = 16.3%, mode=0.04249 (edgelen_1001)
+ * efficiency = 16.2%, mode=0.05208 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03445 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09527 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27835 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.3%, mode=0.06186 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03193 (edgelen_1)
+ * efficiency = 16.3%, mode=0.03385 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09117 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04338 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.04940 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03445 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09468 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28401 (edgelen_5)
+
+beta = 0.10000, cycle = 1000, lnL = -4162.56932 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06159 (edgelen_1003)
+ * efficiency = 16.5%, mode=0.03195 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03396 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09155 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04060 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04940 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03627 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09266 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28335 (edgelen_5)
+
+beta = 0.10000, cycle = 2000, lnL = -4161.43512 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 3000, lnL = -4162.67099 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06159 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03195 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03482 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09028 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04298 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05083 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03652 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09266 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28335 (edgelen_5)
+
+beta = 0.10000, cycle = 4000, lnL = -4162.32141 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 5000, lnL = -4164.82138 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 6000, lnL = -4161.84045 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06159 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03195 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03493 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09094 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04173 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05083 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03652 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09449 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28335 (edgelen_5)
+
+beta = 0.10000, cycle = 7000, lnL = -4162.53702 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 8000, lnL = -4159.49413 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 9000, lnL = -4162.56974 (less than 2 minutes remaining)
+beta = 0.10000, cycle = 10000, lnL = -4165.95494 (less than 2 minutes remaining)
+Setting chain boldness to 92.5 based on beta = 0.075
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03060 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03337 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08969 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04054 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04995 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03736 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09433 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28669 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.06115 (edgelen_1003)
+ * efficiency = 17.0%, mode=0.03271 (edgelen_1)
+ * efficiency = 16.5%, mode=0.03386 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08962 (edgelen_2)
+ * efficiency = 17.0%, mode=0.04054 (edgelen_1001)
+ * efficiency = 16.1%, mode=0.04995 (edgelen_3)
+ * efficiency = 16.1%, mode=0.03736 (edgelen_1000)
+ * efficiency = 17.0%, mode=0.09433 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28472 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03271 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03386 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08962 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04062 (edgelen_1001)
+ * efficiency = 17.0%, mode=0.04935 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03617 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09433 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28472 (edgelen_5)
+
+beta = 0.07500, cycle = 1000, lnL = -4160.71900 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06115 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03271 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03547 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09175 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04286 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.05018 (edgelen_3)
+ * efficiency = 17.0%, mode=0.03727 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09433 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28347 (edgelen_5)
+
+beta = 0.07500, cycle = 2000, lnL = -4164.87144 (less than 2 minutes remaining)
+beta = 0.07500, cycle = 3000, lnL = -4159.26224 (less than 2 minutes remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.8%, mode=0.06278 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03151 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03511 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09175 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04286 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05018 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03543 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09194 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28263 (edgelen_5)
+
+beta = 0.07500, cycle = 4000, lnL = -4163.96085 (59 seconds remaining)
+beta = 0.07500, cycle = 5000, lnL = -4163.79048 (58 seconds remaining)
+beta = 0.07500, cycle = 6000, lnL = -4160.56690 (56 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06159 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03169 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03436 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09093 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04297 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05055 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03605 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09194 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28263 (edgelen_5)
+
+beta = 0.07500, cycle = 7000, lnL = -4165.90405 (54 seconds remaining)
+beta = 0.07500, cycle = 8000, lnL = -4160.99930 (53 seconds remaining)
+beta = 0.07500, cycle = 9000, lnL = -4160.54300 (51 seconds remaining)
+beta = 0.07500, cycle = 10000, lnL = -4164.89995 (49 seconds remaining)
+Setting chain boldness to 95 based on beta = 0.05
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.05981 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03192 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03638 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09135 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04294 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04990 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03494 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09477 (edgelen_4)
+ * efficiency = 16.7%, mode=0.27860 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.4%, mode=0.06171 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03192 (edgelen_1)
+ * efficiency = 17.3%, mode=0.03408 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09135 (edgelen_2)
+ * efficiency = 16.5%, mode=0.04304 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04971 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03657 (edgelen_1000)
+ * efficiency = 16.9%, mode=0.09477 (edgelen_4)
+ * efficiency = 17.1%, mode=0.28584 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06171 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03165 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03544 (edgelen_1002)
+ * efficiency = 17.0%, mode=0.09135 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04163 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04867 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03657 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09267 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28584 (edgelen_5)
+
+beta = 0.05000, cycle = 1000, lnL = -4160.27022 (48 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06171 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03165 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03493 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09135 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04163 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.04983 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03657 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09267 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28584 (edgelen_5)
+
+beta = 0.05000, cycle = 2000, lnL = -4161.03492 (46 seconds remaining)
+beta = 0.05000, cycle = 3000, lnL = -4163.07826 (44 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06308 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03165 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03493 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.09135 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04983 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03657 (edgelen_1000)
+ * efficiency = 16.6%, mode=0.09310 (edgelen_4)
+ * efficiency = 16.9%, mode=0.28584 (edgelen_5)
+
+beta = 0.05000, cycle = 4000, lnL = -4158.82513 (43 seconds remaining)
+beta = 0.05000, cycle = 5000, lnL = -4159.84559 (41 seconds remaining)
+beta = 0.05000, cycle = 6000, lnL = -4162.68985 (39 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06308 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03165 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03495 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09007 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04205 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04983 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03657 (edgelen_1000)
+ * efficiency = 16.7%, mode=0.09479 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28299 (edgelen_5)
+
+beta = 0.05000, cycle = 7000, lnL = -4159.11651 (38 seconds remaining)
+beta = 0.05000, cycle = 8000, lnL = -4163.81045 (36 seconds remaining)
+beta = 0.05000, cycle = 9000, lnL = -4164.14732 (34 seconds remaining)
+beta = 0.05000, cycle = 10000, lnL = -4161.37016 (33 seconds remaining)
+Setting chain boldness to 97.5 based on beta = 0.025
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06179 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03156 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03450 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.09052 (edgelen_2)
+ * efficiency = 16.7%, mode=0.04241 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.04991 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03405 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09336 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28630 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 17.0%, mode=0.06018 (edgelen_1003)
+ * efficiency = 16.2%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03529 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.09183 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.4%, mode=0.04991 (edgelen_3)
+ * efficiency = 16.8%, mode=0.03405 (edgelen_1000)
+ * efficiency = 16.4%, mode=0.09443 (edgelen_4)
+ * efficiency = 16.5%, mode=0.28630 (edgelen_5)
+
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06184 (edgelen_1003)
+ * efficiency = 16.6%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03529 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08980 (edgelen_2)
+ * efficiency = 16.9%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.5%, mode=0.05007 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03530 (edgelen_1000)
+ * efficiency = 16.5%, mode=0.09465 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28411 (edgelen_5)
+
+beta = 0.02500, cycle = 1000, lnL = -4159.96435 (31 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.6%, mode=0.06273 (edgelen_1003)
+ * efficiency = 16.9%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.8%, mode=0.03517 (edgelen_1002)
+ * efficiency = 16.6%, mode=0.08980 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05007 (edgelen_3)
+ * efficiency = 16.5%, mode=0.03645 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09275 (edgelen_4)
+ * efficiency = 17.0%, mode=0.28240 (edgelen_5)
+
+beta = 0.02500, cycle = 2000, lnL = -4163.35714 (29 seconds remaining)
+beta = 0.02500, cycle = 3000, lnL = -4166.15657 (28 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06059 (edgelen_1003)
+ * efficiency = 16.7%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03412 (edgelen_1002)
+ * efficiency = 16.9%, mode=0.08980 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.6%, mode=0.04998 (edgelen_3)
+ * efficiency = 16.7%, mode=0.03636 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09411 (edgelen_4)
+ * efficiency = 16.6%, mode=0.28240 (edgelen_5)
+
+beta = 0.02500, cycle = 4000, lnL = -4161.07632 (26 seconds remaining)
+beta = 0.02500, cycle = 5000, lnL = -4160.19545 (24 seconds remaining)
+beta = 0.02500, cycle = 6000, lnL = -4162.37180 (23 seconds remaining)
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.7%, mode=0.06059 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03150 (edgelen_1)
+ * efficiency = 16.7%, mode=0.03412 (edgelen_1002)
+ * efficiency = 16.8%, mode=0.08998 (edgelen_2)
+ * efficiency = 16.8%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.7%, mode=0.05079 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03636 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09322 (edgelen_4)
+ * efficiency = 16.7%, mode=0.28240 (edgelen_5)
+
+beta = 0.02500, cycle = 7000, lnL = -4168.05721 (21 seconds remaining)
+beta = 0.02500, cycle = 8000, lnL = -4160.99295 (19 seconds remaining)
+beta = 0.02500, cycle = 9000, lnL = -4164.69554 (18 seconds remaining)
+beta = 0.02500, cycle = 10000, lnL = -4161.16807 (16 seconds remaining)
+Setting chain boldness to 100 based on beta = 0
+
+Updater diagnostics (* = slice sampler):
+ * efficiency = 16.9%, mode=0.06229 (edgelen_1003)
+ * efficiency = 16.8%, mode=0.03188 (edgelen_1)
+ * efficiency = 16.6%, mode=0.03490 (edgelen_1002)
+ * efficiency = 16.7%, mode=0.08998 (edgelen_2)
+ * efficiency = 16.6%, mode=0.04189 (edgelen_1001)
+ * efficiency = 16.8%, mode=0.05079 (edgelen_3)
+ * efficiency = 16.6%, mode=0.03636 (edgelen_1000)
+ * efficiency = 16.8%, mode=0.09322 (edgelen_4)
+ * efficiency = 16.8%, mode=0.28240 (edgelen_5)
+
+beta = 0.00000, cycle = 1000, lnL = -4157.78371 (14 seconds remaining)
+beta = 0.00000, cycle = 2000, lnL = -4158.00712 (13 seconds remaining)
+beta = 0.00000, cycle = 3000, lnL = -4159.55937 (11 seconds remaining)
+beta = 0.00000, cycle = 4000, lnL = -4178.90501 (9 seconds remaining)
+beta = 0.00000, cycle = 5000, lnL = -4180.60330 (8 seconds remaining)
+beta = 0.00000, cycle = 6000, lnL = -4160.94217 (6 seconds remaining)
+beta = 0.00000, cycle = 7000, lnL = -4161.19047 (4 seconds remaining)
+beta = 0.00000, cycle = 8000, lnL = -4170.71022 (3 seconds remaining)
+beta = 0.00000, cycle = 9000, lnL = -4158.08284 (1 second remaining)
+beta = 0.00000, cycle = 10000, lnL = -4157.79482 (0 seconds remaining)
+21510256 likelihood evaluations in 667.23000 seconds
+  = 32238.14277 likelihood evaluations/sec

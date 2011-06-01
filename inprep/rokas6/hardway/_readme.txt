@@ -22,3 +22,15 @@ brute6taxon.sh --> shell script designed for submission to kwyjibo's SGE
 brute6taxon.py --> the Phycas script to do the analyses
 data_first1000jc.txt --> tree number and log marginal likelihood
 summarize.py --> computes overall marginal likelihood from data_first1000jc.txt
+output.96.txt --> output from the analysis of tree 96, which has the highest posterior probability (needed for the reference distribution details)
+
+Reference distribution details (from tree 96):
+  edgelen_1003 = Gamma(53.94841, 0.00116)
+  edgelen_1 = Gamma(25.43606, 0.00130)
+  edgelen_1002 = Gamma(30.21331, 0.00118)
+  edgelen_2 = Gamma(77.51640, 0.00118)
+  edgelen_1001 = Gamma(25.52571, 0.00170)
+  edgelen_3 = Gamma(33.92934, 0.00153)
+  edgelen_1000 = Gamma(17.87053, 0.00211)
+  edgelen_4 = Gamma(63.23979, 0.00150)
+  edgelen_5 = Gamma(173.60092, 0.00164)

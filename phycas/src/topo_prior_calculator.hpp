@@ -59,6 +59,8 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
             this->defEdgeLenDist = d;
             }
         ProbDistShPtr GetEdgeLenProbDistForSplit(const Split & s) const;
+		double LnNumBinaryTrees();
+
     protected:
         TreeShPtr focalTree;
         std::map<Split, double> splitToProbMap;

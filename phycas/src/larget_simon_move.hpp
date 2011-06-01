@@ -76,8 +76,12 @@ class LargetSimonMove : public MCMCUpdater
 		virtual double  sampleWorkingPrior() const;
 
 		virtual bool    computesTopologyPrior() const {return true;}
+        
 		// These are virtual functions in the MCMCUpdater base class
 		//
+        double			recalcPrior();
+		double			recalcWorkingPrior() const;
+		bool 			isPriorSteward() const;
         virtual void    setPosteriorTuningParam(double x);
         virtual void    setPriorTuningParam(double x);
 		virtual void	setBoldness(double x);

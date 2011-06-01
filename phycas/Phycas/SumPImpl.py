@@ -237,11 +237,11 @@ class ParamSummarizer(CommonFunctions):
         likes = p['lnL']
         priors = p['lnPrior']
         ref_dists = p['lnRefDens']
-
+		
         lnR = 0.0
         nbetas = len(betas)
-        if betas[0] != 1.0 or betas[-1] != 0.0:
-            raise Exception('Stepping Stone method requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
+        #if betas[0] != 1.0 or betas[-1] != 0.0:
+        #    raise Exception('Stepping Stone method requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
             
         self.output(' %10s %10s %10s %15s %15s' % ('b_(k-1)','beta_incr','n','lnRk','lnR(cum)'))
         for i in range(1,nbetas):
@@ -288,7 +288,8 @@ class ParamSummarizer(CommonFunctions):
         """
         nvalues = len(values)
         n = float(nvalues)
-        
+        if n < 2:
+            raise VarianceZeroError()		
         # calculate the mean
         m = sum(values)/n
         

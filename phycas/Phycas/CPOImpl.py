@@ -29,7 +29,6 @@ class CPOImpl(CommonFunctions):
         Opens the site log-likelihood file.
         
         """
-        #raw_input('POLPOL: inside CPOImpl.siteLikeFileOpen...')
         self.phycassert(self.sitelikef is None, 'Attempt made to open CPOImpl.sitelikef, but it is already open!')
         sitelnl_file_spec = self.opts.out.sitelike
         try:
