@@ -77,7 +77,7 @@ double LargetSimonMove::recalcPrior()
 	}
         
 /*----------------------------------------------------------------------------------------------------------------------
-|	Samples a tree from Mark's reference distribution.
+|	Computes the log of the probability of the tree under Mark Holder's tree topology reference distribution.
 */
 double LargetSimonMove::recalcWorkingPrior() const
 	{

@@ -1,0 +1,8 @@
+(1:1.0,2:1.0,(4:1.0,3:1.0):0.84)
+master_edgelen = Gamma(1.0, 1.0)
+split_-*** = Gamma(3.0,0.03)
+split_-*-- = Gamma(1.0,0.03)
+split_--*- = Gamma(3.0,0.03)
+split_---* = Gamma(2.0,0.03)
+split_--** = Gamma(2.0,0.03)
+split_NA   = Gamma(1.0,0.03)
