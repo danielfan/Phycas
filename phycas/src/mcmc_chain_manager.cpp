@@ -184,7 +184,7 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
-		if (s->isPriorSteward())
+		if (s->useWorkingPrior() && s->isPriorSteward())	// not sure "&& s->isPriorSteward()" is necessary
 			{
 			double this_ln_prior = s->recalcWorkingPrior();
 			ln_ref_dist += this_ln_prior;

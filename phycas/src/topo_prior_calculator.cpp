@@ -1042,7 +1042,9 @@ ProbDistShPtr FocalTreeTopoProbCalculator::GetEdgeLenProbDistForSplit(const Spli
 double FocalTreeTopoProbCalculator::LnEdgeLenProbForSplit(const Split & s, const double b) const
     {
     ProbDistShPtr p = GetEdgeLenProbDistForSplit(s);
-    return p->GetLnPDF(b);
+    double pr = p->GetLnPDF(b);
+    //std::cerr << boost::str(boost::format("print %s.getLnPDF(%g),%g # %s") % p->GetDistributionDescription() % b % pr % s.CreatePatternRepresentation()) << std::endl;	//POLPOL
+    return pr;
     }
 
 std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree, bool calcEdgeLenLnProb)
@@ -1090,12 +1092,16 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
         }
     if (calcEdgeLenLnProb)
         {
+        //double treelen = 0.0;	//POLPOL
         preorder_iterator testNdIt = testTree.begin();
         ++testNdIt;
         for (; testNdIt != testTree.end(); ++testNdIt)
             {
-            lnEdgeLenProb += LnEdgeLenProbForSplit(testNdIt->split, testNdIt->GetEdgeLen());
+            double currLnEdgeLenProb = LnEdgeLenProbForSplit(testNdIt->split, testNdIt->GetEdgeLen());
+            lnEdgeLenProb += currLnEdgeLenProb;
+	        //treelen += testNdIt->GetEdgeLen();	//POLPOL
             }
+	    //std::cerr << boost::str(boost::format("print TL = %g") % treelen) << std::endl;	//POLPOL
         }
     
     double lnDenominator = 0.0;
@@ -1131,6 +1137,8 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             (*ndIt)->SetIsSelected(false);
         }
+        
+    //std::cerr << boost::str(boost::format("--> lnProb = %g, lnDenominator = %g, lnEdgeLenProb = %g, total = %g") % lnProb % lnDenominator % lnEdgeLenProb % (lnProb - lnDenominator + lnEdgeLenProb)) << std::endl;	//POLPOL
     
     return std::pair<double, double>(lnProb - lnDenominator, lnEdgeLenProb);
     }
