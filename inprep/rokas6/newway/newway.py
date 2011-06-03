@@ -17,9 +17,9 @@ mcmc.out.trees.prefix = '_trees'
 mcmc.out.trees.mode = REPLACE
 mcmc.out.params.prefix = '_params'
 mcmc.out.params.mode = REPLACE
-mcmc.ncycles = 10000
-mcmc.sample_every = 100
-mcmc.report_every = 1000
+mcmc.ncycles = 1000
+mcmc.sample_every = 1
+mcmc.report_every = 100
 
 mcmc.fix_topology = False
 mcmc.allow_polytomies = False
