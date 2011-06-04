@@ -166,6 +166,8 @@ void updater_pymod()
 		boost::shared_ptr<phycas::FocalTreeTopoProbCalculator> >("FocalTreeTopoProbCalculatorBase", init<TreeShPtr>())
 		.def("setDefaultEdgeLenDist", &FocalTreeTopoProbCalculator::SetDefaultEdgeLenDist)
 		.def("setEdgeLenDist", &FocalTreeTopoProbCalculator::SetEdgeLenDist)
+        .def("sampleTree", &FocalTreeTopoProbCalculator::SampleTree)
+        .def("calcTopologyLnProb", &FocalTreeTopoProbCalculator::CalcTopologyLnProbVector)
 		;
 	class_<PolytomyTopoPriorCalculator, boost::noncopyable, 
 		boost::shared_ptr<phycas::PolytomyTopoPriorCalculator> >("PolytomyTopoPriorCalculatorBase")
