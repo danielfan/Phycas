@@ -878,7 +878,6 @@ void Model::createParameters(
 					edge_len_param->fixParameter();	
 				edgelens_vect_ref.push_back(edge_len_param);
 				}
-#if POLPY_NEWWAY
 			if (edgeLenHyperPrior)
 				{
 				if (separate_int_ext_edgelen_priors)
@@ -913,7 +912,6 @@ void Model::createParameters(
 					edgelen_hyperparams_vect_ref.push_back(p_all);
 					}
 				}
-#endif
 			}
 		else if (separate_int_ext_edgelen_priors)
 			{
@@ -935,13 +933,9 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p_external);
-#if POLPY_NEWWAY
 				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::external);
 				h->setEdgeLenMasterParam(pit);
 				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(h);
-#else
-				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit, true));
-#endif				
 				p->setName(std::string("external_hyper"));
 				p->setTree(t);
 				p->setPrior(edgeLenHyperPrior);
@@ -962,13 +956,9 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p_internal);
-#if POLPY_NEWWAY
 				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::internal);
 				h->setEdgeLenMasterParam(pit);
 				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(h);
-#else
-				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit, false));
-#endif				
 				p->setName(std::string("internal_hyper"));
 				p->setTree(t);
 				p->setPrior(edgeLenHyperPrior);
@@ -994,13 +984,9 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p);
-#if POLPY_NEWWAY
 				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::all);
 				h->setEdgeLenMasterParam(pit);
 				MCMCUpdaterShPtr p_hyper = MCMCUpdaterShPtr(h);
-#else
-				MCMCUpdaterShPtr p_hyper = MCMCUpdaterShPtr(new HyperPriorParam(pit, true));
-#endif				
 				p_hyper->setName(std::string("edgelen_hyper"));
 				p_hyper->setTree(t);
 				p_hyper->setPrior(edgeLenHyperPrior);

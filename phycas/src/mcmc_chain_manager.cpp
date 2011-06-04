@@ -194,7 +194,6 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 	return ln_ref_dist;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Replaces current (exponential) prior distribution for all internal edge length parameters with a new one having
 |	the supplied mean, and returns the current log joint prior over all internal edge lengths.
@@ -287,7 +286,6 @@ double MCMCChainManager::reviseAllEdgeLenPriors(
 		}
 	return sum_log_prior;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_prior' by calling recalcPrior() for all parameters.

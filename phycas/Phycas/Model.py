@@ -31,9 +31,7 @@ class Model(PhycasCommand):
                 ("state_freqs",                [1.0, 1.0, 1.0, 1.0],                 "The current values for the four base frequency parameters"),
                 ("fix_freqs",                  False,                                "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("edgelen_hyperprior",         InverseGamma(2.1,1.0/1.1),            "The prior distribution for the hyperparameter that serves as the mean of an Exponential edge length prior. If set to None, a non-hierarchical model will be used with respect to edge lengths. Note that specifying an edge length hyperprior will cause internal and external edge length priors to be Exponential distributions (regardless of what you assign to internal_edgelen_prior, external_edgelen_prior or edgelen_prior)."),
-#if POLPY_NEWWAY    // no touch
                 ("separate_edgelen_hyper",     False,                                "If True, hyperparameters will be allowed to differ for internal vs. external edge lengths. If False, one hyperparameter will govern all edge length prior distributions. If edgelen_hyperprior is None, this setting will have no effect.", BoolArgValidate),
-#endif
                 ("fix_edgelen_hyperparam",     False,                                "If True, the hyperparameter that governs the mean of the Exponential edge length prior will be fixed at the value edgelen_hyperparam.", BoolArgValidate),
                 ("edgelen_hyperparam",         0.05,                                 "The current value of the edge length hyperparameter - setting this currently has no effect", FloatArgValidate(greaterthan=0.0)),
                 ("internal_edgelen_prior",     Exponential(2.0),                     "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
@@ -42,6 +40,9 @@ class Model(PhycasCommand):
                 ("fix_edgelens",               False,                                "not yet documented", BoolArgValidate),
                 )
         PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
+
+        # The data members added below are hidden from the user because they are for use by phycas developers.
+        self.__dict__["treelen_prior"] = None	# NOT YET IMPLEMENTED If not None, should be either Gamma or InverseGamma. This sets a prior on the tree length, and a Dirichlet prior on individual branch lengths
         
     def checkPriorSupport(self):
         """

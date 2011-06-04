@@ -51,7 +51,6 @@ EdgeLenParam::~EdgeLenParam()
 	//std::cerr << "\n>>>>> EdgeLenParam dying..." << std::endl;
 	}
 
-#if POLPY_NEWWAY	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the edge managed by this EdgeLenParam is an internal edge.
 */
@@ -79,7 +78,6 @@ bool EdgeLenParam::isExternalEdge()
 	
 	return is_external_edge;
 	}
-#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
@@ -491,17 +489,10 @@ double StateFreqParam::operator()(
 */
 void HyperPriorParam::sendCurrValueToModel(double v)
 	{
-#if POLPY_NEWWAY
 	if (edge_type == all || edge_type == external)
 		model->setExternalEdgelenHyperparam(v);
 	else
 		model->setInternalEdgelenHyperparam(v);
-#else
-	if (external_edges)
-		model->setExternalEdgelenHyperparam(v);
-	else
-		model->setInternalEdgelenHyperparam(v);
-#endif	
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -509,17 +500,10 @@ void HyperPriorParam::sendCurrValueToModel(double v)
 */
 double HyperPriorParam::getCurrValueFromModel() const
 	{
-#if POLPY_NEWWAY
 	if (edge_type == all || edge_type == external)
 		return model->getExternalEdgelenHyperparam();
 	else 
 		return model->getInternalEdgelenHyperparam();
-#else
-	if (external_edges)
-		return model->getExternalEdgelenHyperparam();
-	else 
-		return model->getInternalEdgelenHyperparam();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -547,7 +531,6 @@ double HyperPriorParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 
-#if POLPY_NEWWAY
 		//std::cerr << "###### New " << (edge_type == internal ? "internal" : (edge_type == external ? "external" : "(all)")) << " edge length hyperparam value = " << mu << std::endl;	//@@@~
 		if (edgelen_master_param)
 			{
@@ -569,11 +552,6 @@ double HyperPriorParam::operator()(
 				edgeLensLnPrior = p->reviseAllEdgeLenPriors(mu);
 				}
 			}
-#else
-		//std::cerr << "###### New edge length hyperparam value = " << mu << std::endl;	//@@@~
-		edgelen_master_param->setPriorMeanAndVariance(mu, mu*mu); //@POL note that this implicitly assumes an exponential edge length prior
-        edgeLensLnPrior = edgelen_master_param->recalcPrior();
-#endif
 		//std::cerr << "###################### edgeLensLnPrior = " << edgeLensLnPrior << " ######################" << std::endl;	//@@@~
 
         // Store current log-likelihood value (if next updater is a move, it will then not have to calculate it)

@@ -266,10 +266,7 @@ class MarkovChain(LikelihoodCore):
             # first subset are actually used (at this writing, 31 Jan 2010) because both
             # tree topology and edge lengths are always (at this writing) linked across subsets
             
-            # POLPY_NEWWAY  // no touch
             separate_edge_len_dists = mspec.separate_edgelen_hyper
-            # else
-            #separate_edge_len_dists = mspec.internal_edgelen_prior is not mspec.external_edgelen_prior
             
             #raw_input('separate_edge_len_dists = %s' % (separate_edge_len_dists and 'yes' or 'no'))
             m.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
