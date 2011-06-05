@@ -563,9 +563,10 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(
 	for (unsigned i = 0; i <= n; i++)
 		bs_b[i] = exp(bs_b[i]);
 
+    bool prevVerboseMode = verboseMode;
     verboseMode = true;
     DoTreeChecks(*focalTree, true, "ctor");
-    verboseMode = false;
+    verboseMode = prevVerboseMode;
 	for (TreeNode *p = focalTree->GetLastPreorder(); p != NULL; p = p->GetNextPostorder())
 		{
 		PHYCAS_ASSERT(p->ptr == NULL);
@@ -786,9 +787,10 @@ double FocalTreeTopoProbCalculator::countDistancesUsingBryantSteel(TreeNode *ff,
 	{
 	TreeNode * v0 = ff;
 	std::cerr << "v0->num = " << v0->GetNodeNumber() <<'\n';
+	const bool prevVerboseMode = verboseMode;
 	verboseMode = true;
     DoTreeChecks(*focalTree, true, "countDistancesUsingBryantSteel");
-	verboseMode = false;
+	verboseMode = prevVerboseMode;
 	
 	PHYCAS_ASSERT(!v0->IsTip());
 	int n_max = n - 3;

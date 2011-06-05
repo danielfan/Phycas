@@ -1281,7 +1281,7 @@ class MCMCImpl(CommonFunctions):
                         if not u.isFixed():
                             u.setUseWorkingPrior(True)
                             if u.getName() in ['master_edgelen','external_edgelen','internal_edgelen'] and not self.opts.fix_topology:
-	                            u.setUseWorkingPrior(False)	# larget_simon_local takes over this role for variable topology steppingstone analyses
+                                u.setUseWorkingPrior(False) # larget_simon_local takes over this role for variable topology steppingstone analyses
                             if u.computesUnivariatePrior() or u.computesMultivariatePrior():
                                 if self.opts.ssobj.refdist_definition_file is not None:
                                     # User has specified a file containing the reference distribution definitions
@@ -1298,9 +1298,11 @@ class MCMCImpl(CommonFunctions):
                                     topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
                                 prefix = 'split_'
                                 default_edge_len = None
+                                ul = u.getLot()
                                 for k, v in ref_dist_map.iteritems():
                                     if k.lower().startswith(prefix):
                                         split_rep = k[len(prefix):]
+                                        v.setLot(ul)
                                         if split_rep.lower() == 'na':
                                             assert(default_edge_len is None)
                                             topo_ref_dist_calculator.setDefaultEdgeLenDist(v)
