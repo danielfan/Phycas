@@ -52,6 +52,16 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
 
         
         std::pair<double, double> CalcTopologyLnProb(Tree &, bool calcEdgeLenLnProb);
+
+        // like CalcTopologyLnProb, but easier to export to Python
+        std::vector<double> CalcTopologyLnProbVector(Tree &tree, bool calcEdgeLenLnProb)
+            {
+            std::pair<double, double> r = CalcTopologyLnProb(tree, calcEdgeLenLnProb);
+            std::vector<double> v(1, r.first);
+            if (calcEdgeLenLnProb)
+                v.push_back(r.second);
+            return v;
+            }
         double CalcLnNumTreesMaxDistFromTreeInSelectedRegion(TreeNode *selectedFirstFork, unsigned numLeaves);
         void SetEdgeLenDist(const Split &, ProbDistShPtr);
         void SetDefaultEdgeLenDist(ProbDistShPtr d) 

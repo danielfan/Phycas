@@ -63,6 +63,7 @@ class ProbabilityDistribution : public AdHocDensity
         double              LnGamma(double x);
 
 		virtual void		SetLot(Lot * other); //@POL seems like this should be a shared pointer
+		bool                UsingOwnLot() const { return (lot == &myLot);}
 		virtual Lot *		GetLot() {return lot;}
 		virtual void		ResetLot();
 		virtual void		SetSeed(unsigned rnseed);
