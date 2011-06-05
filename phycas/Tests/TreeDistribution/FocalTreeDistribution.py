@@ -14,20 +14,23 @@ split_dist_list = [('-***', Gamma(.1, .10)),
                    ('-*--', Gamma(.3, .10)),
                    ('---*', Gamma(.4, .10)),
                    ('--**', Gamma(.5, .10)),]
+rnseed     = 95629
+rng = Lot()
+rng.setSeed(rnseed)
+
 for split_rep, dist in split_dist_list:
     s = Phylogeny.SplitBase()
     s.createFromPattern(split_rep)
     print split_rep, dist, s.createPatternRepresentation()
+    dist.setLot(rng)
     topo_ref_dist_calculator.setEdgeLenDist(s, dist)
 def_edge_len_dist = Gamma(.6, .10)
+def_edge_len_dist.setLot(rng)
 topo_ref_dist_calculator.setDefaultEdgeLenDist(def_edge_len_dist)
 
 sampled_tree = TreeCollection(newick=newick).trees[0]
 
 
-rnseed     = 95629
-rng = Lot()
-rng.setSeed(rnseed)
 
 for i in range(100):
     topo_ref_dist_calculator.sampleTree(sampled_tree, rng)
