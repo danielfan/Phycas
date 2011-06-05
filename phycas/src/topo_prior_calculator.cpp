@@ -185,6 +185,7 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
     destTree->RefreshNodeCounts();
     DoTreeChecks(*destTree, true, "after topology is finished");
 
+    //std::cerr << "\nPOLPOL: -----------------------------\n";
     preorder_iterator ndIt = destTree->begin();
     ++ndIt;
     for (; ndIt != destTree->end(); ++ndIt)
@@ -194,6 +195,8 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         PHYCAS_ASSERT(d);
         const double e = d->Sample();
         nd.SetEdgeLen(e);
+        //ProbabilityDistribution * dptr = &*d;	//POLPOL
+        //std::cerr << boost::str(boost::format("POLPOL: Drew %g for node %d using %s @") % e % nd.GetNodeNumber() % d->GetDistributionDescription()) << (dptr) << "\n";
         if (verboseMode)
             std::cerr << "Drew " << e << " for node # = " << nd.GetNodeNumber() << "\n";
         }

@@ -1069,8 +1069,11 @@ class MCMCImpl(CommonFunctions):
         ref_dist_tree = lines[0]
         for line in lines[1:]:
             k,v = line.split('=')
-            print v
-            ref_dist_map[k.strip()] = eval(v.strip())
+            print 'debugCreateRefDistMap: v =',v
+            split_str = k.strip()
+            probdist = eval(v.strip())
+            probdist.setLot(self._getLot())
+            ref_dist_map[split_str] = probdist
         return (ref_dist_tree,ref_dist_map)
         
     def run(self):
