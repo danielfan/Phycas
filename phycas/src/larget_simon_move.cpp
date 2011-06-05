@@ -104,7 +104,7 @@ double LargetSimonMove::sampleWorkingPrior() const
 */
 bool LargetSimonMove::isPriorSteward() const
 	{
-	return true;
+	return bool(topo_prob_calc);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
