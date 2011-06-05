@@ -651,7 +651,7 @@ class TreeSummarizer(CommonFunctions):
                 gamma_b = var_edgelen/mean_edgelen
                 gamma_a = mean_edgelen/gamma_b
                 self.refdistf.write('split_%s = Gamma(%g,%g)\n' % (k,gamma_a,gamma_b))
-            #self.refdistf.write('\n***** split_vect[first_below_50:] *****\n')	#temporary!
+            #self.refdistf.write('\n***** split_vect[first_below_50:] *****\n') #temporary!
             num_NA_edgelens = 0
             sum_NA_edgelens = 0.0
             sum_squared_NA_edgelens = 0.0
