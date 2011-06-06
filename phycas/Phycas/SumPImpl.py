@@ -2,6 +2,8 @@ import os,sys,math,random
 from phycas import *
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
+from phycas.Phycas.SumTImpl import refDistFileOpen, refDistFileClose
+
 
 class VarianceZeroError(Exception):
     def __init__(self):
@@ -36,6 +38,7 @@ class ParamSummarizer(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
+        self.refdistf = None
 
     def interpolate(self, xx, x, y):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -545,10 +548,12 @@ class ParamSummarizer(CommonFunctions):
         sz = len(stats_headers)
         gss = '%12s'*sz + '\n'
         self.output(gss % stats_headers)
+        param2stats = {} # dictionary of the parameters to the summary stats
         for h in headers[1:]:   # skip 'Gen' header
             v = params[h]
             try:
                 stats = (h,len(v)) + self.summary_stats(v)
+                param2stats[h] = stats
                 gss = '%12s' + '%12d' + '%12.5f'*(sz - 2)
                 self.output(gss % stats)
             except (VarianceZeroError,VarianceUndefinedError):
@@ -557,6 +562,18 @@ class ParamSummarizer(CommonFunctions):
                 self.output(gss % sub)
         self.output()
         self.harmonic_mean(params['lnL'])
+
+        # Output reference prior information (if requested)
+        refDistFileOpen(self)
+        if self.refdistf is not None:
+            for h in headers[3:]:   # skip 'Gen', 'lnL', and 'lnPrior' headers
+                stats = param2stats[h]
+                #TEMP we should be storing the stats in some kind of dictionary. This indexing looks brittle!
+                self.refdistf.write("%s = Gamma(mean=%f, std_dev=%f)\n" % (h, stats[-2], stats[-1]))
+            refDistFileClose(self)
+        
+
+
         
     def calcLogHM(self, vect_of_log_values):  
         logn = math.log(float(len(vect_of_log_values)))      
@@ -741,3 +758,29 @@ class ParamSummarizer(CommonFunctions):
             self.handleFile(fn)
         if len(cpofn) > 0:
             self.handleCPOFile(cpofn)
+    def refDistFileOpen(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Opens the reference distribution file.
+        
+        """
+        self.phycassert(self.refdistf is None, 'Attempt made to open SumTImpl.refdistf, but it is already open!')
+        refdist_file_spec = self.opts.out.refdistfile
+        try:
+            self.refdistf = refdist_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open reference distribution file (%s) failed.' % self.opts.out.refdistfile.filename
+
+        if self.refdistf:
+            print 'Reference distribution file was opened successfully'
+
+    def refDistFileClose(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Closes the reference distribution file.
+        
+        """
+        self.phycassert(self.refdistf is not None, 'Attempt made to close SumTImpl.refdistf, but it is not open!')
+        self.refdistf.close()
+        self.refdistf = None
+

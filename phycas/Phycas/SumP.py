@@ -18,6 +18,8 @@ class SumP(PhycasCommand):
         cpoplot_spec = ROutputSpec(prefix='sumpCPO', help_str="The file specified by this setting saves the R commands to produce a plot of CPO values across sites. If set to None, no R file will be generated.")
         o.__dict__["cpoplot"] = cpoplot_spec
         PhycasCommand.__init__(self, args, "sump", "The sump command is used to summarize a sample of parameter values produced by an MCMC simulation.", o)
+        refdistf_spec = TextOutputSpec(prefix='refdist', help_str="The file specified by this setting saves reference distribution information for use in the stepping-stone method. If set to None, reference distribution output will not be saved to a file.")
+        o.__dict__["refdistfile"] = refdistf_spec
 
         # The data members added below should be hidden from the user because they are for use by phycas developers.
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
