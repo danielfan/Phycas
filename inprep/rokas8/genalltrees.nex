@@ -1,0 +1,6 @@
+#NEXUS
+execute rokas8T1000C.nex ; 
+set maxtrees = 10395 ;
+generate all ;
+savetrees file = alltrees.nex ;
+
