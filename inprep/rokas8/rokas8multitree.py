@@ -1,7 +1,9 @@
 import sys
 from phycas import *
 
-setMasterSeed(25215436)
+seed = int(sys.argv[2])
+print 'Seed is', seed
+setMasterSeed(seed)
 
 model.edgelen_hyperprior = None
 model.edgelen_prior = Exponential(10.0)
@@ -40,7 +42,6 @@ mcmc.starting_tree_source = TreeCollection(newick=newick)
 ss.override_fixed_topology_restriction = True
 ss.refdist_definition_file = 'refdist.txt'
 ss.nbetavals = 25
-ss.xcycles = -(mcmc.ncycles - 1)
 ss()
 
 sump.out.log = 'ss.sump.multitree' + step_tag + 'steps.txt'
