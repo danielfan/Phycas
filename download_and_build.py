@@ -251,7 +251,7 @@ def write_sourceable_file(o, env_dict):
     else:
         o.write('LD_LIBRARY_PATH="${NCL_INSTALL_DIR}/lib/ncl:${PHYCAS_ROOT}/phycas/Conversions"\nexport LD_LIBRARY_PATH\n')
     o.write('PATH="${BJAM_PARENT}:${PATH}"\nexport PATH\n')
-    o.write('PYTHONPATH="${PHYCAS_ROOT}:${PYTHONPATH}"\nexport PATH')
+    o.write('PYTHONPATH="${PHYCAS_ROOT}:${PYTHONPATH}"\nexport PYTHONPATH\n')
 
 def_phycas_ver = ('1', '2', '0')
 phycas_dir = 'Phycas-' + '.'.join(def_phycas_ver)
@@ -379,7 +379,7 @@ if not os.path.isdir(os.path.join(ncl_install_dir, 'include', 'ncl', 'ncl.h')):
             os.mkdir(ncl_build_dir)
         cfgcommand_fo = open(cfgcommand_fn, 'w')
         cfgcommand_fo.write('''#!/bin/sh
-../configure --prefix=`pwd`/installed --disable-shared
+../configure --prefix=`pwd`/installed --enable-shared
 ''')
         cfgcommand_fo.close()
     if not do_system(['sh', 'cfgcommand.sh'], dir=ncl_build_dir):
