@@ -6,7 +6,7 @@ do
     then
         mkdir scale${s}
     fi
-    head -n1 ../pilot/refdist.txt | python ~/tmp/gist-1010511/alter_edge_lengths.py -i --scale=${s} | awk '{print $1}' > scale${s}/refdist.txt
+    head -n1 ../pilot/refdist.txt | python 1010511/alter_edge_lengths.py -i --scale=${s} | awk '{print $1}' > scale${s}/refdist.txt
     cat ../pilot/refdist_params.txt >> scale${s}/refdist.txt
     echo 'master_edgelen = Gamma(1.0, 1.0)' >> scale${s}/refdist.txt
     cat ../pilot/sump.refdist.txt >> scale${s}/refdist.txt
