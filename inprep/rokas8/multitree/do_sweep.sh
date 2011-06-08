@@ -27,10 +27,10 @@ do
     fi
     fn="${dir}/refdist.txt"
     head -n1 ../pilot/refdist.txt | python 1010511/alter_edge_lengths.py -i --scale=${s} --cap=${cap} | awk '{print $1}' > "${fn}" || exit
-    cat ../pilot/refdist_params.txt >> "${fn}" || exit
+    cat ../pilot/refdist_params.txt | python broaden_dist.py ${cv} >> "${fn}" || exit
     # master_edgelen is not used, but currently required - @TODO
     echo 'master_edgelen = Gamma(1.0, 1.0)' >> "${fn}" || exit
-    cat ../pilot/sump.refdist.txt >> "${fn}" || exit
+    cat ../pilot/sump.refdist.txt | python broaden_dist.py ${cv} >> "${fn}" || exit
 done
 set +x
 echo "Assured that parameters had a coefficient of variation of at least ${cv}"
