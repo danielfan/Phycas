@@ -1,7 +1,7 @@
 import sys
 from phycas import *
 
-seed = int(sys.argv[2])
+seed = int(sys.argv[3])
 print 'Seed is', seed
 setMasterSeed(seed)
 
@@ -41,7 +41,7 @@ mcmc.starting_tree_source = TreeCollection(newick=newick)
 
 ss.override_fixed_topology_restriction = True
 ss.refdist_definition_file = 'refdist.txt'
-ss.nbetavals = 25
+ss.nbetavals = int(sys.argv[2])
 ss()
 
 sump.out.log = 'ss.sump.multitree' + step_tag + 'steps.txt'
