@@ -124,6 +124,10 @@ void updater_pymod()
 		.def("getLambda", &phycas::LargetSimonMove::getLambda)
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
 		;
+	class_<phycas::FocalTreeMetropHastingsUpdater, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::FocalTreeMetropHastingsUpdater> >("FocalTreeMove", init<phycas::FocalTreeTopoProbCalculatorShPtr>()) 
+		.def("update", &phycas::FocalTreeMetropHastingsUpdater::update)
+		;
 	//class_<phycas::UnimapFastNNIMove, bases<phycas::MCMCUpdater>, 
 	//	boost::noncopyable, boost::shared_ptr<phycas::UnimapFastNNIMove> >("UnimapFastNNIMove") 
 	//	.def("update", &phycas::UnimapFastNNIMove::update)

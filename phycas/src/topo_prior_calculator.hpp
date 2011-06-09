@@ -94,6 +94,7 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
     };
 
 typedef boost::shared_ptr<FocalTreeTopoProbCalculator> FocalTreeTopoProbCalculatorShPtr;
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
 |	utility functions for computing the number of tree topologies with varying degrees of resolution.

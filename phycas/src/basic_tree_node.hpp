@@ -197,8 +197,55 @@ class TreeNode
 		void *				ptr;					/**< pointer to temporary data */
 
 		friend class Tree;
-		friend class FocalTreeTopoProbCalculator;
+		friend class FocalTreeTopoProbCalculator;//@TEMP should be using functions
+		friend class NodeInfoBlob; //@TEMP should be using functions
 	};
+
+///Cache for navigational pointers and edgeLen
+class NodeInfoBlob
+    {
+    public:
+        NodeInfoBlob(TreeNode * n)
+            :nd(n),
+            lChild(n ? n->GetLeftChild() : 0L),
+            rSib(n ? n->GetRightSib() : 0L),
+            par(n ? n->GetParent() : 0L),
+            nextPreorder(n ? n->GetNextPreorder() : 0L),
+            prevPreorder(n ? n->GetNextPostorder() : 0L),
+            edgeLen(n ? n->GetEdgeLen() : 0.0)
+            { 
+            if (n)
+                {
+                this->lChild = n->GetLeftChild();
+                this->rSib = n->GetRightSib();
+                this->par = n->GetParent();
+                this->nextPreorder = n->GetNextPreorder();
+                this->prevPreorder = n->GetNextPostorder();
+                this->edgeLen = n->GetEdgeLen();
+                }
+            }
+        void restore() const
+            {
+            if (this->nd == 0L)
+                return;
+    		this->nd->lChild = this->lChild;
+		    this->nd->rSib = this->lChild;
+		    this->nd->par = this->par;
+		    this->nd->nextPreorder = this->nextPreorder;
+		    this->nd->prevPreorder = this->prevPreorder;
+		    this->nd->edgeLen = this->edgeLen;
+            }
+            
+        TreeNode * nd;
+        TreeNode * lChild;
+        TreeNode * rSib;
+        TreeNode * par;    
+        TreeNode * nextPreorder;    
+        TreeNode * prevPreorder;    
+        double edgeLen;
+    };
+
+
 
 }	// namespace phycas
 

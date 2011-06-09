@@ -129,6 +129,44 @@ class LargetSimonMove : public MCMCUpdater
 		std::vector<double>	one_edgelen;	/**< workspace declared here to avoid unnecessary allocs/deallocs */
 	};
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	A class that propose moves for Metropolis Hastings by drawing trees from a FocalTreeTopoProbCalculator
+*/
+class FocalTreeMetropHastingsUpdater : public MCMCUpdater
+	{
+	public:
+			FocalTreeMetropHastingsUpdater(FocalTreeTopoProbCalculatorShPtr prop_dist);
+			virtual	~FocalTreeMetropHastingsUpdater();
+
+		virtual double			getLnHastingsRatio() const;
+		virtual double	getLnJacobian() const {
+		    return 0.0;
+		}
+		bool isPriorSteward() const {
+		    return true;
+		}
+		bool computesTopologyPrior() const {
+		    return true;
+		}
+        double			recalcPrior();
+		double			recalcWorkingPrior() const;
+		virtual bool	update();
+		virtual void	proposeNewState();
+		virtual void	revert();
+		virtual void	accept();
+
+
+	protected:
+	    double calcTreeEdgesLnPrior(const MCMCChainManager &) const ;
+
+		FocalTreeTopoProbCalculatorShPtr proposal_dist;
+		
+		double prev_ln_focal_prob;
+		double curr_ln_focal_prob;
+		std::vector<NodeInfoBlob> prevState;
+	};
+
 } // namespace phycas
 
 #include "phycas/src/larget_simon_move.inl"
