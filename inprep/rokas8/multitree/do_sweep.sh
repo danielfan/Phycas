@@ -11,10 +11,17 @@ then
     echo "Expecting a maximum split frequency to apply to every internal edge in the reference distribution"
     exit 1
 fi
+b="$3"
+if test -z $b
+then
+	echo "Expecting a number of beta intervals as a third argument"
+	exit 1
+fi
 set -x
-for s in 1 0.999 0.99 0.98 0.97 0.96 0.95 0.9 0.8 0.7 0.6 0.5 0.25 0.1
+export NO_PHYCAS_SPLASH=1
+for s in 1 0.9 0.5 0.25 0.1
 do
-    dir="mincv${cv}_scale${s}_cap${cap}"
+    dir="mincv${cv}_scale${s}_cap${cap}_beta${b}"
     if ! test -d "$dir"
     then
         mkdir "${dir}" || exit 
