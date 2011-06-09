@@ -18,6 +18,7 @@ then
 	exit 1
 fi
 set -x
+export NO_PHYCAS_SPLASH=1
 for s in 1 0.9 0.5 0.25 0.1
 do
     dir="mincv${cv}_scale${s}_cap${cap}_beta${b}"
