@@ -1,6 +1,6 @@
 from _PyDistributionBase import PyDistributionBase
 from _ProbDistExt import *
-
+import math
 class Gamma(GammaDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -18,10 +18,11 @@ class Gamma(GammaDistBase, PyDistributionBase):
         given x ~ Gamma(shape=a, scale=1), y ~ Gamma(shape=b, scale=1).
 
     """
-    def __init__(self, shape, scale):
+    def __init__(self, shape=None, scale=None, mean=None, var=None, std_dev=None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the shape and scale parameters of the Gamma object. e.g.,
+        Specify the 2 of shape, scale, mean, and var parameters of the 
+        Gamma object:
 
         >>> from phycas.ProbDist import *
         >>> d = Gamma(2, 3)
@@ -29,6 +30,36 @@ class Gamma(GammaDistBase, PyDistributionBase):
         6.0
 
         """
+        if [shape, scale, mean, var, std_dev].count(None) != 3:
+            raise ValueError("Expecting exactly two of shape, scale, mean, and var (or std_dev instead of var) to be specified")
+        if (std_dev is not None) and (var is not None):
+            raise ValueError("Specify var or std_dev, but not both.")
+        if var is None:
+            if std_dev is not None:
+                assert(std_dev > 0.0)
+                var = std_dev*std_dev
+        if shape is None:
+            if scale is None:
+                assert(var > 0.0)
+                assert(mean > 0.0)
+                scale = float(var)/mean
+                shape = mean/scale
+            elif mean is None:
+                assert(var > 0.0)
+                assert(scale > 0.0)
+                shape = float(var)/(scale*scale)
+            else:
+                assert(scale > 0.0)
+                assert(mean > 0.0)
+                shape = mean/scale
+        elif scale is None:
+            assert(shape > 0.0)
+            if mean is None:
+                assert(var > 0.0)
+                scale = math.sqrt(float(var)/shape)
+            else:
+                assert(mean > 0.0)
+                scale = float(mean)/shape
         GammaDistBase.__init__(self, shape, scale)
         
     def clone(self):

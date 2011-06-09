@@ -273,7 +273,8 @@ from phycas.Utilities.GlobalState import readFile
 
 RNG = Lot
     
-print """
+if not 'NO_PHYCAS_SPLASH' in os.environ:
+    print """
   /////////////////////////////
  ///// Welcome to Phycas /////
 /////////////////////////////

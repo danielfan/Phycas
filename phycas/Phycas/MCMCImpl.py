@@ -1068,7 +1068,8 @@ class MCMCImpl(CommonFunctions):
         lines = open(fn, 'r').readlines()
         ref_dist_tree = lines[0]
         for line in lines[1:]:
-            k,v = line.split('=')
+            sp = line.split('=')
+            k,v = sp[0], '='.join(sp[1:])
             print 'debugCreateRefDistMap: v =',v
             split_str = k.strip()
             probdist = eval(v.strip())

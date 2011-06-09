@@ -638,7 +638,7 @@ class TreeSummarizer(CommonFunctions):
 
         # Output reference prior information (note: do not be tempted to move this section up 
         # because it depends on the fact that we are completely done with the tree majrule by this point)
-        self.refDistFileOpen()
+        refDistFileOpen(self)
         if self.refdistf is not None:
             self.assignEdgeLensAndSupportValues(majrule, split_map, self.num_trees_considered, True) # True means assign clade posteriors as edge lengths
             self.refdistf.write('%s\n' % (majrule.makeNumberedNewick()))
@@ -668,7 +668,7 @@ class TreeSummarizer(CommonFunctions):
             gamma_a = mean_NA_edgelen/gamma_b
             #self.refdistf.write('split_NA = Gamma(%g,%g) -> n=%g -> s=%g -> ss=%g -> m=%g -> v=%g\n' % (gamma_a,gamma_b,num_NA_edgelens,sum_NA_edgelens,sum_squared_NA_edgelens,mean_NA_edgelen,var_NA_edgelen))
             self.refdistf.write('split_NA = Gamma(%g,%g)\n' % (gamma_a,gamma_b))
-            self.refDistFileClose()
+            refDistFileClose(self)
         
         self.stdout.info('\nSumT finished.')
         return split_info
@@ -682,28 +682,28 @@ class TreeSummarizer(CommonFunctions):
             self._splitsPdfWriter = sp.open(11.0, 8.5, self.stdout)
         return self._splitsPdfWriter
             
-    def refDistFileOpen(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Opens the reference distribution file.
-        
-        """
-        self.phycassert(self.refdistf is None, 'Attempt made to open SumTImpl.refdistf, but it is already open!')
-        refdist_file_spec = self.opts.out.refdistfile
-        try:
-            self.refdistf = refdist_file_spec.open(self.stdout)
-        except:
-            print '*** Attempt to open reference distribution file (%s) failed.' % self.opts.out.refdistfile.filename
+def refDistFileOpen(self):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Opens the reference distribution file.
+    
+    """
+    self.phycassert(self.refdistf is None, 'Attempt made to open ' + str(self.__class__) + '.refdistf, but it is already open!')
+    refdist_file_spec = self.opts.out.refdistfile
+    try:
+        self.refdistf = refdist_file_spec.open(self.stdout)
+    except:
+        print '*** Attempt to open reference distribution file (%s) failed.' % self.opts.out.refdistfile.filename
 
-        if self.refdistf:
-            print 'Reference distribution file was opened successfully'
+    if self.refdistf:
+        print 'Reference distribution file was opened successfully'
 
-    def refDistFileClose(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Closes the reference distribution file.
-        
-        """
-        self.phycassert(self.refdistf is not None, 'Attempt made to close SumTImpl.refdistf, but it is not open!')
-        self.refdistf.close()
-        self.refdistf = None
+def refDistFileClose(self):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Closes the reference distribution file.
+    
+    """
+    self.phycassert(self.refdistf is not None, 'Attempt made to close  ' + str(self.__class__) + '.refdistf, but it is not open!')
+    self.refdistf.close()
+    self.refdistf = None
