@@ -1003,7 +1003,8 @@ bool FocalTreeMetropHastingsUpdater::update()
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
-	double prev_ln_ref_dist, curr_ln_ref_dist;
+	double prev_ln_ref_dist = 0.0;
+	double curr_ln_ref_dist = 0.0;
 	const double prev_ln_like = p->getLastLnLike();
 	const double prev_ln_prior = p->getLastLnPrior();
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();

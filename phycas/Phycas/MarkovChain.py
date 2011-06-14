@@ -5,6 +5,7 @@ import phycas.ProbDist as ProbDist
 import phycas.Likelihood as Likelihood
 from LikelihoodCore import LikelihoodCore
 
+
 #from threading import Thread
 class UnimapSpreadingWrapper(object):
     def __init__(self, mcmc):
@@ -81,6 +82,7 @@ class MarkovChain(LikelihoodCore):
         self.unimapping_move            = None
         self.unimap_edge_move           = None
         self.larget_simon_move          = None
+        self.focal_tree_move            = None
         # FLEXCAT_MOVE
         #self.ncat_move                 = None
         self.bush_move                  = None
@@ -561,6 +563,22 @@ class MarkovChain(LikelihoodCore):
             if model0.edgeLengthsFixed():
                 self.larget_simon_move.fixParameter()
             self.chain_manager.addMove(self.larget_simon_move)
+
+            ft_weight = self.parent.opts.focal_tree_move_weight
+            if ft_weight > 0:
+                from phycas.Phycas.MCMCImpl import readRefDistFile
+                focal_tree_move = readRefDistFile(self.parent.opts.focal_tree_move_inp_file)
+                self.focal_tree_move = Likelihood.FocalTreeMove()
+                self.focal_tree_move.setName("focal_tree_move")
+                self.focal_tree_move.setWeight(ft_weight)
+                self.focal_tree_move.setTree(self.tree)
+                self.focal_tree_move.setModel(model0)
+                self.focal_tree_move.setTreeLikelihood(self.likelihood)
+                self.focal_tree_move.setLot(self.r)
+                if model0.edgeLengthsFixed():
+                    self.phycassert(False, "the focal tree move cannot be used if the branch lengths are fixed")
+                self.chain_manager.addMove(self.focal_tree_move)
+                
 
         # If requested, create a BushMove object to allow polytomous trees
         if self.parent.opts.allow_polytomies:

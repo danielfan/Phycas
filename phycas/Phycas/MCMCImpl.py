@@ -1261,25 +1261,8 @@ class MCMCImpl(CommonFunctions):
                     self.output('\nReference distribution details:')
                     if self.opts.ssobj.refdist_definition_file is not None:
                         # User has specified a file containing the reference distribution definitions
-                        ref_dist_tree, ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
-                        # build focal tree
-                        focal_tree = TreeCollection(newick=ref_dist_tree).trees[0]
-                        ntips = focal_tree.getNObservables()
-                        focal_tree.recalcAllSplits(ntips)
-                        nd = focal_tree.getFirstPreorder()
-                        assert nd.isRoot(), 'the first preorder node should be the root'
-                        self.stdout.phycassert(focal_tree.hasEdgeLens(), 'focal tree from reference distribution must have edge lengths (which will be interpreted as split posteriors)')
-                        nd = nd.getNextPreorder()
-                        while nd:
-                            # Determine whether this split represents an internal or tip node
-                            if not (nd.isTip() or nd.getParent().isRoot()):
-                                split_prob = nd.getEdgeLen()
-                                self.stdout.phycassert(split_prob > 0.0 and split_prob < 1.0, 'Split probabilities must be in the range (0, 1)')
-                                s = nd.getSplit()
-                                if s.isBitSet(0):
-                                    s.invertSplit()
-                            nd = nd.getNextPreorder()
-                    topo_ref_dist_calculator = None
+                        focal_tree, ref_dist_map = readRefDistFile(self.opts.ssobj.refdist_definition_file, self.stdout)
+                        topo_ref_dist_calculator = None
                     all_updaters = cold_chain.chain_manager.getAllUpdaters() 
                     for u in all_updaters:
                         if not u.isFixed():
@@ -1362,3 +1345,26 @@ class MCMCImpl(CommonFunctions):
         if self.paramf:
             self.paramFileClose()
             
+
+
+def readRefDistFile(ref_dist_file, output):
+    '''Returns focal_tree and ref_dist_map read from `ref_dist_file`.'''
+    ref_dist_tree, ref_dist_map = self.debugCreateRefDistMap(ref_dist_file)
+    # build focal tree
+    focal_tree = TreeCollection(newick=ref_dist_tree).trees[0]
+    ntips = focal_tree.getNObservables()
+    focal_tree.recalcAllSplits(ntips)
+    nd = focal_tree.getFirstPreorder()
+    assert nd.isRoot(), 'the first preorder node should be the root'
+    output.phycassert(focal_tree.hasEdgeLens(), 'focal tree from reference distribution must have edge lengths (which will be interpreted as split posteriors)')
+    nd = nd.getNextPreorder()
+    while nd:
+        # Determine whether this split represents an internal or tip node
+        if not (nd.isTip() or nd.getParent().isRoot()):
+            split_prob = nd.getEdgeLen()
+            self.stdout.phycassert(split_prob > 0.0 and split_prob < 1.0, 'Split probabilities must be in the range (0, 1)')
+            s = nd.getSplit()
+            if s.isBitSet(0):
+                s.invertSplit()
+        nd = nd.getNextPreorder()
+    return focal_tree, ref_dist_map

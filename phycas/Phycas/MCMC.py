@@ -25,6 +25,8 @@ class MCMC(PhycasCommand):
                 ("ls_move_lambda0",          1.0,    "Sets the maximum value of the tuning parameter for the LargetSimonMove Metropolis-Hastings move. This value corresponds to a boldness value of 100.0 and is only used during path sampling analyses.", FloatArgValidate(min=0.01)),
                 ("ls_move_weight",           100,    "Larget-Simon moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("ls_move_debug",          False,    "If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move", BoolArgValidate),
+                ("focal_tree_move_weight",     0,    "Focal-Tree-based updates moves will be performed this many times per cycle", IntArgValidate(min=0)),
+                ("focal_tree_move_inp_file",  "",    "The filepath to a file in \"reference distribution\" format that contains the focal tree and edge length distributions", FileExistsValidate),
                 ("edge_move_lambda",         0.2,    "Sets the minimum value of the tuning parameter for the EdgeMove Metropolis-Hastings move. This value corresponds to a boldness vlaue of 0.0 and is the value used for normal analyses.", FloatArgValidate(min=0.01)),
                 ("edge_move_lambda0",        1.0,    "Sets the maximum value of the tuning parameter for the EdgeMove Metropolis-Hastings move. This value corresponds to a boldness value of 0.0 and is only used during path sampling analyses.", FloatArgValidate(min=0.01)),
                 ("edge_move_weight",           0,    "Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge ", IntArgValidate(min=0)),
