@@ -1037,45 +1037,6 @@ class MCMCImpl(CommonFunctions):
                 self.last_adaptation = cycle + 1
         self.cycle_start += self.burnin + self.ncycles
         
-    def debugCreateRefDistMap(self, fn):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        For debugging purposes, takes a file name and from the contents of the
-        file creates a focal tree and an associative array that matches 
-        reference distributions (values) with parameter names (keys). The 
-        first line is a tree definition with embedded clade posteriors. Lines
-        following the first are reference distribution definitions, one per 
-        line. Because this function is for debugging only, there is no error
-        checking. The file fn looks like this:
-        
-        (1,(2,(3,4):0.98)
-        state_freqs_1 = Dirichlet((238.39642,157.91107,206.25071,298.46741))
-        relrates_1 = Dirichlet((2.49381,13.95800,4.00536,0.96666,71.97821,1.20396))
-        state_freqs_2 = Dirichlet((99.07607,56.30029,25.76232,155.27580))
-        relrates_2 = Dirichlet((0.02057,6.74463,0.13622,0.07952,0.09088,0.12974))
-        state_freqs_3 = Dirichlet((223.45568,33.88380,13.25484,221.71725))
-        relrates_3 = Dirichlet((0.15491,10.04708,0.52291,1.18910,29.41715,0.73720))
-        subset_relrates = RelativeRateDistribution((2.34641,26.07778,45.84810))
-        ...
-        gamma_shape_3 = Gamma(46.92875, 0.00657)
-        
-        If the tree was fixed during the MCMC run, there will be edge length
-        reference distribution details: e.g. 
-        
-        edgelen_1001 = Gamma(10.26258, 0.08717)
-        """
-        ref_dist_map = {}      
-        lines = open(fn, 'r').readlines()
-        ref_dist_tree = lines[0]
-        for line in lines[1:]:
-            sp = line.split('=')
-            k,v = sp[0], '='.join(sp[1:])
-            print 'debugCreateRefDistMap: v =',v
-            split_str = k.strip()
-            probdist = eval(v.strip())
-            probdist.setLot(self._getLot())
-            ref_dist_map[split_str] = probdist
-        return (ref_dist_tree,ref_dist_map)
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1261,8 +1222,10 @@ class MCMCImpl(CommonFunctions):
                     self.output('\nReference distribution details:')
                     if self.opts.ssobj.refdist_definition_file is not None:
                         # User has specified a file containing the reference distribution definitions
-                        focal_tree, ref_dist_map = readRefDistFile(self.opts.ssobj.refdist_definition_file, self.stdout)
-                        topo_ref_dist_calculator = None
+                        pair = readRefDistFile(self.opts.ssobj.refdist_definition_file, 
+                                               self.stdout,
+                                               self._getLot())
+                        topo_ref_dist_calculator, ref_dist_map = pair
                     all_updaters = cold_chain.chain_manager.getAllUpdaters() 
                     for u in all_updaters:
                         if not u.isFixed():
@@ -1281,23 +1244,6 @@ class MCMCImpl(CommonFunctions):
                                     u.finalizeWorkingPrior()
                                 self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
                             if u.computesTopologyPrior():
-                                if topo_ref_dist_calculator is None:
-                                    topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
-                                prefix = 'split_'
-                                default_edge_len = None
-                                ul = u.getLot()
-                                for k, v in ref_dist_map.iteritems():
-                                    if k.lower().startswith(prefix):
-                                        split_rep = k[len(prefix):]
-                                        v.setLot(ul)
-                                        if split_rep.lower() == 'na':
-                                            assert(default_edge_len is None)
-                                            topo_ref_dist_calculator.setDefaultEdgeLenDist(v)
-                                        else:
-                                            s = Phylogeny.SplitBase()
-                                            s.createFromPattern(split_rep)
-                                            print split_rep, v, s.createPatternRepresentation()
-                                            topo_ref_dist_calculator.setEdgeLenDist(s, v)
                                 u.setReferenceDistribution(topo_ref_dist_calculator)
                     self.output()
                     ref_dist_calculated = True
@@ -1345,12 +1291,55 @@ class MCMCImpl(CommonFunctions):
         if self.paramf:
             self.paramFileClose()
             
+def debugCreateRefDistMap(fn, rng):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    For debugging purposes, takes a file name and from the contents of the
+    file creates a focal tree and an associative array that matches 
+    reference distributions (values) with parameter names (keys). The 
+    first line is a tree definition with embedded clade posteriors. Lines
+    following the first are reference distribution definitions, one per 
+    line. Because this function is for debugging only, there is no error
+    checking. The file fn looks like this:
+    
+    (1,(2,(3,4):0.98)
+    state_freqs_1 = Dirichlet((238.39642,157.91107,206.25071,298.46741))
+    relrates_1 = Dirichlet((2.49381,13.95800,4.00536,0.96666,71.97821,1.20396))
+    state_freqs_2 = Dirichlet((99.07607,56.30029,25.76232,155.27580))
+    relrates_2 = Dirichlet((0.02057,6.74463,0.13622,0.07952,0.09088,0.12974))
+    state_freqs_3 = Dirichlet((223.45568,33.88380,13.25484,221.71725))
+    relrates_3 = Dirichlet((0.15491,10.04708,0.52291,1.18910,29.41715,0.73720))
+    subset_relrates = RelativeRateDistribution((2.34641,26.07778,45.84810))
+    ...
+    gamma_shape_3 = Gamma(46.92875, 0.00657)
+    
+    If the tree was fixed during the MCMC run, there will be edge length
+    reference distribution details: e.g. 
+    
+    edgelen_1001 = Gamma(10.26258, 0.08717)
+    """
+    ref_dist_map = {}      
+    lines = open(fn, 'r').readlines()
+    ref_dist_tree, to_eval = lines[0], lines[1:]
+    if len(ref_dist_tree.split('=')) > 1: # if there does not appear to be a tree, we'll return None
+        to_eval = lines
+        ref_dist_tree = None
+    for line in to_eval:
+        sp = line.split('=')
+        k,v = sp[0], '='.join(sp[1:])
+        print 'debugCreateRefDistMap: v =',v
+        split_str = k.strip()
+        probdist = eval(v.strip())
+        probdist.setLot(rng)
+        ref_dist_map[split_str] = probdist
+    return ref_dist_tree, ref_dist_map
 
 
-def readRefDistFile(ref_dist_file, output):
+def readRefDistFile(ref_dist_file, output, rng):
     '''Returns focal_tree and ref_dist_map read from `ref_dist_file`.'''
-    ref_dist_tree, ref_dist_map = self.debugCreateRefDistMap(ref_dist_file)
-    # build focal tree
+    ref_dist_tree, ref_dist_map = debugCreateRefDistMap(ref_dist_file, rng)
+    if not ref_dist_tree:
+        return None, ref_dist_map
     focal_tree = TreeCollection(newick=ref_dist_tree).trees[0]
     ntips = focal_tree.getNObservables()
     focal_tree.recalcAllSplits(ntips)
@@ -1362,9 +1351,26 @@ def readRefDistFile(ref_dist_file, output):
         # Determine whether this split represents an internal or tip node
         if not (nd.isTip() or nd.getParent().isRoot()):
             split_prob = nd.getEdgeLen()
-            self.stdout.phycassert(split_prob > 0.0 and split_prob < 1.0, 'Split probabilities must be in the range (0, 1)')
+            output.phycassert(split_prob > 0.0 and split_prob < 1.0, 'Split probabilities must be in the range (0, 1)')
             s = nd.getSplit()
             if s.isBitSet(0):
                 s.invertSplit()
         nd = nd.getNextPreorder()
-    return focal_tree, ref_dist_map
+
+    topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
+    
+    prefix = 'split_'
+    default_edge_len = None    
+    for k, v in ref_dist_map.iteritems():
+        if k.lower().startswith(prefix):
+            split_rep = k[len(prefix):]
+            v.setLot(rng)
+            if split_rep.lower() == 'na':
+                assert(default_edge_len is None)
+                topo_ref_dist_calculator.setDefaultEdgeLenDist(v)
+            else:
+                s = Phylogeny.SplitBase()
+                s.createFromPattern(split_rep)
+                print split_rep, v, s.createPatternRepresentation()
+                topo_ref_dist_calculator.setEdgeLenDist(s, v)
+    return topo_ref_dist_calculator, ref_dist_map

@@ -567,8 +567,12 @@ class MarkovChain(LikelihoodCore):
             ft_weight = self.parent.opts.focal_tree_move_weight
             if ft_weight > 0:
                 from phycas.Phycas.MCMCImpl import readRefDistFile
-                focal_tree_move = readRefDistFile(self.parent.opts.focal_tree_move_inp_file)
-                self.focal_tree_move = Likelihood.FocalTreeMove()
+                pair = readRefDistFile(self.parent.opts.focal_tree_move_inp_file,
+                                       self.parent.stdout,
+                                       self.parent._getLot())
+                topo_ref_dist_calculator, ref_dist_map = pair
+
+                self.focal_tree_move = Likelihood.FocalTreeMove(topo_ref_dist_calculator)
                 self.focal_tree_move.setName("focal_tree_move")
                 self.focal_tree_move.setWeight(ft_weight)
                 self.focal_tree_move.setTree(self.tree)

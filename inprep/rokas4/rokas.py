@@ -7,6 +7,7 @@ short = '-e' in sys.argv
 skip_regular = '-s' in sys.argv
 regular_mcmc = '-m' in sys.argv
 debugging = '-d' in sys.argv
+focal_tree_move = '-f' in sys.argv
 if '-4' in sys.argv:
     ntax = '4'
     ntrees = 3
@@ -78,6 +79,8 @@ mcmc.report_every = 1000
 # take tiny steps when updating freqs and GTR relative rates
 mcmc.state_freq_psi = 3000.0
 mcmc.rel_rate_psi   = 3000.0
+
+    
 
 mcmc.draw_directly_from_prior = True
 
@@ -209,6 +212,14 @@ if jobid > ntrees:
     ss.refdist_definition_file = model.type + ntax + 'rokas.txt'
 else:
     mcmc.starting_tree_source = TreeCollection(newick=tree_descriptions[jobid-1])
+    
+if focal_tree_move:
+    if not ss.refdist_definition_file:
+        sys.exit('You cannot request the focal_tree_move and also specify fixed tree options')
+    mcmc.ls_move_weight = 50
+    mcmc.focal_tree_move_weight = 50
+    mcmc.focal_tree_move_inp_file = ss.refdist_definition_file
+
 if testing_sample:
     ss.nbetavals = 2
 else:
