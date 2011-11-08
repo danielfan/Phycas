@@ -226,6 +226,9 @@ ss = SS()
 from Phycas.CPO import CPO
 cpo = CPO()
 
+from Phycas.JPG import JPG
+jpg = JPG()
+
 from Phycas.Unimap import Unimap
 unimap = Unimap()
 
@@ -238,6 +241,7 @@ def setMasterSeed(x):
     randomtree.rng = r
     mcmc.rng = r
     sim.rng = r
+    jpg.rng = r
     return r
 
 def simpleOutputter(msg):

@@ -1,58 +1,108 @@
 from _LikelihoodExt import *
 
-class JCModel(JCModelBase):
+class IrreversibleModel(IrreversibleModelBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Encapsulates the Jukes and Cantor (1969) substitution model, which
-    assumes base frequencies are equal and all types of substitutions
-    occur at the same rate.
+    Encapsulates a simple irreversible model, which assumes
+    tree is rooted and root state is either absent (0) or present (1).
+    Assumes by default that 1 is the root state, but this can be 
+    changed via the setRootState function.
     
-    Literature Cited:
-    
-    Jukes, T. H., and C. R. Cantor. 1969. Evolution of protein molecules.
-    Pages 21-132 in Mammalian Protein Metabolism (H. N. Munro, ed.)
-    Academic Press, New York.    
-
     """
+    def getScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns current value of scaling parameter. The branch
+        lengths are multiplied by this scaling factor to allow the 
+        irreversible character to evolve at a different rate than the
+        characters used to generate branch lengths.
+        
+        """
+        return IrreversibleModelBase.getScalingFactor(self)
+    
+    def setScalingFactor(self, sf):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets value of scaling parameter to supplied value sf. The branch
+        lengths are multiplied by this scaling factor to allow the 
+        irreversible character to evolve at a different rate than the
+        characters used to generate branch lengths.
+        
+        """
+        IrreversibleModelBase.setScalingFactor(self, sf)
+    
+    def fixScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Fixes value of the scaling_factor to its current value.
+        
+        """
+        IrreversibleModelBase.fixScalingFactor(self)
+    
+    def freeScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Frees scaling factor so that it can be modified during MCMC analyses.
+        
+        """
+        IrreversibleModelBase.freeScalingFactor(self, sf)
+
+    def setGainOnly(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Turns the model into a model in which only gains are allowed.
+            
+            """
+        IrreversibleModelBase.setGainOnly(self)
+    
+    def setLossOnly(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Turns the model into a model in which only losses are allowed.
+            
+            """
+        IrreversibleModelBase.setLossOnly(self)
+    
     def getNStates(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns the number of states (always 4 for this model).
-        
-        """
-        return JCModelBase.getNStates(self)
-
+            Returns the number of states (always 2 for this model).
+            
+            """
+        return IrreversibleModelBase.getNStates(self)
+    
     def getStateFreqs(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a tuple comprising the 4 state frequencies. Always
-        (0.25, 0.25, 0.25, 0.25) for this model.
-
+        Returns a tuple comprising the 2 state frequencies. Either 
+        (1.0,0.0) or (0.0,1.0) for this model depending on whether 0 or 1
+        is the root state, respectively.
+        
         >>> import phycas.Likelihood
-        >>> model = phycas.Likelihood.JCModel()
+        >>> model = phycas.Likelihood.IrreversibleModel()
         >>> print model.getStateFreqs()
-        (0.25, 0.25, 0.25, 0.25)
+        (0.0,1.0)
         
         """
-        return JCModelBase.getStateFreqs(self)
-
-    def setAllFreqsEqual(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Sets all four state frequencies to 0.25. Superfluous for this model,
-        but included for conformity
-        
-        """
-        return JCModelBase.setAllFreqsEqual(self)
-
+        return IrreversibleModelBase.getStateFreqs(self)
+    
+#    def setAllFreqsEqual(self):
+#        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+#        """
+#        Frequencies cannot be set equal for this model, so this will generate
+#        and exception.
+#        
+#        """
+#        return IrreversibleModelBase.setAllFreqsEqual(self)
+#    
     def getNGammaRates(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns the current number of relative rate categories.
         
         """
-        return JCModelBase.getNGammaRates(self)
-
+        return IrreversibleModelBase.getNGammaRates(self)
+    
     def setNGammaRates(self, n):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -60,8 +110,8 @@ class JCModel(JCModelBase):
         than zero).
         
         """
-        return JCModelBase.setNGammaRates(self, n)
-
+        IrreversibleModelBase.setNGammaRates(self, n)
+    
     def getRateProbs(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -69,8 +119,8 @@ class JCModel(JCModelBase):
         site falls in its particular rate category.
         
         """
-        return JCModelBase.getRateProbs(self)
-
+        return IrreversibleModelBase.getRateProbs(self)
+    
     def setAllRateProbsEqual(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -78,8 +128,8 @@ class JCModel(JCModelBase):
         categories.
         
         """
-        return JCModelBase.setAllRateProbsEqual(self)
-
+        IrreversibleModelBase.setAllRateProbsEqual(self)
+    
     def setPriorOnShapeInverse(self, invert):    
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -88,6 +138,96 @@ class JCModel(JCModelBase):
         parameter itself.
         
         """
+        IrreversibleModelBase.setPriorOnShapeInverse(self, invert)
+
+class JCModel(JCModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+        Encapsulates the Jukes and Cantor (1969) substitution model, which
+        assumes base frequencies are equal and all types of substitutions
+        occur at the same rate.
+        
+        Literature Cited:
+        
+        Jukes, T. H., and C. R. Cantor. 1969. Evolution of protein molecules.
+        Pages 21-132 in Mammalian Protein Metabolism (H. N. Munro, ed.)
+        Academic Press, New York.    
+        
+        """
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Returns the number of states (always 4 for this model).
+            
+            """
+        return JCModelBase.getNStates(self)
+    
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Returns a tuple comprising the 4 state frequencies. Always
+            (0.25, 0.25, 0.25, 0.25) for this model.
+            
+            >>> import phycas.Likelihood
+            >>> model = phycas.Likelihood.JCModel()
+            >>> print model.getStateFreqs()
+            (0.25, 0.25, 0.25, 0.25)
+            
+            """
+        return JCModelBase.getStateFreqs(self)
+    
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Sets all four state frequencies to 0.25. Superfluous for this model,
+            but included for conformity
+            
+            """
+        return JCModelBase.setAllFreqsEqual(self)
+    
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Returns the current number of relative rate categories.
+            
+            """
+        return JCModelBase.getNGammaRates(self)
+    
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Sets the number of relative rate categories to n (n should be greater
+            than zero).
+            
+            """
+        return JCModelBase.setNGammaRates(self, n)
+    
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Returns a list each element of which is the probability that any given
+            site falls in its particular rate category.
+            
+            """
+        return JCModelBase.getRateProbs(self)
+    
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Sets all rate probabilities to the inverse of the number of rate
+            categories.
+            
+            """
+        return JCModelBase.setAllRateProbsEqual(self)
+    
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            If True is specified, then the gamma shape parameter will actually
+            update the inverse of the shape parameter rather than the shape
+            parameter itself.
+            
+            """
         JCModelBase.setPriorOnShapeInverse(self, invert)
 
 class HKYModel(HKYModelBase):

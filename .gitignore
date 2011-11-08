@@ -1,3 +1,11 @@
+XCode/phycas/phycas.xcodeproj/project.xcworkspace/
+XCode/phycas/phycas.xcodeproj/xcuserdata/
+*.synctex.gz
+*.log
+*.aux
+inprep/gogarten/strictclock_data/
+inprep/gogarten/strictclock_nodata/
+inprep/gogarten/yule_tree_height/yule_tree_height.pdf
 distr_manifest.txt
 *.pyc
 *.dylib

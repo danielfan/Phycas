@@ -112,6 +112,17 @@ class LikelihoodCore(object):
             m.setNucleotideFreqs(model_spec.state_freqs[0], model_spec.state_freqs[1], model_spec.state_freqs[2], model_spec.state_freqs[3])  #POL should be named setStateFreqs?
             if model_spec.fix_freqs:
                 m.fixStateFreqs()
+        elif model_spec.type in ['loss','gain']:
+            m = Likelihood.IrreversibleModel()
+            m.setScalingFactor(model_spec.scaling_factor)
+            if model_spec.fix_scaling_factor:
+                m.fixScalingFactor()
+            else:
+                m.freeScalingFactor()
+            if model_spec.type == 'loss':
+                m.setLossOnly()
+            else:
+                m.setGainOnly()
         else:
             m = Likelihood.JCModel()
             

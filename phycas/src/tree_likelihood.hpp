@@ -247,6 +247,7 @@ class TreeLikelihood
 		double							harvestLnL(EdgeEndpoints & focalEdge, TreeShPtr t);
 		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
 		double							harvestLnLFromValidNode(TreeNode *focalNode);
+        void                            debugWalkTreeShowCondLikes(TreeShPtr t);
 
 		unsigned						buildConstantStatesVector();
 

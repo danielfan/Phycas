@@ -4,7 +4,7 @@ from phycas.ProbDist import Beta, Exponential, InverseGamma, Dirichlet
 class Model(PhycasCommand):
     def __init__(self):
         args = ( 
-                ("type",                       'hky',                                "Can be 'jc', 'hky', 'gtr' or 'codon'", EnumArgValidate(['jc', 'hky', 'gtr', 'codon'])),
+                ("type",                       'hky',                                "Can be 'gain', 'loss', 'jc', 'hky', 'gtr' or 'codon'", EnumArgValidate(['gain', 'loss', 'jc', 'hky', 'gtr', 'codon'])),
                 ("update_relrates_separately", True,                                 "If True, GTR relative rates will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
                 ("relrate_prior",              Dirichlet([1.0,1.0,1.0,1.0,1.0,1.0]), "The joint prior distribution for all six GTR relative rate parameters. Used only if update_relrates_separately is False."),
                 ("relrate_param_prior",        Exponential(1.0),                     "The prior distribution for individual GTR relative rate parameters.  Used only if update_relrates_separately is true."),
@@ -25,6 +25,8 @@ class Model(PhycasCommand):
                 ("pinvar_prior",               Beta(1.0, 1.0),                       "The prior distribution for pinvar, the proportion of invariable sites parameter"),
                 ("pinvar",                     0.2,                                  "The current value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
                 ("fix_pinvar",                 False,                                "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("scaling_factor",             1.0,                                  "The current value of scaling_factor, used to rescale edge lengths (primarily for use with the gain or loss model). This parameter should be fixed if a partition model is providing subset-specific rates, otherwise there will be nonidentifibility issues", FloatArgValidate(greaterthan=0.0)),
+                ("fix_scaling_factor",         True,                                 "If True, the scaling_factor parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("update_freqs_separately",    True,                                 "If True, state frequencies will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
                 ("state_freq_prior",           Dirichlet([1.0, 1.0, 1.0, 1.0]),      "The joint prior distribution for the relative state frequency parameters. Used only if update_freqs_separately is False."),
                 ("state_freq_param_prior",     Exponential(1.0),                     "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states. Used only if update_freqs_separately is True."),

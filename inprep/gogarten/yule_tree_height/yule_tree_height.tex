@@ -1,0 +1,30 @@
+\documentclass[12pt]{article}
+\setlength{\oddsidemargin}{0.in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-0.25in}
+\setlength{\textheight}{8.25in}
+
+\usepackage{amsmath,bm,cancel} % align environment, bold math, and cancel functionality, respectively
+\pagestyle{empty}	% do not need page numbers
+\parindent=0.in		% do not indent paragraphs
+\setlength{\parskip}{.1in}	% put some space between paragraphs
+\setcounter{secnumdepth}{0}	% no numbers in headings
+
+% my commands
+
+\begin{document}
+
+\section{Expected Yule tree height under Lognormal rate prior}
+
+Expected root height ($t_n$) for a Yule tree containing $n$ taxa evolving with speciation rate $\lambda$:
+\[ t_n = \frac{1}{\lambda} \sum_{k=2}^n \frac{1}{k} \]
+For $n=45$ taxa, $t_{45} \approx \phi_{45}/\lambda$, where $\phi_{45} = 3.39494811555$. Note that $\lambda = \phi_n/t_n$.
+
+Let $\lambda \sim \mbox{LogNormal}(\mu,\sigma)$,
+\begin{align*}
+f(t_n) &= f(\lambda) \frac{d\lambda}{dt_n} \\
+&= \left(\frac{1}{\lambda \sqrt{2 \pi \sigma^2}} e^{\frac{-(\log(\lambda) - \mu)^2}{2\sigma^2}} \right) \left( \frac{d\lambda}{dt_n} \right) \\
+&= \left(\frac{t_n}{\phi_n \sqrt{2 \pi \sigma^2}} e^{\frac{-(\log(\phi_n) - \log(t_n) - \mu)^2}{2\sigma^2}} \right) \left( -\frac{\phi_n}{t_n^2} \right) \\
+&= \frac{-1}{t_n \sqrt{2 \pi \sigma^2}} e^{\frac{-(\log(t_n) - [\log(\phi_n) - \mu])^2}{2\sigma^2}}  
+\end{align*}
+\end{document}

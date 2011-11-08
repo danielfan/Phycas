@@ -1,0 +1,19 @@
+#NEXUS
+
+begin taxa;
+	dimensions ntax=3;
+	taxlabels
+		O
+		A
+		B
+	;
+end;
+
+begin trees;
+	translate
+		1 O,
+		2 A,
+		3 B
+	;
+    tree onlytree [&lnP=0.0] = [&R] (O:0.2,(A:0.1,B:0.1):0.1);
+end;

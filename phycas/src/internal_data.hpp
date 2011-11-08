@@ -43,7 +43,7 @@ class CondLikelihoodStorage;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The InternalData class stores the data structures needed for computing likelihoods on trees. This includes both
-|	condition likelihood arrays and transition probability matrices. A Conditional Likelihood Array (CLA) is stored
+|	conditional likelihood arrays and transition probability matrices. A Conditional Likelihood Array (CLA) is stored
 |	internally as a std::vector<double>, but the accessor function getCLA() returns a pointer to the first element so
 |	the array can be efficiently traversed during update loops. The CLAs are laid out as follows (for 3 relative rate
 |	categores and DNA data):

@@ -2548,19 +2548,56 @@ double TreeLikelihood::calcLnLFromNode(
 		// compute the likelihood
 		EdgeEndpoints edge(&focal_node, NULL);
 		lnL = harvestLnL(edge, t);
+        //debugWalkTreeShowCondLikes(t);
 		}
 	return lnL;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
-|	`row' index in the data matrix `mat'). Returns a pointer to the newly-created TipData structure. See documentation 
-|	for the TipData structure for more explanation.
+|	Performs a postorder traversal of the tree, printing out conditional likelihood arrays for every node encountered
+|   along the way. Makes most sense to invoke this function only for very small datasets.
 */
+void TreeLikelihood::debugWalkTreeShowCondLikes(    //POLCURR
+  TreeShPtr t)		/**< is the tree to walk */
+	{
+    for (TreeNode *nd = t->GetLastPreorder(); nd; nd = nd->GetNextPostorder()) 
+        {
+            if (nd->IsTip()) {
+                std::cerr << "Tip node:" << nd->GetNodeNumber() << std::endl;
+            } else {
+                std::cerr << "Internal node:" << nd->GetNodeNumber() << std::endl;
+                std::cerr << "-->|";
+                const InternalData * internal_data = nd->GetInternalData();
+                PHYCAS_ASSERT(internal_data != NULL);
+                ConstCondLikelihoodShPtr condlike = internal_data->getValidChildCondLikePtr();
+                const LikeFltType * cla = condlike->getCLA();                
+                unsigned num_subsets = partition_model->getNumSubsets();
+                for (unsigned i = 0; i < num_subsets; ++i) {
+                    unsigned num_patterns = partition_model->subset_num_patterns[i];
+                    unsigned num_states = partition_model->subset_num_states[i];
+                    unsigned num_rates = partition_model->subset_num_rates[i];
+                    for (unsigned r = 0; r < num_rates; ++r) {
+                        for (unsigned p = 0; p < num_patterns; ++p, cla += num_states) {
+                            for (unsigned s = 0; s < num_states; ++s) {
+                                std::cerr << boost::str(boost::format("%d:%g") % s % cla[s]) << '|';
+                            }
+                        }
+                    }
+                }
+                std::cerr << std::endl;
+            }
+        }
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+ |	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
+ |	`row' index in the data matrix `mat'). Returns a pointer to the newly-created TipData structure. See documentation 
+ |	for the TipData structure for more explanation.
+ */
 TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipData
   unsigned row)		/**< is the row of the data matrix corresponding to the data for this tip node */
-	{
-	// The first element of a pattern vector is used to store the index of the partition subset to which the pattern belongs
+    {
+    // The first element of a pattern vector is used to store the index of the partition subset to which the pattern belongs
 	// Hence, add 1 to the requested row to get the correct element of the pattern vector
 	unsigned index_of_taxon = row + 1;
 	

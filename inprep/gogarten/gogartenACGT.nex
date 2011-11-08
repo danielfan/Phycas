@@ -1,0 +1,53 @@
+#nexus
+
+begin data;
+    dimensions ntax=45 nchar=1;
+    format datatype=dna gap=- missing=?;
+    matrix
+        Volvox_globator_D86836.1                                A
+        Nitella_translucens_L13482.1                            A
+        Conocephalum_conicum_U87066.1                           A
+        Marchantia_polymorpha_U87079.1                          A
+        Polytrichum_commune_U87087.1                            A
+        Sphagnum_palustre_L13485.1                              A
+        Takakia_lepidozioides_AY312936.1                        A
+        Anthoceros_punctatus_U87063.1                           A
+        Megaceros_vincentianus_U87080.1                         A
+        Lycopodium_digitatum_L11055.1                           A
+        Selaginella_apoda_AJ010854.1_Meadow_Spike_Moss          G
+        Selaginella_apoda_L11280.1                              G
+        Isoetes_melanopoda_L11054.1                             G
+        Ophioglossum_engelmanii_L11058.1                        A
+        Osmunda_cinnamomea_D14882.1_Cinnamon_Fern               A
+        Equisetum_arvense_L11053.1_Horsetail_Scouring_Rush      A
+        Psilotum_nudum_AP004638.1_Whisk_Fern                    A
+        Polypodium_appalachianum_U21141.1                       A
+        Salvinia_cucullata_U05649.1                             G
+        Dennstaedtia_punctilobula_U05918.1_Hay_Scented_Fern     A
+        Matteuccia_struthiopteris_U05930.1                      A
+        Marsilea_quadrifolia_L13480.1                           G
+        Dryopteris_dickinsii_U05622.1                           A
+        Cycas_circinalis_AF531198.1                             G
+        Encephalartos_arenarius_AF531206.1                      G
+        Zamia_inermis_L12683.1                                  G
+        Ginkgo_biloba_AJ235804.1                                G
+        Ephedra_sinica_D10732.1                                 G
+        Gnetum_leyboldii_U72820.1                               G
+        Gnetum_gnemon_L12680.2                                  G
+        Welwitschia_mirabilis_AJ235814.1                        G
+        Pinus_radiata_AY497250.1_Monterrey_Pine                 G
+        Abies_magnifica_X58391.1_Red_Fir                        G
+        Larix_occidentalis_X63663.1_Western_Larch               G
+        Pseudotsuga_menziesii_X52937.1_Douglas_Fir              G
+        Sequoia_sempervirens_L25755.2_California_Redwood        G
+        Lilium_superbum_L12682.2_Turks_Cap_Lily                 G
+        Avena_sativa_L15300.1_Oats                              G
+        Triticum_aestivum_AB042240.3_Wheat                      G
+        Rosmarinus_officinalis_Z37435.1_Rosemary                G
+        Coffea_arabica_X83631.1_Coffee                          G
+        Liriodendron_tulipifera_AF190430.1_Tulip_Tree           G
+        Cinnamomum_camphora_L12641.2_Cinnamon                   G
+        Sassafras_albidum_AF206819.1_Sassafras                  G
+        Ranunculus_trichophyllus_L08766.1_Buttercup             G
+    ;              
+end;

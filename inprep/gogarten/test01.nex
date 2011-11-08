@@ -1,0 +1,11 @@
+#nexus
+
+begin data;
+    dimensions ntax=3 nchar=1;
+    format datatype=standard;
+    matrix
+        O  1
+        A  0
+        B  0
+    ;              
+end;

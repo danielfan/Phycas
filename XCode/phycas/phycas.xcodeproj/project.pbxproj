@@ -226,6 +226,7 @@
 		D1A8CC0A11BACBC200A2A901 /* tss_null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1A8CC0911BACBC200A2A901 /* tss_null.cpp */; };
 		D1A8CC0B11BACBD300A2A901 /* timeconv.inl in Headers */ = {isa = PBXBuildFile; fileRef = D1A8CC0611BACBA400A2A901 /* timeconv.inl */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
+		D1EAD40F1468823E00361263 /* irreversible_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1EEBF561468330A000AB033 /* irreversible_model.cpp */; };
 		D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 /* End PBXBuildFile section */
 
@@ -616,6 +617,8 @@
 		D11BC11511B74F950011F82A /* char_super_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = char_super_matrix.cpp; path = ../../phycas/src/char_super_matrix.cpp; sourceTree = SOURCE_ROOT; };
 		D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = char_super_matrix.hpp; path = ../../phycas/src/char_super_matrix.hpp; sourceTree = SOURCE_ROOT; };
 		D147CA4711BBF61400AE29FC /* uni738taxa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = uni738taxa.py; path = ../../inprep/unimap738/uni738taxa.py; sourceTree = SOURCE_ROOT; };
+		D155CD40146613E100988FD3 /* JPG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPG.py; path = ../../phycas/Phycas/JPG.py; sourceTree = "<group>"; };
+		D155CD41146613E100988FD3 /* JPGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPGImpl.py; path = ../../phycas/Phycas/JPGImpl.py; sourceTree = "<group>"; };
 		D1595F981222D95D00D9378D /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHANGES; path = ../../CHANGES; sourceTree = SOURCE_ROOT; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
@@ -662,6 +665,7 @@
 		D1D3ED1C11C021C100A53554 /* nanissue.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = nanissue.py; path = ../../inprep/jockusch_problem/nanissue.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
+		D1EEBF561468330A000AB033 /* irreversible_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = irreversible_model.cpp; path = ../../phycas/src/irreversible_model.cpp; sourceTree = "<group>"; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
 		D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = relative_rate_distribution.cpp; path = ../../phycas/src/relative_rate_distribution.cpp; sourceTree = SOURCE_ROOT; };
 		D1F9EFC8112D9B4C00654AD4 /* relative_rate_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = relative_rate_distribution.hpp; path = ../../phycas/src/relative_rate_distribution.hpp; sourceTree = SOURCE_ROOT; };
@@ -853,6 +857,7 @@
 				7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */,
 				7A0945DD10CAEFB900CEFDE0 /* internal_data.hpp */,
 				7A0945DE10CAEFB900CEFDE0 /* jc_model.cpp */,
+				D1EEBF561468330A000AB033 /* irreversible_model.cpp */,
 				7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */,
 				7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */,
 				7A0945E110CAEFB900CEFDE0 /* larget_simon_move.hpp */,
@@ -1338,6 +1343,8 @@
 				D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */,
 				D1ABDDE510D2D60000EDC77A /* CPO.py */,
 				D1ABDDE610D2D60000EDC77A /* CPOImpl.py */,
+				D155CD40146613E100988FD3 /* JPG.py */,
+				D155CD41146613E100988FD3 /* JPGImpl.py */,
 				D1ABDDE710D2D60000EDC77A /* GammaNylDNA4.py */,
 				D1ABDDE810D2D60000EDC77A /* GGImpl.py */,
 				D1ABDDE910D2D60000EDC77A /* Like.py */,
@@ -1863,6 +1870,7 @@
 				7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */,
 				7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */,
 				7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */,
+				D1EAD40F1468823E00361263 /* irreversible_model.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2087,7 +2095,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = Debug;
@@ -2107,7 +2115,7 @@
 				LIBRARY_SEARCH_PATHS = "$(PHYCAS_ROOT)/phycas/Conversions";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = Release;
@@ -2132,7 +2140,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = SlowDebug;

@@ -1152,8 +1152,8 @@ double TreeLikelihood::harvestLnLFromValidNode(
 		unsigned		np					= partition_model->subset_num_patterns[i];
 		
 		//temp!
-		double ssrr = partition_model->getSubsetRelRate(i);
-		std::cerr << "Subset relative rate for subset " << i << " is " << ssrr << std::endl;
+		//double ssrr = partition_model->getSubsetRelRate(i);
+		//std::cerr << "Subset relative rate for subset " << i << " is " << ssrr << std::endl;
 		
 		const unsigned	singleRateCLALength	= np*ns;
 		

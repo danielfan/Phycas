@@ -566,8 +566,139 @@ class ParamSummarizer(CommonFunctions):
             self._cpoRFilename = sp._getFilename()
             self._cpoRFile = sp.open(self.stdout)
         return self._cpoRFile
-        
+
     def cpo_summary(self, lines, burnin):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+            Produces an R file containing commands for producing a plot of CPO
+            (Conditional Predictive Ordinates). This plot has site position as the
+            x-coordinate and site CPO as the y-coordinate. The title of the plot
+            contains the summary measure (sum of CPO over all sites).
+            
+            """
+        self.output('\nCPO analysis')
+        
+        # Each line in lines comprises nsites log-site-likelihood values (one sample from the chain)
+        nsites = len(lines[0].split())
+        loglikes = [[] for i in range(nsites)]
+        
+        # Create nsites lists, each of which holds all log-site-likelihood values sampled from one site
+        for line in lines:
+            parts = line.split()
+            for i,logx in enumerate(parts):
+                loglikes[i].append(float(logx))
+        
+        # Create the default partition if none has been defined
+        partition.validate(nsites)
+        
+        # Compute the log-CPO measure for each site, and the sum over all sites
+        # Sites that have been excluded will have lognm = 0.0 and thus will not
+        # contribute to total_cpo
+        cpovect = [0.0]*nsites  #POLPOL was []
+        total_cpo = 0.0
+        k = 0   # POLPOL added
+        for subset_index,(subset_name,subset_sitelist,subset_model) in enumerate(partition.subset):
+            print 'CPO: processing subset = %s...' % subset_name
+            for i in subset_sitelist:
+                loghm = self.calcLogHM(loglikes[i-1])
+                total_cpo += loghm
+                cpovect[k] = loghm  #POLPOL added
+                k += 1  #POLPOL added
+        #POLPOL cpovect.append(loghm)
+        #for i in range(nsites):
+        #    loghm = self.calcLogHM(loglikes[i])
+        #    total_cpo += loghm
+        #    cpovect.append(loghm)
+        self.output('Model CPO = %.5f' % total_cpo)
+        
+        # Identify the worst sites in terms of CPO, placing these in cpo_worst
+        cpo_worst = []
+        for i in range(nsites):
+            if cpovect[i] < 0.0:
+                cpo_worst.append((i,cpovect[i]))
+        cpo_worst.sort(cmp=lambda x,y: cmp(x[1], y[1]))
+        nincluded = len(cpo_worst)
+        last_of_worst = int(math.ceil(self.opts.cpo_cutoff*nincluded))
+        cpo_worst[last_of_worst:] = []
+        
+        # Create a mask showing which sites are in the worst category
+        mask = ['-']*nsites
+        for i,j in cpo_worst:
+            mask[i] = '*'
+        for i in range(nsites):
+            if cpovect[i] == 0.0:
+                mask[i] = 'x'
+        maskstr = ''.join(mask)
+        # begin again here: need to print out maskstr in output...note: mask invalid except for default partition
+        
+        # Use nearest neighbor smoother to produce a more easily-interpreted plot
+        
+        # Smoothing algorithm:
+        #
+        #    ysmoothed[i] = (sum_j w_j y_j) / (sum_j w_j)
+        #
+        # where: j is the set [x_{i-m}, ..., x_{i-1}, x_i, x_{i+1}, ..., x_{i+m}]
+        #        w_j = exp{-(x_i - x_j)^2/(2*var)}
+        #        x_i is the position of site i (i.e. for the 5th site, x_i = 5.0)
+        # note: setting m to nsites seems to work pretty well, so might as well
+        #       just use this vale of m and save the user having yet another
+        #       setting to worry about.
+        
+        #m = nsites  # m is the number of neighbors to each side of site i 
+        #sd = self.opts.cposmooth    # use standard deviation sd for Gaussian weights
+        #var = math.pow(sd,2.0)
+        #denom = 2.0*var
+        #ysmoothed = []
+        #for i in range(nsites):
+        #    low = i - m
+        #    high = i + m
+        #    if low < 0:
+        #        low = 0
+        #    if high > nsites - 1:
+        #        high = nsites - 1
+        #    yvalues = cpovect[low:high+1]
+        #    xvalues = range(low, high+1)
+        #    assert len(xvalues) == len(yvalues), '%d != %d for i = %d' % (len(xvalues),len(yvalues),i)
+        #    weights = [math.exp(-math.pow(-(float(x) - float(i)), 2.0)/denom) for x in xvalues]
+        #    wy = [w*y for w,y in zip(weights,yvalues)]
+        #    yavg = sum(wy)/sum(weights)
+        #    ysmoothed.append(yavg)
+        
+        self._cpoRFilename = None
+        self._cpoRFile = None
+        
+        if bool(self.optsout.cpoplot):
+            try:
+                self._cpoOpenRFile()
+                self._cpoRFile.write('# plot of log(CPO) across sites\n')
+                #self._cpoRFile.write('quartz(bg="white")\n')
+                self._cpoRFile.write('x = c(%s)\n' % ','.join(['%d' % x for x in range(nsites)]))
+                self._cpoRFile.write('y = c(%s)\n' % ','.join(['%g' % y for y in cpovect]))
+                #self._cpoRFile.write("plot(x, y, type='l', main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+                #self._cpoRFile.write('quartz(bg="white")\n')
+                self._cpoRFile.write('colvec = rep("black",%d)\n' % nsites)
+                self._cpoRFile.write('z = c(%s)\n' % ','.join(['%d' % (zz[0]+1) for zz in cpo_worst]))
+                self._cpoRFile.write('colvec[z] = "red"\n')
+                self._cpoRFile.write("plot(x, y, type='h', col=colvec, main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+                
+                cum = 0
+                self._cpoRFile.write('abline(v=1)\n')
+                for subset_index,(subset_name,subset_sitelist,subset_model) in enumerate(partition.subset):
+                    cum += len(subset_sitelist)
+                    self._cpoRFile.write('abline(v=%d)\n' % cum)
+            
+            #self._cpoRFile.write('\n# plot of estimated probability density of log(CPO) values\n')
+            #self._cpoRFile.write('quartz(bg="white")\n')
+            #self._cpoRFile.write('plot(density(y))\n')
+            #self._cpoRFile.write('\n# Smoothed plot of log(CPO) across sites\n')
+            #self._cpoRFile.write('quartz(bg="white")\n')
+            #self._cpoRFile.write('ysmoothed = c(%s)\n' % ','.join(['%g' % y for y in ysmoothed]))
+            #self._cpoRFile.write("plot(x, ysmoothed, type='l', main='Smoothed using standard deviation %g', xlab='Site', ylab = 'CPO')\n" % sd)
+            finally:
+                if self._cpoRFile:
+                    self.optsout.cpoplot.close()
+    
+    def cpo_summary_obsolete(self, lines, burnin):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Produces an R file containing commands for producing a plot of CPO

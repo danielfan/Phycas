@@ -213,28 +213,64 @@ typedef boost::shared_ptr<Model> ModelShPtr;
 typedef std::vector<ModelShPtr> ModelVect;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Specialization of the base class Model that represents the Jukes and Cantor (1969) model.
-*/
-class JC: public Model
-	{
-	public:
-								JC();
-								~JC()
-									{
-									//std::cerr << "JC dying..." << std::endl;
-									}
+ |	Specialization of the base class Model that represents the simple exponential failure model.
+ */
+class Irreversible: public Model
+{
+public:
+    Irreversible();
+    ~Irreversible()
+    {
+        //std::cerr << "~Irreversible dying..." << std::endl;
+    }
+    
+    virtual std::string		getModelName() const;
+    double					calcUniformizationLambda() const;
+    void					calcPMat(double * * pMat, double edgeLength) const;
+    double					calcLMat(double * * lMat) const;
+    double					calcUMat(double * * uMat) const;
+    virtual std::string		paramHeader() const;
+    virtual std::string		paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
+    
+    void					fixScalingFactor();
+    void					freeScalingFactor();
+    void                    setScalingFactor(double sf);
+    double                  getScalingFactor();
+    
+    void                    setGainOnly();
+    void                    setLossOnly();
+    
+protected:
+    double  phi;            /**< Scaling factor parameter. Allows rate of evolution to depart from that implied by the edge lengths (i.e. phi = 1.0) */
+    bool    phi_fixed;      /**< If true (default), scaling factor parameter phi will not be modified during MCMC analyses */
+    bool    root_present;   /**< If true (default), root state is assumed to be 1 and only losses are allowed; if false, root state is assumed to be 0 and only gains are allowed */
+};
 
-		virtual std::string		getModelName() const;
-		double					calcUniformizationLambda() const;
-		void					calcPMat(double * * pMat, double edgeLength) const;
-        double					calcLMat(double * * lMat) const;
-        double					calcUMat(double * * uMat) const;
-        virtual std::string		paramHeader() const;
-		virtual std::string		paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
-	};
+typedef boost::shared_ptr<Irreversible> IrreversibleShPtr;
+
+/*----------------------------------------------------------------------------------------------------------------------
+ |	Specialization of the base class Model that represents the Jukes and Cantor (1969) model.
+ */
+class JC: public Model
+{
+public:
+    JC();
+    ~JC()
+    {
+        //std::cerr << "JC dying..." << std::endl;
+    }
+    
+    virtual std::string		getModelName() const;
+    double					calcUniformizationLambda() const;
+    void					calcPMat(double * * pMat, double edgeLength) const;
+    double					calcLMat(double * * lMat) const;
+    double					calcUMat(double * * uMat) const;
+    virtual std::string		paramHeader() const;
+    virtual std::string		paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
+};
 
 typedef boost::shared_ptr<JC> JCShPtr;
-
+    
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specialization of the base class Model that represents the Hasegawa-Kishino-Yano (1985) model.
 */
