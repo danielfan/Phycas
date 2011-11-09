@@ -45,7 +45,7 @@ class IrreversibleModel(IrreversibleModelBase):
         Frees scaling factor so that it can be modified during MCMC analyses.
         
         """
-        IrreversibleModelBase.freeScalingFactor(self, sf)
+        IrreversibleModelBase.freeScalingFactor(self)
 
     def setGainOnly(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

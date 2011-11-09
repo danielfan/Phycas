@@ -3,12 +3,15 @@ from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Phycas.JPGImpl import JPGImpl
 from phycas import P
+from phycas.ProbDist import Exponential,BetaPrime
 
 class JPG(PhycasCommand):
     def __init__(self):
         args = tuple(PhycasCommand._getRNGOptions() + [
             ("data_source", P.characters, "The DataSource that provides the data to be analyzed in the JPG analysis. Should be a DataSource object", DataSourceValidate),
             ("tree_source", None, "A TreeCollection that will serve as the source of trees to analyze. If a string is passed in, it is interpreted as a the path to a tree file.", TreeSourceValidate),
+            ("scaling_factor_prior", Exponential(1.0), "The prior distribution for the scaling factor parameter that adjusts edge lengths for the rate of the focal character"),
+            ("rate_ratio_prior", BetaPrime(1.0,1.0), "The prior distribution for the forward/reverse rate ratio of the focal character (for a model that allows forward and reverse substitution)"),
             ("nreps", 100, "Number of replicates per tree", IntArgValidate(min=1)),
             ("fromtree", 1, "First tree in tree_source to evaluate (1 <= fromtree <= totree <= no. trees in tree_source)", IntArgValidate(min=1)),
             ("totree", sys.maxint, "Last tree in tree_source to evaluate (1 <= fromtree <= totree <= no. trees in tree_source)", IntArgValidate(min=1)),

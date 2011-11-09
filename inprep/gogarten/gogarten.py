@@ -1,8 +1,8 @@
 from phycas import *
 
 g_random_seed      = 13579
-g_data_file_name   = 'test01.nex'
-g_tree_file_name   = 'test.tre'
+g_data_file_name   = 'gogarten01.nex'
+g_tree_file_name   = 'gogarten.tre'
 
 # sf    avg. lnL
 # 0.5     -3.07528004645
@@ -40,13 +40,14 @@ def runMCMC(fnprefix):
     
     # set up model
     model.type = 'loss'
-    model.scaling_factor = 10.0
-    model.fix_scaling_factor = True
+    model.fix_scaling_factor = False
     
     jpg.data_source = blob.characters    
     jpg.tree_source = TreeCollection(filename=g_tree_file_name)
-    jpg.fromtree = 1
-    jpg.totree = 1
+    jpg.fromtree = 901
+    jpg.totree = 1000
+    jpg.scaling_factor_prior = ProbDist.Exponential(0.1)
+    jpg.nreps = 10
     jpg()
     
 if __name__ == '__main__':

@@ -59,6 +59,7 @@ class JPGImpl(CommonFunctions):
         maxLnL = max(like_list)
         n = float(len(like_list))
         tmp = [math.exp(x - maxLnL) for x in like_list]
+        print 'In _calcAvgLike: maxLnL = %g, n = %d' % (maxLnL,n) 
         return maxLnL - math.log(n) + math.log(sum(tmp)) 
         
     def run(self):
@@ -73,32 +74,34 @@ class JPGImpl(CommonFunctions):
         core.setupCore()
 
         tr_source = self.opts.tree_source
-        for phi in [.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0]:
-            if tr_source is not None:
-                print 'sf\tlog(avg. lnL)'
-                m = core.partition_model.getModel(0)
-                m.setScalingFactor(phi)
-                tree_index = 0
-                lnLarr = []
-                try:
-                    #tr_source.setActiveTaxonLabels(self.taxon_labels)
-                    it = iter(tr_source)
-                    while True:
-                        try:
-                            t = it.next()
-                        except StopIteration:
+        if tr_source is not None:
+            tree_index = 0
+            lnLarr = []
+            try:
+                #tr_source.setActiveTaxonLabels(self.taxon_labels)
+                it = iter(tr_source)
+                while True:
+                    try:
+                        t = it.next()
+                    except StopIteration:
+                        break
+                    tree_index += 1;
+                    if tree_index >= self.opts.fromtree:
+                        if tree_index > self.opts.totree:
                             break
-                        tree_index += 1;
-                        if tree_index >= self.opts.fromtree:
-                            if tree_index > self.opts.totree:
-                                break
-                            core.setTree(t)
-                            core.prepareForLikelihood()
+                        print 'tree',tree_index
+                        core.setTree(t)
+                        core.prepareForLikelihood()
+                        for rep in range(self.opts.nreps):
+                            m = core.partition_model.getModel(0)
+                            phi = self.opts.scaling_factor_prior.sample()
+                            print '  rep',rep,', phi =',phi
+                            m.setScalingFactor(phi)
                             lnL = core.calcLnLikelihood()
                             lnLarr.append(lnL)
-                    print '%g\t%g' % (m.getScalingFactor(),self._calcAvgLike(lnLarr))
-                except:
-                    self.stdout.error("Trees could not be obtained from tree_source")
-                    raise
+                print 'log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),)
+            except:
+                self.stdout.error("Trees could not be obtained from tree_source")
+                raise
 
         
