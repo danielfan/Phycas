@@ -218,6 +218,7 @@
 		D11D1AA21191C2A7009F9107 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		D11EF46B11AEE2ED00AAD3E0 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
 		D11EF46E11AEE30E00AAD3E0 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		D163E44C146A1A6B00F98F75 /* binary_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D163E44B146A1A6B00F98F75 /* binary_model.cpp */; };
 		D183E6D711668139002AB4A3 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 		D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
 		D19A8A0C11307E88001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
@@ -620,6 +621,7 @@
 		D155CD40146613E100988FD3 /* JPG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPG.py; path = ../../phycas/Phycas/JPG.py; sourceTree = "<group>"; };
 		D155CD41146613E100988FD3 /* JPGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPGImpl.py; path = ../../phycas/Phycas/JPGImpl.py; sourceTree = "<group>"; };
 		D1595F981222D95D00D9378D /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHANGES; path = ../../CHANGES; sourceTree = SOURCE_ROOT; };
+		D163E44B146A1A6B00F98F75 /* binary_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = binary_model.cpp; path = ../../phycas/src/binary_model.cpp; sourceTree = "<group>"; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1814096112C826C00D91CF6 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/danielsims/partition.py; sourceTree = SOURCE_ROOT; };
@@ -857,6 +859,7 @@
 				7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */,
 				7A0945DD10CAEFB900CEFDE0 /* internal_data.hpp */,
 				7A0945DE10CAEFB900CEFDE0 /* jc_model.cpp */,
+				D163E44B146A1A6B00F98F75 /* binary_model.cpp */,
 				D1EEBF561468330A000AB033 /* irreversible_model.cpp */,
 				7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */,
 				7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */,
@@ -1871,6 +1874,7 @@
 				7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */,
 				7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */,
 				D1EAD40F1468823E00361263 /* irreversible_model.cpp in Sources */,
+				D163E44C146A1A6B00F98F75 /* binary_model.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -140,6 +140,163 @@ class IrreversibleModel(IrreversibleModelBase):
         """
         IrreversibleModelBase.setPriorOnShapeInverse(self, invert)
 
+class BinaryModel(BinaryModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Encapsulates a simple 2-state Markov model with scaling factor
+    parameter phi, which whem multiplied by the edge length determines
+    the forward rate (state 0 -> 1), and a reverse/forward rate ratio,
+    rho, which when multiplied by both phi and the edge length 
+    determines the reverse rate.
+    
+    """
+    def getScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns current value of the scaling parameter, phi. The branch
+        lengths are multiplied by this scaling factor to allow the 
+        binary character to evolve at a different rate than the
+        characters used to generate branch lengths.
+        
+        """
+        return BinaryModelBase.getScalingFactor(self)
+    
+    def setScalingFactor(self, sf):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets value of scaling parameter phi to the supplied value sf. The
+        edge lengths are multiplied by this scaling factor to allow the 
+        binary character to evolve at a different rate than the
+        characters used to generate branch lengths.
+        
+        """
+        BinaryModelBase.setScalingFactor(self, sf)
+    
+    def fixScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Fixes value of the scaling_factor phi to its current value.
+        
+        """
+        BinaryModelBase.fixScalingFactor(self)
+    
+    def freeScalingFactor(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Frees scaling factor phi so that it can be modified during MCMC
+        analyses.
+        
+        """
+        BinaryModelBase.freeScalingFactor(self)
+    
+    def getRevForRateRatio(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns current value of the reverse/forward rate ratio, rho.        
+        """
+        return BinaryModelBase.getRevForRateRatio(self)
+
+    def setRevForRateRatio(self, sf):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets value of reverse/forward rate ratio, rho, to the supplied value 
+        sf.
+        
+        """
+        BinaryModelBase.setRevForRateRatio(self, sf)
+
+    def fixRevForRateRatio(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Fixes value of the reverse/forward rate ratio rho to its current
+        value.
+        
+        """
+        BinaryModelBase.fixRevForRateRatio(self)
+
+    def freeRevForRateRatio(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Frees reverse/forward rate ratio rho so that it can be modified during
+        MCMC analyses.
+        
+        """
+        BinaryModelBase.freeRevForRateRatio(self)
+
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the number of states (always 2 for this model).
+        
+        """
+        return BinaryModelBase.getNStates(self)
+    
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a tuple comprising the 2 state frequencies. 
+        
+        >>> import phycas.Likelihood
+        >>> model = phycas.Likelihood.BinaryModel()
+        >>> print model.getStateFreqs()
+        (0.5,0.5)
+        
+        """
+        return BinaryModelBase.getStateFreqs(self)
+    
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets both frequencies to 0.5.
+        
+        """
+        return BinaryModelBase.setAllFreqsEqual(self)
+    
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current number of relative rate categories.
+        
+        """
+        return BinaryModelBase.getNGammaRates(self)
+    
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the number of relative rate categories to n (n should be greater
+        than zero).
+        
+        """
+        BinaryModelBase.setNGammaRates(self, n)
+    
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a list each element of which is the probability that any given
+        site falls in its particular rate category.
+        
+        """
+        return BinaryModelBase.getRateProbs(self)
+    
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets all rate probabilities to the inverse of the number of rate
+        categories.
+        
+        """
+        BinaryModelBase.setAllRateProbsEqual(self)
+    
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        If True is specified, then the gamma shape parameter will actually
+        update the inverse of the shape parameter rather than the shape
+        parameter itself.
+        
+        """
+        BinaryModelBase.setPriorOnShapeInverse(self, invert)
+
 class JCModel(JCModelBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """

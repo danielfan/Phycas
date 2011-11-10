@@ -123,6 +123,18 @@ class LikelihoodCore(object):
                 m.setLossOnly()
             else:
                 m.setGainOnly()
+        elif model_spec.type in ['binary']:
+            m = Likelihood.BinaryModel()
+            m.setScalingFactor(model_spec.scaling_factor)
+            if model_spec.fix_scaling_factor:
+                m.fixScalingFactor()
+            else:
+                m.freeScalingFactor()
+            m.setRevForRateRatio(model_spec.rate_ratio)
+            if model_spec.fix_rate_ratio:
+                m.fixRevForRateRatio()
+            else:
+                m.freeRevForRateRatio()
         else:
             m = Likelihood.JCModel()
             

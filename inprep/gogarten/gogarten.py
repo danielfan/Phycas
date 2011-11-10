@@ -4,34 +4,6 @@ g_random_seed      = 13579
 g_data_file_name   = 'gogarten01.nex'
 g_tree_file_name   = 'gogarten.tre'
 
-# sf    avg. lnL
-# 0.5     -3.07528004645
-# 1.0     -2.46956902616
-# 1.5     -2.15795241251
-# 2.0     -1.96939280831
-# 2.5     -1.84974940417
-# 3.0     -1.7745875202
-# 3.5     -1.73067197465
-# 4.0     -1.7099700404
-# 4.5  *  -1.70721002709
-# 5.0     -1.71872906894
-# 5.5     -1.74186917796
-# 6.0     -1.77463469653
-# 6.5     -1.81548565567
-# 7.0     -1.86320677966
-# 7.5     -1.91682098632
-# 8.0     -1.97553028342
-# 8.5     -2.0386741941
-# 9.0     -2.10569977232
-# 9.5     -2.17613950173
-# 10.0    -2.24959469116
-
-def abort(message):
-    print 'Aborting...'
-    print 'Reason:',message
-    import sys
-    sys.exit(0)
-    
 def runMCMC(fnprefix):
     setMasterSeed(g_random_seed)
     
@@ -39,14 +11,15 @@ def runMCMC(fnprefix):
     blob = readFile(g_data_file_name)
     
     # set up model
-    model.type = 'loss'
+    model.type = 'gain'
     model.fix_scaling_factor = False
+    #model.scaling_factor_prior = ProbDist.Exponential(0.1)
     
     jpg.data_source = blob.characters    
     jpg.tree_source = TreeCollection(filename=g_tree_file_name)
+    jpg.scaling_factor_prior = ProbDist.Exponential(0.1)
     jpg.fromtree = 901
     jpg.totree = 1000
-    jpg.scaling_factor_prior = ProbDist.Exponential(0.1)
     jpg.nreps = 10
     jpg()
     
