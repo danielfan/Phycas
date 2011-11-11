@@ -31,7 +31,7 @@ using namespace phycas;
 |	Constructor sets `num_states' data member to 2 and 'root_state' data member to 1.
 */
 Irreversible::Irreversible()
-  : Model(2),root_present(true), phi(1.0)
+  : Model(2),root_present(true), scaling_factor(1.0)
 	{
     state_freq_fixed = true;
     setLossOnly();  // default is a parallel loss model
@@ -42,37 +42,53 @@ Irreversible::Irreversible()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi_fixed' data member to false.
+|	Sets `scaling_factor_fixed' data member to false.
 */
 void Irreversible::freeScalingFactor() 
     {
-    phi_fixed = false;
+    scaling_factor_fixed = false;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi_fixed' data member to true.
+|	Sets `scaling_factor_fixed' data member to true.
 */
 void Irreversible::fixScalingFactor() 
     {
-    phi_fixed = true;
+    scaling_factor_fixed = true;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
- |	Returns current value of the `phi' data member.
+ |	Returns current value of the `scaling_factor' data member.
  */
 double Irreversible::getScalingFactor()
     {
-    return phi;
+    return scaling_factor;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi' data member to the supplied scaling factor `sf'. Assumes `sf' is greater than or equal to zero.
+|	Sets `scaling_factor' data member to the supplied scaling factor `sf'. Assumes `sf' is greater than or equal to zero.
 */
 void Irreversible::setScalingFactor(
-  double sf)    /**< is the new value of phi */
+  double sf)    /**< is the new value of scaling_factor */
     {
     PHYCAS_ASSERT(sf >= 0.0);
-    phi = sf;
+    scaling_factor = sf;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `kappa_prior'.
+*/
+ProbDistShPtr Irreversible::getScalingFactorPrior()
+    {
+	return scaling_factor_prior;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `kappa_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
+*/
+void Irreversible::setScalingFactorPrior(ProbDistShPtr d)
+    {
+	scaling_factor_prior = d;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -149,14 +165,14 @@ std::string Irreversible::paramReport(
 |>
 |	P00 = 0
 |	P01 = 0
-|	P10 = 1 - exp{-phi*edgeLength}
-|	P11 = exp{-phi*edgeLength}
+|	P10 = 1 - exp{-scaling_factor*edgeLength}
+|	P11 = exp{-scaling_factor*edgeLength}
 |>
-|	where phi is a scaling factor parameter that should be a value different than 1 only if edge lengths are generated
+|	where the scaling_factor parameter should be a value different than 1 only if edge lengths are generated
 |   from characters other than this character. For the IrreversibleGain model, the transition probabilities are:
 |>
-|	P00 = exp{-phi*edgeLength}
-|	P01 = 1 - exp{-phi*edgeLength}
+|	P00 = exp{-scaling_factor*edgeLength}
+|	P01 = 1 - exp{-scaling_factor*edgeLength}
 |	P10 = 0
 |	P11 = 0
 |>
@@ -166,7 +182,7 @@ void Irreversible::calcPMat(double * * pMat, double edgeLength) const
 	// The next two lines fix the "Jockusch" bug (see bug 8 in the BUGS file for details)
     if (edgeLength < 1.e-8) 
         edgeLength = 1.e-8; //TreeNode::edgeLenEpsilon;
-	const double exp_term = exp(-phi*edgeLength);
+	const double exp_term = exp(-scaling_factor*edgeLength);
     const double prob_change = 1.0 - exp_term;
 	const double prob_nochange = exp_term;
 	PHYCAS_ASSERT(prob_change >= 0.0);

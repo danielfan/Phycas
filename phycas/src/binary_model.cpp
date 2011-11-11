@@ -31,7 +31,7 @@ using namespace phycas;
 |	Constructor sets `num_states' data member to 2 and 'root_state' data member to 1.
 */
 Binary::Binary()
-  : Model(2),phi(1.0),rho(1.0)
+  : Model(2),scaling_factor(1.0),rho(1.0)
 	{
     state_freq_fixed = false;
         
@@ -41,37 +41,37 @@ Binary::Binary()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi_fixed' data member to false.
+|	Sets `scaling_factor_fixed' data member to false.
 */
 void Binary::freeScalingFactor() 
     {
-    phi_fixed = false;
+    scaling_factor_fixed = false;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi_fixed' data member to true.
+|	Sets `scaling_factor_fixed' data member to true.
 */
 void Binary::fixScalingFactor() 
     {
-    phi_fixed = true;
+    scaling_factor_fixed = true;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns current value of the `phi' data member.
+|	Returns current value of the `scaling_factor' data member.
 */
 double Binary::getScalingFactor()
     {
-    return phi;
+    return scaling_factor;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `phi' data member to the supplied scaling factor `sf'. Assumes `sf' is greater than or equal to zero.
+|	Sets `scaling_factor' data member to the supplied scaling factor `sf'. Assumes `sf' is greater than or equal to zero.
 */
 void Binary::setScalingFactor(
-  double sf)    /**< is the new value of phi */
+  double sf)    /**< is the new value of scaling_factor */
     {
     PHYCAS_ASSERT(sf >= 0.0);
-    phi = sf;
+    scaling_factor = sf;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ double Binary::getRevForRateRatio()
 |	Sets `rho' data member to the supplied reverse/forward rate ratio `r'. Assumes `r' is greater than or equal to zero.
 */
 void Binary::setRevForRateRatio(
-  double r)    /**< is the new value of phi */
+  double r)    /**< is the new value of scaling_factor */
     {
     PHYCAS_ASSERT(r >= 0.0);
     rho = r;
@@ -142,7 +142,7 @@ std::string Binary::paramReport(
     {
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s = "";
-    s += str(boost::format(fmt) % phi);
+    s += str(boost::format(fmt) % scaling_factor);
     s += str(boost::format(fmt) % rho);
     s += str(boost::format(fmt) % state_freqs[0]);
 	s += str(boost::format(fmt) % state_freqs[1]);

@@ -114,6 +114,7 @@ class LikelihoodCore(object):
                 m.fixStateFreqs()
         elif model_spec.type in ['loss','gain']:
             m = Likelihood.IrreversibleModel()
+            m.setScalingFactorPrior(model_spec.scaling_factor_prior.cloneAndSetLot(self.r)) # shouldn't be here (in LikelihoodCore)
             m.setScalingFactor(model_spec.scaling_factor)
             if model_spec.fix_scaling_factor:
                 m.fixScalingFactor()

@@ -143,17 +143,17 @@ class IrreversibleModel(IrreversibleModelBase):
 class BinaryModel(BinaryModelBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Encapsulates a simple 2-state Markov model with scaling factor
-    parameter phi, which whem multiplied by the edge length determines
+    Encapsulates a simple 2-state Markov model with scaling_factor
+    parameter, which whem multiplied by the edge length determines
     the forward rate (state 0 -> 1), and a reverse/forward rate ratio,
-    rho, which when multiplied by both phi and the edge length 
+    rho, which when multiplied by both scaling_factor and the edge length 
     determines the reverse rate.
     
     """
     def getScalingFactor(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns current value of the scaling parameter, phi. The branch
+        Returns current value of the scaling_factor parameter. The branch
         lengths are multiplied by this scaling factor to allow the 
         binary character to evolve at a different rate than the
         characters used to generate branch lengths.
@@ -164,7 +164,7 @@ class BinaryModel(BinaryModelBase):
     def setScalingFactor(self, sf):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets value of scaling parameter phi to the supplied value sf. The
+        Sets value of scaling_factor parameter to the supplied value sf. The
         edge lengths are multiplied by this scaling factor to allow the 
         binary character to evolve at a different rate than the
         characters used to generate branch lengths.
@@ -175,7 +175,7 @@ class BinaryModel(BinaryModelBase):
     def fixScalingFactor(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Fixes value of the scaling_factor phi to its current value.
+        Fixes value of the scaling_factor to its current value.
         
         """
         BinaryModelBase.fixScalingFactor(self)
@@ -183,7 +183,7 @@ class BinaryModel(BinaryModelBase):
     def freeScalingFactor(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Frees scaling factor phi so that it can be modified during MCMC
+        Frees scaling_factor so that it can be modified during MCMC
         analyses.
         
         """

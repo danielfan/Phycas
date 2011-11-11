@@ -237,13 +237,17 @@ public:
     void                    setScalingFactor(double sf);
     double                  getScalingFactor();
     
+    void                    setScalingFactorPrior(ProbDistShPtr d);
+    ProbDistShPtr           getScalingFactorPrior();
+    
     void                    setGainOnly();
     void                    setLossOnly();
     
 protected:
-    double  phi;            /**< Scaling factor parameter. Allows rate of evolution to depart from that implied by the edge lengths (i.e. phi = 1.0) */
-    bool    phi_fixed;      /**< If true (default), scaling factor parameter phi will not be modified during MCMC analyses */
-    bool    root_present;   /**< If true (default), root state is assumed to be 1 and only losses are allowed; if false, root state is assumed to be 0 and only gains are allowed */
+	ProbDistShPtr           scaling_factor_prior;		/**< The prior distribution governing scaling_factor */
+    double                  scaling_factor;            /**< Scaling factor parameter. Allows rate of evolution to depart from that implied by the edge lengths (i.e. scaling_factor = 1.0) */
+    bool                    scaling_factor_fixed;      /**< If true (default), scaling_factor parameter will not be modified during MCMC analyses */
+    bool                    root_present;   /**< If true (default), root state is assumed to be 1 and only losses are allowed; if false, root state is assumed to be 0 and only gains are allowed */
 };
 
 typedef boost::shared_ptr<Irreversible> IrreversibleShPtr;
@@ -279,8 +283,8 @@ public:
     double                  getRevForRateRatio();
     
 protected:
-    double  phi;            /**< Scaling factor parameter. Allows rate of evolution to depart from that implied by the edge lengths (i.e. phi = 1.0) */
-    bool    phi_fixed;      /**< If true (default), scaling factor parameter phi will not be modified during MCMC analyses */
+    double  scaling_factor;            /**< scaling_factor parameter. Allows rate of evolution to depart from that implied by the edge lengths (i.e. scaling_factor = 1.0) */
+    bool    scaling_factor_fixed;      /**< If true (default), scaling_factor parameter will not be modified during MCMC analyses */
     double  rho;            /**< Reverse/forward rate ratio parameter. */
     bool    rho_fixed;      /**< If true (default), Reverse/forward rate ratio parameter rho will not be modified during MCMC analyses */
     bool    root_present;   /**< If true (default), root state is assumed to be 1 and only losses are allowed; if false, root state is assumed to be 0 and only gains are allowed */

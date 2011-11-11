@@ -19,7 +19,7 @@ class JPGImpl(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
-        self.opts = opts
+        self.opts   = opts
 
     def getStartingTree(self):
         """
@@ -27,13 +27,6 @@ class JPGImpl(CommonFunctions):
         """
         return None
 
-    def _setupModel(self):
-        """
-            
-        """
-        self.phycassert(self.datatype == 1, 'Expecting standard datatype (i.e. presence/absence data)')
-        # begin again here
-    
     def _loadData(self):
         """
             
@@ -59,7 +52,6 @@ class JPGImpl(CommonFunctions):
         maxLnL = max(like_list)
         n = float(len(like_list))
         tmp = [math.exp(x - maxLnL) for x in like_list]
-        print 'In _calcAvgLike: maxLnL = %g, n = %d' % (maxLnL,n) 
         return maxLnL - math.log(n) + math.log(sum(tmp)) 
         
     def run(self):
@@ -68,13 +60,14 @@ class JPGImpl(CommonFunctions):
             
         """
         self._loadData()
-        self._setupModel()
         
         core = LikelihoodCore(self)
         core.setupCore()
 
         tr_source = self.opts.tree_source
         if tr_source is not None:
+            m = core.partition_model.getModel(0)
+            d = m.getScalingFactorPrior()
             tree_index = 0
             lnLarr = []
             try:
@@ -89,17 +82,16 @@ class JPGImpl(CommonFunctions):
                     if tree_index >= self.opts.fromtree:
                         if tree_index > self.opts.totree:
                             break
-                        print 'tree',tree_index
+                        self.output('tree %d' % tree_index)
                         core.setTree(t)
                         core.prepareForLikelihood()
                         for rep in range(self.opts.nreps):
-                            m = core.partition_model.getModel(0)
-                            phi = self.opts.scaling_factor_prior.sample()
-                            print '  rep',rep,', phi =',phi
+                            phi = d.sample()
+                            self.output('  rep = %g, phi = %g' % (rep,phi))
                             m.setScalingFactor(phi)
                             lnL = core.calcLnLikelihood()
                             lnLarr.append(lnL)
-                print 'log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),)
+                self.output('log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),))
             except:
                 self.stdout.error("Trees could not be obtained from tree_source")
                 raise
