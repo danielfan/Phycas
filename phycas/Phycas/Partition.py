@@ -99,6 +99,15 @@ class Partition(PhycasCommand):
         
     def noData(self):
         return not self.is_data 
+
+    def resetPartition(self):
+        """
+        Returns object to the state it was in when first constructed: subset and sitemodel are both empty lists
+        and is_data is False.
+        """
+        self.is_data = False
+        self.subset = []
+        self.sitemodel = []
         
     def validate(self, nsites):
         """

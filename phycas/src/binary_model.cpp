@@ -125,6 +125,9 @@ void Binary::setKappa(
     {
     PHYCAS_ASSERT(k >= 0.0);
     kappa = k;
+    state_freqs[0] = 1.0/(1.0 + kappa);
+    state_freqs[1] = 1.0 - state_freqs[0];
+        
 }   
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -201,8 +204,8 @@ void Binary::calcPMat(double * * pMat, double edgeLength) const
     if (edgeLength < 1.e-8) 
         edgeLength = 1.e-8; //TreeNode::edgeLenEpsilon;
 	const double exp_term = exp(-edgeLength*scaling_factor*pow(1.0 + kappa,2.0)/(2.0*kappa));
-    const double pi0 = 1.0/(1.0 + kappa);
-    const double pi1 = kappa/(1.0 + kappa);
+    const double pi0 = state_freqs[0];
+    const double pi1 = state_freqs[1];
 	pMat[0][0] = pi0 + pi1*exp_term;
 	pMat[0][1] = pi1 - pi1*exp_term;
 	pMat[1][0] = pi0 - pi0*exp_term;

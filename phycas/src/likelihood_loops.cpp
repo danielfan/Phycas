@@ -234,6 +234,9 @@ void TreeLikelihood::calcCLATwoTips(
                     double leftprob = leftPMatTRow[s];
                     double rightprob = rightPMatTRow[s];
                     cla[s] = leftprob*rightprob;
+                        
+                    //@POLTEMP
+                    //std::cerr << boost::str(boost::format("subset=%d, rate=%d, pattern=%d, state=%d, left=%g, right=%g, cla=%g") % i % r % p % s % leftprob % rightprob % cla[s]) << std::endl;
                     }
                 }
             }
@@ -1178,7 +1181,12 @@ double TreeLikelihood::harvestLnLFromValidNode(
 				const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
 				double siteLike_r = 0.0;	
 				for (unsigned i = 0; i < ns; ++i)
+                    {
 					siteLike_r += focalNdCLAPtr_r[i]*stateFreq[i];
+                    
+                    //@POLTEMP
+                    //std::cerr << boost::str(boost::format("pat=%d, rate=%d, state=%d, cla=%g, freq=%g, like=%g") % pat % r % i % focalNdCLAPtr_r[i] % stateFreq[i] % siteLike_r) << std::endl;
+                    }
 				siteLike += rateCatProbArray[r]*siteLike_r;
 				focalNdCLAPtr[r] += ns;
 				}

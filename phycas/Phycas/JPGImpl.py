@@ -19,7 +19,8 @@ class JPGImpl(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
-        self.opts   = opts
+        self.opts       = opts
+        self.detailsf   = None
 
     def getStartingTree(self):
         """
@@ -53,13 +54,34 @@ class JPGImpl(CommonFunctions):
         n = float(len(like_list))
         tmp = [math.exp(x - maxLnL) for x in like_list]
         return maxLnL - math.log(n) + math.log(sum(tmp)) 
+
+    def detailsFileOpen(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Opens the sampling details file and writes a header line.
         
+        """
+        details_file_spec = self.opts.out.details
+        self.detailsf = None
+        try:
+            self.detailsf = details_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open details file (%s) failed.' % self.opts.out.details.filename
+        
+        if self.detailsf:
+            self.detailsf.write('tree\trep\tscaling factor\tkappa\tlog-likelihood\n')
+
+    def detailsFileClose(self):
+        if self.detailsf is not None:
+            self.detailsf.close()
+
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
             
         """
         self._loadData()
+        partition.resetPartition()
         partition.validate(self.nchar)
         
         core = LikelihoodCore(self)
@@ -70,9 +92,7 @@ class JPGImpl(CommonFunctions):
             self.stdout.error("Expecting just one model, but found %d models" % (len(model_specs),))
             return
         mspec = model_specs[0]
-        print 'mspec.type =',mspec.type
         m = core.partition_model.getModel(0)
-        self.output('Model name: %s' % (m.getModelName(),))
 
         kdist = None
         sfdist = None
@@ -92,6 +112,9 @@ class JPGImpl(CommonFunctions):
         if tr_source is None:
             self.stdout.error("Tree source does not appear to have been specified")
             return
+
+        self.detailsFileOpen()
+        self.output('Model name: %s' % (m.getModelName(),))
                               
         tree_index = 0
         lnLarr = []
@@ -107,7 +130,6 @@ class JPGImpl(CommonFunctions):
                 if tree_index >= self.opts.fromtree:
                     if tree_index > self.opts.totree:
                         break
-                    self.output('tree %d' % tree_index)
                     core.setTree(t)
                     core.prepareForLikelihood()
                     for rep in range(self.opts.nreps):
@@ -116,14 +138,20 @@ class JPGImpl(CommonFunctions):
                         if kdist is not None:
                             k = kdist.sample()
                             m.setKappa(k)
-                            self.output('  rep = %g, phi = %g, kappa = %g' % (rep,phi,k))
-                        else:
-                            self.output('  rep = %g, phi = %g' % (rep,phi))
                         lnL = core.calcLnLikelihood()
                         lnLarr.append(lnL)
-            self.output('log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),))
+                        if self.detailsf:
+                            if kdist is not None:
+                                self.detailsf.write('%d\t%d\t%g\t%g\t%g\n' % (tree_index,rep+1,phi,k,lnL))
+                            else:
+                                self.detailsf.write('%d\t%d\t%g\t\t%g\n' % (tree_index,rep+1,phi,lnL))
+            if len(lnLarr) > 0:
+                self.output('log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),))
+            else:
+                self.stdout.error("Sample array empty, possibly because from and to settings are incorrect for the tree file being processed")
         except:
             self.stdout.error("Analysis could not be completed (sorry, I can't tell you why)")
             raise
 
+        self.detailsFileClose()
         
