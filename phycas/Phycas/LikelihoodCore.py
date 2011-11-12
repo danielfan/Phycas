@@ -114,7 +114,6 @@ class LikelihoodCore(object):
                 m.fixStateFreqs()
         elif model_spec.type in ['loss','gain']:
             m = Likelihood.IrreversibleModel()
-            m.setScalingFactorPrior(model_spec.scaling_factor_prior.cloneAndSetLot(self.r)) # shouldn't be here (in LikelihoodCore)
             m.setScalingFactor(model_spec.scaling_factor)
             if model_spec.fix_scaling_factor:
                 m.fixScalingFactor()
@@ -131,11 +130,11 @@ class LikelihoodCore(object):
                 m.fixScalingFactor()
             else:
                 m.freeScalingFactor()
-            m.setRevForRateRatio(model_spec.rate_ratio)
-            if model_spec.fix_rate_ratio:
-                m.fixRevForRateRatio()
+            m.setKappa(model_spec.kappa)
+            if model_spec.fix_kappa:
+                m.fixKappa()
             else:
-                m.freeRevForRateRatio()
+                m.freeKappa()
         else:
             m = Likelihood.JCModel()
             

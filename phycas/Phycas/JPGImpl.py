@@ -60,40 +60,70 @@ class JPGImpl(CommonFunctions):
             
         """
         self._loadData()
+        partition.validate(self.nchar)
         
         core = LikelihoodCore(self)
         core.setupCore()
 
+        model_specs = partition.getModels()
+        if len(model_specs) != 1:
+            self.stdout.error("Expecting just one model, but found %d models" % (len(model_specs),))
+            return
+        mspec = model_specs[0]
+        print 'mspec.type =',mspec.type
+        m = core.partition_model.getModel(0)
+        self.output('Model name: %s' % (m.getModelName(),))
+
+        kdist = None
+        sfdist = None
+        if m.__class__.__name__ == Likelihood.IrreversibleModel.__name__:
+            m.setScalingFactorPrior(mspec.scaling_factor_prior.cloneAndSetLot(self.opts.rng))
+            sfdist = m.getScalingFactorPrior()
+        elif m.__class__.__name__ == Likelihood.BinaryModel.__name__:
+            m.setScalingFactorPrior(mspec.scaling_factor_prior.cloneAndSetLot(self.opts.rng))
+            sfdist = m.getScalingFactorPrior()
+            m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.opts.rng))
+            kdist = m.getKappaPrior()
+        else:
+            self.stdout.error("Expecting model to be type 'gain', 'loss' or 'binary', but instead found type %s" % (mspec.type,))
+            return
+
         tr_source = self.opts.tree_source
-        if tr_source is not None:
-            m = core.partition_model.getModel(0)
-            d = m.getScalingFactorPrior()
-            tree_index = 0
-            lnLarr = []
-            try:
-                #tr_source.setActiveTaxonLabels(self.taxon_labels)
-                it = iter(tr_source)
-                while True:
-                    try:
-                        t = it.next()
-                    except StopIteration:
+        if tr_source is None:
+            self.stdout.error("Tree source does not appear to have been specified")
+            return
+                              
+        tree_index = 0
+        lnLarr = []
+        try:
+            #tr_source.setActiveTaxonLabels(self.taxon_labels)
+            it = iter(tr_source)
+            while True:
+                try:
+                    t = it.next()
+                except StopIteration:
+                    break
+                tree_index += 1;
+                if tree_index >= self.opts.fromtree:
+                    if tree_index > self.opts.totree:
                         break
-                    tree_index += 1;
-                    if tree_index >= self.opts.fromtree:
-                        if tree_index > self.opts.totree:
-                            break
-                        self.output('tree %d' % tree_index)
-                        core.setTree(t)
-                        core.prepareForLikelihood()
-                        for rep in range(self.opts.nreps):
-                            phi = d.sample()
+                    self.output('tree %d' % tree_index)
+                    core.setTree(t)
+                    core.prepareForLikelihood()
+                    for rep in range(self.opts.nreps):
+                        phi = sfdist.sample()
+                        m.setScalingFactor(phi)
+                        if kdist is not None:
+                            k = kdist.sample()
+                            m.setKappa(k)
+                            self.output('  rep = %g, phi = %g, kappa = %g' % (rep,phi,k))
+                        else:
                             self.output('  rep = %g, phi = %g' % (rep,phi))
-                            m.setScalingFactor(phi)
-                            lnL = core.calcLnLikelihood()
-                            lnLarr.append(lnL)
-                self.output('log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),))
-            except:
-                self.stdout.error("Trees could not be obtained from tree_source")
-                raise
+                        lnL = core.calcLnLikelihood()
+                        lnLarr.append(lnL)
+            self.output('log avg. likelihood = %g' % (self._calcAvgLike(lnLarr),))
+        except:
+            self.stdout.error("Analysis could not be completed (sorry, I can't tell you why)")
+            raise
 
         

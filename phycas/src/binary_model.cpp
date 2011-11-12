@@ -31,13 +31,16 @@ using namespace phycas;
 |	Constructor sets `num_states' data member to 2 and 'root_state' data member to 1.
 */
 Binary::Binary()
-  : Model(2),scaling_factor(1.0),rho(1.0)
+  : Model(2),scaling_factor(1.0),kappa(1.0)
 	{
     state_freq_fixed = false;
         
+    state_freqs[0] = 0.5;
+    state_freqs[1] = 0.5;
+        
     state_repr.reserve(2);
-	state_repr.push_back("0.5");
-	state_repr.push_back("0.5");
+	state_repr.push_back("0");
+	state_repr.push_back("1");
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -75,38 +78,70 @@ void Binary::setScalingFactor(
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `rho_fixed' data member to false.
+|	Returns current value of data member `scaling_factor_prior'.
 */
-void Binary::freeRevForRateRatio() 
+ProbDistShPtr Binary::getScalingFactorPrior()
     {
-    rho_fixed = false;
+	return scaling_factor_prior;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `rho_fixed' data member to true.
+|	Sets `scaling_factor_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
 */
-void Binary::fixRevForRateRatio() 
+void Binary::setScalingFactorPrior(ProbDistShPtr d)
     {
-    rho_fixed = true;
+	scaling_factor_prior = d;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns current value of the `rho' data member.
+|	Sets `kappa_fixed' data member to false.
 */
-double Binary::getRevForRateRatio()
+void Binary::freeKappa() 
     {
-    return rho;
+    kappa_fixed = false;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `rho' data member to the supplied reverse/forward rate ratio `r'. Assumes `r' is greater than or equal to zero.
+|	Sets `kappa_fixed' data member to true.
 */
-void Binary::setRevForRateRatio(
-  double r)    /**< is the new value of scaling_factor */
+void Binary::fixKappa() 
     {
-    PHYCAS_ASSERT(r >= 0.0);
-    rho = r;
+    kappa_fixed = true;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of the `kappa' data member.
+*/
+double Binary::getKappa()
+    {
+    return kappa;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `kappa' data member to the supplied forward/reverse rate ratio `k'. Assumes `k' is greater than or equal to zero.
+*/
+void Binary::setKappa(
+  double k)    /**< is the new value of kappa */
+    {
+    PHYCAS_ASSERT(k >= 0.0);
+    kappa = k;
 }   
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member 'kappa_prior'.
+*/
+ProbDistShPtr Binary::getKappaPrior()
+    {
+	return kappa_prior;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `kappa_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
+*/
+void Binary::setKappaPrior(ProbDistShPtr d)
+    {
+	kappa_prior = d;
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a string indicating the name of this model, namely "Binary", "Binary+I", "Binary+G", or "Binary+I+G".
@@ -143,7 +178,7 @@ std::string Binary::paramReport(
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s = "";
     s += str(boost::format(fmt) % scaling_factor);
-    s += str(boost::format(fmt) % rho);
+    s += str(boost::format(fmt) % kappa);
     s += str(boost::format(fmt) % state_freqs[0]);
 	s += str(boost::format(fmt) % state_freqs[1]);
 	s += Model::paramReport(ndecimals, include_edgelen_hyperparams);
@@ -151,21 +186,13 @@ std::string Binary::paramReport(
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
- |	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 
+ |	Computes the transition probability matrix given an edge length v. Overrides the pure virtual function inherited from 
  |	the base class Model. For the Binary model, the transition probabilities are:
  |>
- |	P00 = pi[0] + (1 - pi[0])*exp{-beta*t}
- |	P01 = pi[1] - pi[1]*exp{-beta*t}
- |	P10 = pi[0] - pi[0]*exp{-beta*t}
- |	P11 = pi[1] + (1 - pi[1])*exp{-beta*t}
- |>
- |	The evolutionary distance `edgeLength' = beta*t, so as a function of edge length, the transition probabilities
- |	are:
- |>
- |	P00 = pi[0] + (1 - pi[0])*exp{-edgeLength}
- |	P01 = pi[1] - pi[1]*exp{-edgeLength}
- |	P10 = pi[0] - pi[0]*exp{-edgeLength}
- |	P11 = pi[1] + (1 - pi[1])*exp{-edgeLength}
+ |	P00 = [1/(1+k)] + [k/(1+k)] exp{-v(1+k)^2/(2k)}
+ |	P01 = [k/(1+k)] - [k/(1+k)] exp{-v(1+k)^2/(2k)}
+ |	P10 = [1/(1+k)] - [1/(1+k)] exp{-v(1+k)^2/(2k)}
+ |	P11 = [k/(1+k)] + [k/(1+k)] exp{-v(1+k)^2/(2k)}
  |>
  */
 void Binary::calcPMat(double * * pMat, double edgeLength) const
@@ -173,13 +200,13 @@ void Binary::calcPMat(double * * pMat, double edgeLength) const
 	// The next two lines fix the "Jockusch" bug (see bug 8 in the BUGS file for details)
     if (edgeLength < 1.e-8) 
         edgeLength = 1.e-8; //TreeNode::edgeLenEpsilon;
-	const double exp_term = exp(-edgeLength);
-	double pi0 = state_freqs[0];
-	double pi1 = state_freqs[1];
-	pMat[0][0] = pi0 + (1 - pi0)*exp_term;
+	const double exp_term = exp(-edgeLength*scaling_factor*pow(1.0 + kappa,2.0)/(2.0*kappa));
+    const double pi0 = 1.0/(1.0 + kappa);
+    const double pi1 = kappa/(1.0 + kappa);
+	pMat[0][0] = pi0 + pi1*exp_term;
 	pMat[0][1] = pi1 - pi1*exp_term;
 	pMat[1][0] = pi0 - pi0*exp_term;
-	pMat[1][1] = pi1 + (1 - pi1)*exp_term;
+	pMat[1][1] = pi1 + pi0*exp_term;
 }
 
 /*----------------------------------------------------------------------------------------------------------------------

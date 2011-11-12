@@ -4,7 +4,7 @@ from phycas.ProbDist import Beta, Exponential, InverseGamma, Dirichlet
 class Model(PhycasCommand):
     def __init__(self):
         args = ( 
-                ("type",                       'hky',                                "Can be 'gain', 'loss', 'jc', 'hky', 'gtr' or 'codon'", EnumArgValidate(['gain', 'loss', 'jc', 'hky', 'gtr', 'codon'])),
+                ("type",                       'hky',                                "Can be 'gain', 'loss', 'binary', 'jc', 'hky', 'gtr' or 'codon'", EnumArgValidate(['gain', 'loss', 'binary', 'jc', 'hky', 'gtr', 'codon'])),
                 ("update_relrates_separately", True,                                 "If True, GTR relative rates will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
                 ("relrate_prior",              Dirichlet([1.0,1.0,1.0,1.0,1.0,1.0]), "The joint prior distribution for all six GTR relative rate parameters. Used only if update_relrates_separately is False."),
                 ("relrate_param_prior",        Exponential(1.0),                     "The prior distribution for individual GTR relative rate parameters.  Used only if update_relrates_separately is true."),

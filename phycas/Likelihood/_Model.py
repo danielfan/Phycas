@@ -145,7 +145,7 @@ class BinaryModel(BinaryModelBase):
     """
     Encapsulates a simple 2-state Markov model with scaling_factor
     parameter, which whem multiplied by the edge length determines
-    the forward rate (state 0 -> 1), and a reverse/forward rate ratio,
+    the forward rate (state 0 -> 1), and a forward/reverse rate ratio,
     rho, which when multiplied by both scaling_factor and the edge length 
     determines the reverse rate.
     
@@ -189,39 +189,39 @@ class BinaryModel(BinaryModelBase):
         """
         BinaryModelBase.freeScalingFactor(self)
     
-    def getRevForRateRatio(self):
+    def getKappa(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns current value of the reverse/forward rate ratio, rho.        
+        Returns current value of the forward/reverse rate ratio, kappa.        
         """
-        return BinaryModelBase.getRevForRateRatio(self)
+        return BinaryModelBase.getKappa(self)
 
-    def setRevForRateRatio(self, sf):
+    def setKappa(self, k):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets value of reverse/forward rate ratio, rho, to the supplied value 
-        sf.
+        Sets value of forward/reverse rate ratio, kappa, to the supplied value 
+        k.
         
         """
-        BinaryModelBase.setRevForRateRatio(self, sf)
+        BinaryModelBase.setKappa(self, k)
 
-    def fixRevForRateRatio(self):
+    def fixKappa(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Fixes value of the reverse/forward rate ratio rho to its current
+        Fixes value of the forward/reverse rate ratio kappa to its current
         value.
         
         """
-        BinaryModelBase.fixRevForRateRatio(self)
+        BinaryModelBase.fixKappa(self)
 
-    def freeRevForRateRatio(self):
+    def freeKappa(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Frees reverse/forward rate ratio rho so that it can be modified during
+        Frees forward/reverse rate ratio kappa so that it can be modified during
         MCMC analyses.
         
         """
-        BinaryModelBase.freeRevForRateRatio(self)
+        BinaryModelBase.freeKappa(self)
 
     def getNStates(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

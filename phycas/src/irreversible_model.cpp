@@ -76,7 +76,7 @@ void Irreversible::setScalingFactor(
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns current value of data member `kappa_prior'.
+|	Returns current value of data member `scaling_factor_prior'.
 */
 ProbDistShPtr Irreversible::getScalingFactorPrior()
     {
@@ -84,7 +84,7 @@ ProbDistShPtr Irreversible::getScalingFactorPrior()
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `kappa_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
+|	Sets `scaling_factor_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
 */
 void Irreversible::setScalingFactorPrior(ProbDistShPtr d)
     {
