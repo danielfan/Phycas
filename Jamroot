@@ -197,6 +197,7 @@ alias likelihood_sources
     phycas/src/jc_model.cpp 
     phycas/src/kappa_param.cpp 
     phycas/src/internal_data.cpp 
+    phycas/src/binary_model.cpp
     phycas/src/irreversible_model.cpp
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/larget_simon_move.cpp
