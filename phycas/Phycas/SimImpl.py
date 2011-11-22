@@ -49,7 +49,12 @@ class SimImpl(CommonFunctions):
         self.getStartingTree()
         ntax = len(self.opts.taxon_labels)
         self.phycassert(ntax > 3, 'Must specify labels for at least four taxa')
-        self.phycassert(ntax == self.starting_tree.getNTips(), 'Number of tips in tree does not match number of taxon labels in taxon_labels')
+
+        ntips = self.starting_tree.getNTips()
+        if self.starting_tree.isRooted():
+            ntips -= 1
+        self.phycassert(ntax == ntips, 'Number of tips in tree (%d) does not match number of taxon labels in taxon_labels (%d)' % (ntips,ntax))
+
         core = LikelihoodCore(self)
         core.setupCore()
         if not core.tree.hasEdgeLens():

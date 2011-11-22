@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<book xmlns="http://docbook.org/ns/docbook" 
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Phycas</title>
+        <author>
+            <orgname>Paul O. Lewis</orgname>
+            <address>
+                <otheraddr>Department of Ecology &amp; Evolutionary Biology</otheraddr>
+                <otheraddr>University of Connecticut</otheraddr>
+                <city>Storrs</city>
+                <street>75 N. Eagleville Road, Unit 3043</street>
+                <postcode>06269-3043</postcode>
+                <country>U.S.A.</country>
+            </address>
+            <email>paul.lewis@uconn.edu</email>
+        </author>
+    </info>
+    <part>
+        <title>User's Guide</title>
+        <subtitle>Using Phycas for Bayesian Phylogenetic Analyses</subtitle>
+        <chapter>
+            <title>Getting Started</title>
+            <sect1>
+                <title>The simplest analysis</title>
+                <para>Create a new plain text file in the folder (which should contain only the file
+                    green.nex. Name the new file basic.py and type (or copy/paste) the following
+                    lines in to the file:</para>
+                <example xml:id="ex.basic"><title>basic.py</title><programlisting  language="python">
+from phycas import *
+setMasterSeed(98765)
+mcmc.data_source = 'green.nex'
+mcmc.out.log = 'basic.log'
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees.prefix = 'green'
+mcmc.out.params.prefix = 'green'
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
+mcmc()
+</programlisting></example>
+            </sect1>
+        </chapter>
+    </part>
+    <part>
+        <title>Developer's Guide</title>
+        <subtitle>The nitty-gritty details</subtitle>
+        <chapter>
+            <title>Data storage</title>
+            <sect1>
+                <title>Section1 Title</title>
+                <subtitle>Subtitle of Section 1</subtitle>
+                <para>Text</para>
+            </sect1>
+        </chapter>
+    </part>
+</book>

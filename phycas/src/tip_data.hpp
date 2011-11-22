@@ -126,10 +126,8 @@ class TipData
 	friend class SimData;
 
 	public:
-													// this constructor only used for simulations, and thus will be converted to work with partitioning later
-													TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorageShPtr cla_storage);
-													
 													TipData(bool using_unimap, PartitionModelShPtr partition, const state_list_pos_vect_t & positions, const state_list_vect_t & states, CondLikelihoodStorageShPtr cla_storage);
+													TipData(PartitionModelShPtr partition, CondLikelihoodStorageShPtr cla_storage);// this constructor only used for simulations
                                            	 		~TipData();
 	
 		const double * const * const *				getConstTransposedPMatrices(unsigned i) const;

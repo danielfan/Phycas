@@ -165,6 +165,7 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
+		void							patternMapToVect(const pattern_map_vect_t & pattern_map_vect, pattern_to_sites_map_t & pattern_to_sites_map);
 		void							copyDataFromDiscreteMatrix(const CharSuperMatrix *, const std::vector<unsigned> & partition_info);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 

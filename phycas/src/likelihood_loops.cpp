@@ -137,20 +137,22 @@ void TreeLikelihood::calcTMatForSim(
   TipData &	tipData, 
   double	edgeLength)
 	{
-#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
-	double * * * transPMats = tipData.getTransposedPMatrices();
-	calcPMatCommon(transPMats,  edgeLength);
+    // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
+	double * * * transPMats = tipData.getTransposedPMatrices(0);    //POLSIM: 0 is first subset, need to generalize
+	calcPMatCommon(0, transPMats,  edgeLength);    //POLSIM: 0 is first subset, need to generalize
+
+    unsigned nr = partition_model->subset_num_rates[0]; //POLSIM: 0 is first subset, need to generalize
+    unsigned ns = partition_model->subset_num_states[0]; //POLSIM: 0 is first subset, need to generalize
 
 	// For each rate category, transpose the num_states x num_states portion of the matrices
-	for (unsigned rate = 0; rate < num_rates; ++rate)
+	for (unsigned rate = 0; rate < nr; ++rate)
 		{
 		double * * pMat = transPMats[rate];
 		//std::cerr << "Edge length: " << edgeLength << std::endl;
 		//DebugShowNuclTransMatrix(pMat, "Untransposed");
-		transpose(pMat, num_states);
+		transpose(pMat, ns);
 		//DebugShowNuclTransMatrix(pMat, "Transposed");
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

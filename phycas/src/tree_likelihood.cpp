@@ -1978,7 +1978,7 @@ void TreeLikelihood::discardCacheAwayFromNode(
 */
 void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
     {
-#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
+    // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(sim_data);
 	PHYCAS_ASSERT(rng);
 	PHYCAS_ASSERT(nchar > 0);
@@ -2012,19 +2012,23 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 			else
 				{
 				InternalData & ndID = *(nd->GetInternalData());
-				calcPMat(ndID.getPMatrices(), nd->GetEdgeLen());
+				calcPMat(0, ndID.getPMatrices(0), nd->GetEdgeLen());   //POLSIM: 0 is first subset, need to generalize
 				}
 			}
 		}
 
+    //unsigned num_patterns = partition_model->subset_num_patterns[0];  //POLSIM: 0 is first subset, need to generalize
+    unsigned num_states = partition_model->subset_num_states[0];  //POLSIM: 0 is first subset, need to generalize
+    unsigned num_rates = partition_model->subset_num_rates[0];  //POLSIM: 0 is first subset, need to generalize
+
 	// Create a vector of cumulative state frequencies to use in choosing starting states
-	const std::vector<double> & freqs = model->getStateFreqs();
+	const std::vector<double> & freqs = partition_model->subset_model[0]->getStateFreqs();  //POLSIM: 0 is first subset, need to generalize
 	std::vector<double> cum_freqs(num_states, 0.0);
 	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
 
 	// Create a vector of cumulative rate probabilities to use in choosing relative rates
 	std::vector<double> cum_rate_probs(num_rates, 0.0);
-	std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
+	std::partial_sum(rate_probs[0].begin(), rate_probs[0].end(), cum_rate_probs.begin()); //POLSIM: 0 is first subset, need to generalize
 
 	sim_data->resetPatternLength(t->GetNTips());
 	sim_data->wipePattern();
@@ -2056,7 +2060,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		unsigned parent_state = (unsigned)j;
 
 		// Get the T matrix for the tip node serving as the root
-		double * * Tmatrix = rootTD.pMatrixTranspose[r];
+		//double * * Tmatrix = rootTD.pMatrixTranspose[r];
+		double * * Tmatrix = rootTD.getTransposedPMatrices(0)[r];   //POLSIM: 0 is first subset, need to generalize
 
 		// Choose a uniform random deviate
 		double u = rng->Uniform(FILE_AND_LINE);
@@ -2103,7 +2108,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 				{
 				// Get the T matrix
 				TipData & ndTD = *(nd->GetTipData());
-				double * * Tmatrix = ndTD.pMatrixTranspose[r];
+				//double * * Tmatrix = ndTD.pMatrixTranspose[r];
+                double * * Tmatrix = rootTD.getTransposedPMatrices(0)[r];   //POLSIM: 0 is first subset, need to generalize
 
 				// Choose a uniform random deviate
 				double u = rng->Uniform(FILE_AND_LINE);
@@ -2126,7 +2132,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 				{
 				// Get the T matrix
 				InternalData & ndID = *(nd->GetInternalData());
-				double * * Pmatrix = ndID.pMatrices[r];
+				//double * * Pmatrix = ndID.pMatrices[r];
+				double * * Pmatrix = ndID.getPMatrices(0)[r]; //POLSIM: 0 is first subset, need to generalize
 
 				// Choose a uniform random deviate
 				double u = rng->Uniform(FILE_AND_LINE);
@@ -2149,9 +2156,10 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		// We are now finished simulating data for one character, so insert the pattern just generated
 		// into the pattern map maintained by sim_data; the 1.0 means that the count for this pattern
 		// should be incremented by 1
-		sim_data->insertPattern(1.0);
+        uint_list_t tmplist;
+        tmplist.push_back(character);
+		sim_data->insertPattern(tmplist, 1.0);
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2798,7 +2806,7 @@ void deallocateInternalData(InternalData * p)
 void TreeLikelihood::prepareForSimulation(
   TreeShPtr t)			/**< is the tree to decorate */
 	{
-#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
+    // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 
@@ -2812,7 +2820,7 @@ void TreeLikelihood::prepareForSimulation(
 		{
 		if (nd->IsTip())
 			{
-			TipData * td =	new TipData(num_rates,	num_states, cla_pool);	//@POL should be using shared_ptr here?
+			TipData * td =	new TipData(partition_model, cla_pool);	
 			nd->SetTipData(td, td_deleter);
 			}
 		else
@@ -2821,7 +2829,6 @@ void TreeLikelihood::prepareForSimulation(
 			nd->SetInternalData(cl, cl_deleter);
 			}
 		}
-#endif
 	}
 		
 /*----------------------------------------------------------------------------------------------------------------------
@@ -3007,16 +3014,14 @@ void TreeLikelihood::debugCompressedDataInfo(
 |	`pattern_counts' given an original site index.
 */
 unsigned TreeLikelihood::compressDataMatrix(
-  const NxsCXXDiscreteMatrix & mat,			/**< is the data source */
-  const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
+  const NxsCXXDiscreteMatrix    & mat,              /**< is the data source */
+  const uint_vect_t             & partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
-	//std::cerr << "Entering TreeLikelihood::compressDataMatrix..." << std::endl;//tmp
-	
 	unsigned 						ntax 		= mat.getNTax();
 	unsigned 						nchar 		= mat.getNChar();
 	unsigned 						nsubsets 	= partition_model->getNumSubsets();	
 	
-	typedef std::vector< pattern_map_t > pattern_map_vect_t;
+	//typedef std::vector< pattern_map_t > pattern_map_vect_t;
 	pattern_map_vect_t 				pattern_map(nsubsets);
 	pattern_to_sites_map_t 			pattern_to_sites_map;
 	
@@ -3186,6 +3191,8 @@ unsigned TreeLikelihood::compressDataMatrix(
 			}	// not a codon model
 		}	// loop over sites
 	
+// ***** below here now done by patternMapToVect *****
+    
 	// Build subset_offset, pattern_counts, pattern_vect, pattern_to_sites and charIndexToPatternIndex before 
 	// leaving this function (whereupon pattern_map and pattern_to_sites_map will be destroyed)
 	unsigned npatterns = 0;
@@ -3275,6 +3282,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 		
 	PHYCAS_ASSERT(partition_model->getTotalNumPatterns() == pattern_index);
 	subset_offset.push_back(pattern_index);
+// ***** above here now done by patternMapToVect *****
 	
 	// There should no longer be any elements in charIndexToPatternIndex that have the value UINT_MAX
 	// If there are, the elements that still have the value UINT_MAX should correspond with indices stored in the all_missing vector
@@ -3291,30 +3299,132 @@ unsigned TreeLikelihood::compressDataMatrix(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Builds `pattern_vect' and `pattern_counts' using data stored in supplied `pattern_map'.
+*/
+void TreeLikelihood::patternMapToVect(
+  const pattern_map_vect_t & pattern_map_vect,          /**< is a vector of maps (one element per subset) whose keys are patterns and whose values are counts */
+  pattern_to_sites_map_t & pattern_to_sites_map)  /**< is a map whos keys are patterns and whose values are lists of site indices */
+    {
+	unsigned nsubsets = partition_model->getNumSubsets();	
+    
+	// Build subset_offset, pattern_counts, pattern_vect, pattern_to_sites and charIndexToPatternIndex before 
+	// leaving this function (whereupon pattern_map and pattern_to_sites_map will be destroyed)
+	unsigned npatterns = 0;
+	std::vector<unsigned> npatterns_vect(nsubsets, 0);
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		unsigned np = (unsigned)pattern_map_vect[i].size();
+		npatterns_vect[i] = np;
+		npatterns += np;
+		}
+
+	subset_offset.clear();
+	subset_offset.reserve(nsubsets + 1);
+	
+	pattern_counts.clear();
+	pattern_counts.reserve(npatterns);
+	
+	pattern_vect.clear();
+	pattern_vect.reserve(npatterns);
+	
+	pattern_to_sites.clear();
+	pattern_to_sites.reserve(npatterns);
+	
+	unsigned pattern_index = 0;
+	unsigned n_inc_chars = 0;
+	std::vector<unsigned> nsites_vect(nsubsets, 0);
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		unsigned num_sites_this_subset = 0;
+		subset_offset.push_back(pattern_index);
+		for (pattern_map_t::const_iterator mapit = pattern_map_vect[i].begin(); mapit != pattern_map_vect[i].end(); ++mapit)
+			{			
+			if (using_unimap)
+				{
+				// get list of sites that had this pattern
+				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+					{	
+					// mapit->first holds the pattern in the form of a vector of int8_t values
+					pattern_vect.push_back(mapit->first);
+					pattern_counts.push_back(1);
+					num_sites_this_subset += 1;
+				
+					// add this sites list to pattern_to_sites vector
+					uint_list_t v(1, *sitesIt);
+					pattern_to_sites.push_back(v);
+		
+					charIndexToPatternIndex[*sitesIt] = pattern_index++;
+					++n_inc_chars;
+					}
+
+				}
+			else
+				{
+				// mapit->first holds the pattern in the form of a vector of int8_t values
+				pattern_vect.push_back(mapit->first);
+			
+				// mapit->second holds the pattern count
+				pattern_counts.push_back(mapit->second);
+				num_sites_this_subset += (unsigned)mapit->second;
+
+				// get list of sites that had this pattern
+				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				
+				// add this sites list to pattern_to_sites vector
+				pattern_to_sites.push_back(sites);
+		
+				// For each site index in the sites list, add an element to the map charIndexToPatternIndex
+				// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
+				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+					{
+					charIndexToPatternIndex[*sitesIt] = pattern_index;
+					++n_inc_chars;
+					}			
+					
+				++pattern_index;
+				}
+
+			}	// loop over patterns in subset i
+		nsites_vect[i] = num_sites_this_subset;
+		}	// loop over subsets
+	partition_model->setNumSitesVect(nsites_vect);
+	if (using_unimap)
+		partition_model->setNumPatternsVect(nsites_vect);
+	else
+		partition_model->setNumPatternsVect(npatterns_vect);
+		
+	PHYCAS_ASSERT(partition_model->getTotalNumPatterns() == pattern_index);
+	subset_offset.push_back(pattern_index);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Builds `pattern_vect' and `pattern_counts' using data stored in `sim_data'.
 */
 void TreeLikelihood::copyDataFromSimData(
   SimDataShPtr sim_data)	/**< is the data source */
 	{
-#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
+    // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	// Copy simulated data to pattern_map
-	pattern_map = sim_data->getSimPatternMap();
+	pattern_map_vect_t pattern_map_vect;
+    pattern_map_vect.push_back(sim_data->getSimPatternMap()); //POLSIM: 0 is first and only subset, need to generalize
+	pattern_to_sites_map_t & pattern_to_sites_map = sim_data->getPatternToSitesMap();   
+    patternMapToVect(pattern_map_vect, pattern_to_sites_map);
 
 	// Build up counts vector
-	pattern_counts.clear();
-	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
-		{
-		pattern_counts.push_back(it->second);
-		}
+	//pattern_counts.clear();
+	//for (const pattern_map_t::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
+	//	{
+	//	pattern_counts.push_back(it->second);
+	//	}
 
-	nTaxa = sim_data->getPatternLength();
-	num_patterns = (unsigned)pattern_map.size();
+	//nTaxa = sim_data->getPatternLength();
+	//num_patterns = (unsigned)pattern_map.size();
 
-	model->buildStateList(state_list, state_list_pos);
+	//model->buildStateList(state_list, state_list_pos);
 
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

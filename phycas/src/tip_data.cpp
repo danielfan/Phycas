@@ -32,22 +32,37 @@ namespace phycas
 |	`state' and `pMatrixTranspose' data members.
 */
 TipData::TipData(
-  unsigned nRates,		/**< is the number of relative rate categories */
-  unsigned nStates,		/**< is the number of states in the model */
-  CondLikelihoodStorageShPtr cla_storage)
+  PartitionModelShPtr           partition,      /**< is the PartitionModel object containing information about the number of states and rates for each subset */
+  CondLikelihoodStorageShPtr    cla_storage)
 	:
 	state(-1), 
-	pMatrixTranspose(NULL),
 	cla_pool(cla_storage)
 	{
-#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
-	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
-	//ownedPMatrices.Initialize(nRates, nToStates, nStates);
-	for pMatrixTranspose = ownedPMatrices.ptr;
-	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
-	for (unsigned i = 0; i < nStates*nStates ; ++i)
-		sMat[0][i] = 0;
-#endif
+	const unsigned num_subsets = partition->getNumSubsets();
+	
+	pMatrixTranspose.resize(num_subsets);
+	
+	for (unsigned i = 0; i < num_subsets; ++i)
+		{
+		// allocate memory for the ScopedThreeDMatrix of transition probabilities for subset i
+		const unsigned num_states		= partition->subset_num_states[i];
+		const unsigned num_obs_states	= partition->subset_num_states[i];
+		const unsigned num_rates		= partition->subset_num_rates[i];
+		pMatrixTranspose[i].Initialize(num_rates, num_obs_states, num_states);
+        }
+    // former arguments
+    //      unsigned nRates,		/**< is the number of relative rate categories */
+    //      unsigned nStates,		/**< is the number of states in the model */
+    // former initializer list
+	//      pMatrixTranspose(NULL),
+    // former body
+    //        // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
+    //        const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
+    //        //ownedPMatrices.Initialize(nRates, nToStates, nStates);
+    //        pMatrixTranspose = ownedPMatrices.ptr;
+    //        sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
+    //        for (unsigned i = 0; i < nStates*nStates ; ++i)
+    //            sMat[0][i] = 0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -63,6 +63,7 @@ typedef int8_t 										state_code_t;
 typedef std::vector< int8_t >						pattern_t;	
 typedef double										pattern_count_t;
 typedef	std::map<int8_vect_t, double>				pattern_map_t;
+typedef std::vector< pattern_map_t >                pattern_map_vect_t;
 typedef	std::vector<int8_vect_t>					pattern_vect_t;
 typedef std::vector< uint_list_t > 					pattern_to_sites_t;
 typedef std::map<int8_vect_t, uint_list_t>			pattern_to_sites_map_t;

@@ -22,8 +22,6 @@
 
 #include "phycas/src/states_patterns.hpp"
 
-typedef	pattern_map_t	SimPatternMapType;
-
 namespace phycas
 {
 
@@ -52,7 +50,7 @@ class SimData
 		void						resetPatternLength(unsigned ntaxa);
 		void						wipePattern();
 		void						setState(unsigned pos, int8_t state);
-		void						insertPattern(pattern_count_t count);
+        void                        insertPattern(const uint_list_t & sitelist, pattern_count_t count);
 
         void                        buildBinVector(unsigned nstates);
 		std::vector<double>		    getBinnedCounts();
@@ -76,22 +74,24 @@ class SimData
 
 		const static state_code_t	missing_state;			/**< The value that represents missing data */
 
-		const SimPatternMapType &	getSimPatternMap() const;
+		const pattern_map_t &       getSimPatternMap() const;
+        pattern_to_sites_map_t &    getPatternToSitesMap();
 
 	private:
 
-		void						insertPatternToRunningAverage(pattern_count_t count, pattern_count_t p);
+		//void						insertPatternToRunningAverage(pattern_count_t count, pattern_count_t p);
 
 	private:
 
 		unsigned					pattern_length;			/**< Number of taxa, used to reserve elements in new pattern vectors */
-		SimPatternMapType			sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
+		pattern_map_t               sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
 		std::string					outstr;					/**< Workspace for building up a tabular representation of `sim_pattern_map' (used by showPatternMap function) */
 
         double_vect_t		        binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
 		pattern_t					tmp_pattern;			/**< Workspace for building up a pattern */
 		pattern_count_t				total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
         std::vector<pattern_t>   	patternVect;            // temporary debugging aid
+        pattern_to_sites_map_t      pattern_to_sites_map;   /**< stores list of sites (value) for each pattern (key) */
 	};
 
 typedef boost::shared_ptr<SimData>	SimDataShPtr;
