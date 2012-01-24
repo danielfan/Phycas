@@ -197,6 +197,12 @@ class LikelihoodCore(object):
                 mod = self.createModel(m)
                 self.partition_model.addModel(mod)
                 
+        # Copy the sitemodel vector (that contains for each site the index of the model assigned to that site)
+        self.partition_model.setSiteAssignments(partition.getSiteModelVector())
+        
+        # Copy the number and proportion of sites in each subset of the partition
+        self.partition_model.setNumSitesVect(partition.getSubsetSizes())
+        
         # If user has specified subset relative rates in the partition interface, transfer 
         # those now to partition_model
         if partition.subset_relrates is not None:
@@ -204,7 +210,7 @@ class LikelihoodCore(object):
             num_subsets = len(modelspecs)
             self.parent.phycassert(num_subset_relrates == num_subsets, 'Length of partition.subset_relrates list (%d) should equal the number of subsets defined (%d)' % (num_subset_relrates, num_subsets))
             self.partition_model.setSubsetRelRatesVect(partition.subset_relrates)
-         
+        
         self.likelihood = Likelihood.TreeLikelihood(self.partition_model)
         self.likelihood.setLot(self.r)
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)

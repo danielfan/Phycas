@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
     os.chdir(scriptPar)
-    #runTest(outFile, "Simulator", ["simulated.nex"])
+    runTest(outFile, "Simulator", ["simulated.nex"])
     runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "SplitTest", ["out.txt"])
     runTest(outFile, "PDFTree", ["test.pdf"])

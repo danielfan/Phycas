@@ -163,7 +163,7 @@ std::string Irreversible::paramReport(
 |   where lambda is the rate and t the time. Overrides the pure virtual function
 |   inherited from the base class Model. For the IrreversibleLoss model, the transition probabilities are:
 |>
-|	P00 = 0
+|	P00 = 1
 |	P01 = 0
 |	P10 = 1 - exp{-scaling_factor*edgeLength}
 |	P11 = exp{-scaling_factor*edgeLength}
@@ -174,7 +174,7 @@ std::string Irreversible::paramReport(
 |	P00 = exp{-scaling_factor*edgeLength}
 |	P01 = 1 - exp{-scaling_factor*edgeLength}
 |	P10 = 0
-|	P11 = 0
+|	P11 = 1
 |>
 */
 void Irreversible::calcPMat(double * * pMat, double edgeLength) const

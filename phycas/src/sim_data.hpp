@@ -42,6 +42,7 @@ class SimData
 
 
 		void						clear();
+		void						resizePatternVect(unsigned sz);
 		void						zeroCounts();
 		void						appendCountsToFile(std::string fn, bool binary);
 		void						debugAppendCountsToFile(std::string row_name, std::string fn);
@@ -50,7 +51,7 @@ class SimData
 		void						resetPatternLength(unsigned ntaxa);
 		void						wipePattern();
 		void						setState(unsigned pos, int8_t state);
-        void                        insertPattern(const uint_list_t & sitelist, pattern_count_t count);
+        void                        insertPattern(const uint_vect_t & sitelist, pattern_count_t count);//UINT_LIST
 
         void                        buildBinVector(unsigned nstates);
 		std::vector<double>		    getBinnedCounts();

@@ -102,6 +102,7 @@ void TreeLikelihood::calcPMatCommon(
 		{
 		scaled_edges[r] = subset_relrate*edgeLength*rate_means[i][r];
 		}
+    //std::cerr << boost::str(boost::format("calcPMatCommon: i = %d, subset rate = %g, edgelen = %g, scaled_edges = %g") % i % subset_relrate % edgeLength % scaled_edges[0]) << std::endl;
 	partition_model->subset_model[i]->calcPMatrices(pMatrices, &scaled_edges[0], nr); //PELIGROSO
 	}
 
@@ -134,15 +135,16 @@ void DebugShowNuclTransMatrix(double * * m, const char * title)
 |	additional rows are necessary.
 */
 void TreeLikelihood::calcTMatForSim(
-  TipData &	tipData, 
-  double	edgeLength)
+  unsigned i,               /**< is the subset of the partition */
+  TipData &	tipData,        /**< is the structure holding the transition matrices to fill */
+  double	edgeLength)     /**< is the edge length to use in scaling transition probabilities */
 	{
     // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
-	double * * * transPMats = tipData.getTransposedPMatrices(0);    //POLSIM: 0 is first subset, need to generalize
-	calcPMatCommon(0, transPMats,  edgeLength);    //POLSIM: 0 is first subset, need to generalize
+	double * * * transPMats = tipData.getTransposedPMatrices(i);    //POLSIM
+	calcPMatCommon(i, transPMats,  edgeLength);    //POLSIM
 
-    unsigned nr = partition_model->subset_num_rates[0]; //POLSIM: 0 is first subset, need to generalize
-    unsigned ns = partition_model->subset_num_states[0]; //POLSIM: 0 is first subset, need to generalize
+    unsigned nr = partition_model->subset_num_rates[i]; //POLSIM
+    unsigned ns = partition_model->subset_num_states[i]; //POLSIM
 
 	// For each rate category, transpose the num_states x num_states portion of the matrices
 	for (unsigned rate = 0; rate < nr; ++rate)

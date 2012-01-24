@@ -576,6 +576,7 @@ class MCMCImpl(CommonFunctions):
                 #   self.warning('resampling working prior for subset relative rates because first draw contained\n  an element very close to zero: (%s)' % ','.join(['%g' % r for r in rates_vector]))
                 #   rates_vector = u.sampleMultivariateWorkingPrior()
                 #   num_retries += 1
+                print 'MCMCImpl.py exploreWorkingPrior...' #POLTMP
                 cold_chain.partition_model.setSubsetRelRatesVect(rates_vector)
             elif name.find('gamma_shape') == 0:                     # C++ class DiscreteGammaShapeParam
                 i = unpartitioned and 0 or self.getModelIndex(name)

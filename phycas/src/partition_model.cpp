@@ -93,14 +93,44 @@ MultivarProbDistShPtr PartitionModel::getSubsetRelRatePrior() const
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Replaces the values in the data member vector `subset_relrates' with those in the supplied `rrates' vector.
+|	Replaces the values in the data member vector `subset_relrates' with those in the supplied `rrates' vector. Note 
+|   that we cannot assume that the values supplied in `rrates' are normalized. To normalize, we need to solve for the
+|   value `x' in the following example involving 2 subsets, one of which contains 4/5 of the sites and an unnormalized
+|   relative rate of 1, with the other subset containing 1/5 of the sites and having an unnormalized relative rate of
+|   10:
+|>
+|   (0.8)*(1/x) + (0.2)*(10/x) = 1.0  ==> x = (0.8)*(1) + (0.2)*(10) = 2.8
+|>
 */
 void PartitionModel::setSubsetRelRatesVect(
   const std::vector<double> & rrates)	/**< is the vector of relative rates */
 	{
 	PHYCAS_ASSERT(rrates.size() == getNumSubsets());
 	PHYCAS_ASSERT(subset_relrates.size() == getNumSubsets());
-	std::copy(rrates.begin(), rrates.end(), subset_relrates.begin());
+    
+    double num_sites_total = (double)std::accumulate(subset_num_sites.begin(), subset_num_sites.end(), 0.0);
+    //std::cerr << "num_sites_total:" << num_sites_total << std::endl;
+    
+    std::vector<double> relrate_proportion;
+    relrate_proportion.resize(rrates.size());
+    std::transform(rrates.begin(), rrates.end(), subset_num_sites.begin(), relrate_proportion.begin(), (boost::lambda::_1)*(boost::lambda::_2)/num_sites_total);
+    double x = (double)std::accumulate(relrate_proportion.begin(), relrate_proportion.end(), 0.0);
+    //std::cerr << "x:" << x << std::endl;
+
+    std::transform(rrates.begin(), rrates.end(), subset_relrates.begin(), boost::lambda::_1/x);
+
+    //std::cerr << ">>>>>>>>>> PartitionModel::setSubsetRelRatesVect <<<<<<<<<<<" << std::endl;
+    //std::cerr << "subset_relrates:";
+	//std::copy(subset_relrates.begin(), subset_relrates.end(), std::ostream_iterator<double>(std::cerr, " "));
+    //std::cerr << std::endl;
+    
+    //std::cerr << "subset_num_sites:";
+	//std::copy(subset_num_sites.begin(), subset_num_sites.end(), std::ostream_iterator<unsigned>(std::cerr, " "));
+    //std::cerr << std::endl;
+    
+    //std::cerr << "relrate_proportion:";
+	//std::copy(relrate_proportion.begin(), relrate_proportion.end(), std::ostream_iterator<double>(std::cerr, " "));
+    //std::cerr << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -231,4 +261,23 @@ void PartitionModel::setNumRatesVect(const std::vector<unsigned> & nrates)
 	std::copy(nrates.begin(), nrates.end(), subset_num_rates.begin());
 	}
     
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `site_assignments' to a copy of the supplied vector `v'.
+*/
+void PartitionModel::setSiteAssignments(const std::vector<unsigned> & v)
+	{
+	unsigned new_size = (unsigned)v.size();
+	PHYCAS_ASSERT(new_size > 0);
+	site_assignments.resize(new_size);
+	std::copy(v.begin(), v.end(), site_assignments.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `site_assignments' to a copy of the supplied vector `v'.
+*/
+const std::vector<unsigned> & PartitionModel::getSiteAssignments() const
+	{
+    return site_assignments;
+	}
+        
 } // namespace phycas

@@ -1976,16 +1976,33 @@ void TreeLikelihood::discardCacheAwayFromNode(
 |	The `pMatrixTranspose' data member in TipData structures holds the array of T matrices (one T matrix for each 
 |	rate category).
 */
-void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
+void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs) //POLSIM
     {
     // formerly DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(sim_data);
 	PHYCAS_ASSERT(rng);
 	PHYCAS_ASSERT(nchar > 0);
 	
+    // Determine number of subsets in the partition. 
+    unsigned num_partition_subsets = partition_model->getNumSubsets();
+    
+    // Get assignments of models to sites
+    uint_vect_t default_site_assignments;
+    uint_vect_t & site_assignments = default_site_assignments;
+    if (num_partition_subsets > 1)
+        site_assignments = partition_model->getSiteAssignments();   // Note: nchar is ignored if more than 1 subset
+    else
+        default_site_assignments.assign(0, nchar);
+
+    // Make sure sim_data's patternVect is long enough to save all simulated patterns
+    nchar = (unsigned)site_assignments.size();
+    sim_data->resetPatternLength(t->GetNTips());
+    sim_data->resizePatternVect(nchar);
+                
 	// Recalculate transition probabilities if requested
 	if (refresh_probs)
 		{
+        
 		preorder_iterator nd = t->begin();
 
 		// First preorder node is the root node and represents a special case
@@ -1995,7 +2012,9 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		TreeNode * subroot = nd->GetLeftChild();
 		PHYCAS_ASSERT(subroot);
 		PHYCAS_ASSERT(!subroot->GetRightSib()); //@POL need to create a IsSubroot() member function for TreeNode
-		calcTMatForSim(ndTD, subroot->GetEdgeLen());
+        //std::cerr << boost::str(boost::format("subroot edgelen = %g") % subroot->GetEdgeLen()) << std::endl;
+        for (unsigned s = 0; s < num_partition_subsets; ++s)
+            calcTMatForSim(s, ndTD, subroot->GetEdgeLen());
 		++nd;
 
 		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
@@ -2007,159 +2026,174 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 			if (nd->IsTip())
 				{
 				TipData & ndTD = *(nd->GetTipData());
-				calcTMatForSim(ndTD, nd->GetEdgeLen());
+                //std::cerr << boost::str(boost::format("tip node %d edgelen = %g") % nd->GetNodeNumber() % nd->GetEdgeLen()) << std::endl;
+                for (unsigned s = 0; s < num_partition_subsets; ++s)
+                    calcTMatForSim(s, ndTD, nd->GetEdgeLen());
 				}
 			else
 				{
 				InternalData & ndID = *(nd->GetInternalData());
-				calcPMat(0, ndID.getPMatrices(0), nd->GetEdgeLen());   //POLSIM: 0 is first subset, need to generalize
+                //std::cerr << boost::str(boost::format("internal node %d edgelen = %g") % nd->GetNodeNumber() % nd->GetEdgeLen()) << std::endl;
+                for (unsigned s = 0; s < num_partition_subsets; ++s)
+                    calcPMat(s, ndID.getPMatrices(s), nd->GetEdgeLen());
 				}
 			}
 		}
 
-    //unsigned num_patterns = partition_model->subset_num_patterns[0];  //POLSIM: 0 is first subset, need to generalize
-    unsigned num_states = partition_model->subset_num_states[0];  //POLSIM: 0 is first subset, need to generalize
-    unsigned num_rates = partition_model->subset_num_rates[0];  //POLSIM: 0 is first subset, need to generalize
+    // A temporary vector containing just one entry used to specify the sites (or in this case site) 
+    // to which the nascent pattern belongs. We will reuse tmplist for each site.
+    uint_vect_t tmplist;
+    tmplist.push_back(0);
 
-	// Create a vector of cumulative state frequencies to use in choosing starting states
-	const std::vector<double> & freqs = partition_model->subset_model[0]->getStateFreqs();  //POLSIM: 0 is first subset, need to generalize
-	std::vector<double> cum_freqs(num_states, 0.0);
-	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
+    for (unsigned subset = 0; subset < num_partition_subsets; subset++)
+        {
+        //unsigned num_patterns = partition_model->subset_num_patterns[subset];  //POLSIM
+        unsigned num_states = partition_model->subset_num_states[subset];  //POLSIM
+        unsigned num_rates = partition_model->subset_num_rates[subset];  //POLSIM
 
-	// Create a vector of cumulative rate probabilities to use in choosing relative rates
-	std::vector<double> cum_rate_probs(num_rates, 0.0);
-	std::partial_sum(rate_probs[0].begin(), rate_probs[0].end(), cum_rate_probs.begin()); //POLSIM: 0 is first subset, need to generalize
+        // Create a vector of cumulative state frequencies to use in choosing starting states
+        const std::vector<double> & freqs = partition_model->subset_model[subset]->getStateFreqs();  //POLSIM
+        std::vector<double> cum_freqs(num_states, 0.0);
+        std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
 
-	sim_data->resetPatternLength(t->GetNTips());
-	sim_data->wipePattern();
+        // Create a vector of cumulative rate probabilities to use in choosing relative rates
+        std::vector<double> cum_rate_probs(num_rates, 0.0);
+        std::partial_sum(rate_probs[subset].begin(), rate_probs[subset].end(), cum_rate_probs.begin()); //POLSIM
 
-	for (unsigned character = 0; character < nchar; ++character)
-		{
-		// Choose a rate for this character (actually, choose index, the actual rate is rate_means[r])
-		unsigned r = 0;
-		if (num_rates > 1)
-			{
-			// warning: removing the if statement will invalidate all examples involving simulated data with rate
-			// homogeneity because of the call to rng->Uniform here!
-			r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform(FILE_AND_LINE)) - cum_rate_probs.begin());
-			}
+        sim_data->wipePattern();
+        
+        unsigned character = 0;
+        for (std::vector<unsigned>::iterator site = site_assignments.begin(); site != site_assignments.end(); ++site, ++character)
+            {
+            if (*site != subset)
+                continue;
+                
+            // Choose a rate for this character (actually, choose index, the actual rate is rate_means[r])
+            unsigned r = 0;
+            if (num_rates > 1)
+                {
+                // warning: removing the if statement will invalidate all examples involving simulated data with rate
+                // homogeneity because of the call to rng->Uniform here!
+                r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform(FILE_AND_LINE)) - cum_rate_probs.begin());
+                }
 
-		// Generate the starting state
-		int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform(FILE_AND_LINE)) - cum_freqs.begin());
+            // Generate the starting state
+            int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform(FILE_AND_LINE)) - cum_freqs.begin());
 
-		// Assign starting state to the tip node currently serving as the root of the tree
-		preorder_iterator nd = t->begin();
-		TipData & rootTD = *(nd->GetTipData());
-		rootTD.state = j;
+            // Assign starting state to the tip node currently serving as the root of the tree
+            preorder_iterator nd = t->begin();
+            TipData & rootTD = *(nd->GetTipData());
+            rootTD.state = j;
 
-		sim_data->setState(nd->GetNodeNumber(), j);
+            sim_data->setState(nd->GetNodeNumber(), j);
 
-		// Go ahead and generate the state for the (only) descendant of the root node (the "subroot" node)
-		// Note that the root node's T matrix is used for this calculation; the P matrix of the subroot node
-		// is never computed
-		unsigned parent_state = (unsigned)j;
+            // Go ahead and generate the state for the (only) descendant of the root node (the "subroot" node)
+            // Note that the root node's T matrix is used for this calculation; the P matrix of the subroot node
+            // is never computed
+            unsigned parent_state = (unsigned)j;
 
-		// Get the T matrix for the tip node serving as the root
-		//double * * Tmatrix = rootTD.pMatrixTranspose[r];
-		double * * Tmatrix = rootTD.getTransposedPMatrices(0)[r];   //POLSIM: 0 is first subset, need to generalize
+            // Get the T matrix for the tip node serving as the root
+            //double * * Tmatrix = rootTD.pMatrixTranspose[r];
+            double * * Tmatrix = rootTD.getTransposedPMatrices(subset)[r];   //POLSIM
 
-		// Choose a uniform random deviate
-		double u = rng->Uniform(FILE_AND_LINE);
+            // Choose a uniform random deviate
+            double u = rng->Uniform(FILE_AND_LINE);
 
-		// Spin the roulette wheel to choose a state for the subroot node
-		double cum = 0.0;
-		unsigned i = 0;
-		for (; i < num_states; ++i)
-			{
-			double pr = Tmatrix[i][parent_state];
-			//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
-			cum += pr;
-			if (u < cum)
-				break;
-			}
+            // Spin the roulette wheel to choose a state for the subroot node
+            double cum = 0.0;
+            unsigned i = 0;
+            for (; i < num_states; ++i)
+                {
+                double pr = Tmatrix[i][parent_state];
+                //std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
+                cum += pr;
+                if (u < cum)
+                    break;
+                }
 
-		// Increment iterator so that nd now refers to the subroot (sole descendant of the root)
-		++nd;
+            // Increment iterator so that nd now refers to the subroot (sole descendant of the root)
+            ++nd;
 
-		// Assign the new state to the subroot node
-		InternalData & ndID = *(nd->GetInternalData());
-		ndID.state = (int8_t)i;
-		//std::cerr << "  Assigning state " << i << " to node " << nd->GetNodeNumber() << std::endl;
+            // Assign the new state to the subroot node
+            InternalData & ndID = *(nd->GetInternalData());
+            ndID.state = (int8_t)i;
+            //std::cerr << "  Assigning state " << i << " to node " << nd->GetNodeNumber() << std::endl;
 
-		// Walk the remainder of the tree using the preorder sequence, generating data for each node along the way
-		for (++nd; nd != t->end(); ++nd)
-			{
-			// Get state of parent of nd
-			TreeNode * parent = nd->GetParent();
-			parent_state = UINT_MAX;
-			if (parent->IsTip())
-				{
-				TipData * parentTD = parent->GetTipData();
-				parent_state = (unsigned)parentTD->state;
-				}
-			else
-				{
-				InternalData * parentID = parent->GetInternalData();
-				parent_state = (unsigned)parentID->state;
-				}
-			PHYCAS_ASSERT(parent_state < num_states);
+            // Walk the remainder of the tree using the preorder sequence, generating data for each node along the way
+            for (++nd; nd != t->end(); ++nd)
+                {
+                // Get state of parent of nd
+                TreeNode * parent = nd->GetParent();
+                parent_state = UINT_MAX;
+                if (parent->IsTip())
+                    {
+                    TipData * parentTD = parent->GetTipData();
+                    parent_state = (unsigned)parentTD->state;
+                    }
+                else
+                    {
+                    InternalData * parentID = parent->GetInternalData();
+                    parent_state = (unsigned)parentID->state;
+                    }
+                PHYCAS_ASSERT(parent_state < num_states);
 
-			if (nd->IsTip())
-				{
-				// Get the T matrix
-				TipData & ndTD = *(nd->GetTipData());
-				//double * * Tmatrix = ndTD.pMatrixTranspose[r];
-                double * * Tmatrix = rootTD.getTransposedPMatrices(0)[r];   //POLSIM: 0 is first subset, need to generalize
+                if (nd->IsTip())
+                    {
+                    // Get the T matrix
+                    TipData & ndTD = *(nd->GetTipData());
+                    //double * * Tmatrix = ndTD.pMatrixTranspose[r];
+                    double * * Tmatrix = rootTD.getTransposedPMatrices(subset)[r];   //POLSIM
 
-				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
+                    // Choose a uniform random deviate
+                    double u = rng->Uniform(FILE_AND_LINE);
 
-				// Spin the roulette wheel and assign a state to nd
-				double cum = 0.0;
-				unsigned i = 0;
-				for (; i < num_states; ++i)
-					{
-					double pr = Tmatrix[i][parent_state];
-					//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
-					cum += pr;
-					if (u < cum)
-						break;
-					}
-				ndTD.state = (int8_t)i;
-				sim_data->setState(nd->GetNodeNumber(), (int8_t)i);
-				}
-			else
-				{
-				// Get the T matrix
-				InternalData & ndID = *(nd->GetInternalData());
-				//double * * Pmatrix = ndID.pMatrices[r];
-				double * * Pmatrix = ndID.getPMatrices(0)[r]; //POLSIM: 0 is first subset, need to generalize
+                    // Spin the roulette wheel and assign a state to nd
+                    double cum = 0.0;
+                    unsigned i = 0;
+                    for (; i < num_states; ++i)
+                        {
+                        double pr = Tmatrix[i][parent_state];
+                        //std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
+                        cum += pr;
+                        if (u < cum)
+                            break;
+                        }
+                    ndTD.state = (int8_t)i;
+                    sim_data->setState(nd->GetNodeNumber(), (int8_t)i);
+                    }
+                else
+                    {
+                    // Get the T matrix
+                    InternalData & ndID = *(nd->GetInternalData());
+                    //double * * Pmatrix = ndID.pMatrices[r];
+                    double * * Pmatrix = ndID.getPMatrices(subset)[r]; //POLSIM
 
-				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
+                    // Choose a uniform random deviate
+                    double u = rng->Uniform(FILE_AND_LINE);
 
-				// Spin the roulette wheel and assign a state to nd
-				double cum = 0.0;
-				unsigned i = 0;
-				for (; i < num_states; ++i)
-					{
-					double pr = Pmatrix[parent_state][i];
-					//std::cerr << str(boost::format("Pmatrix[%d][%d] = %f") % parent_state % i % pr) << std::endl;
-					cum += pr;
-					if (u < cum)
-						break;
-					}
-				ndID.state = (int8_t)i;
-				}
-			}
+                    // Spin the roulette wheel and assign a state to nd
+                    double cum = 0.0;
+                    unsigned i = 0;
+                    for (; i < num_states; ++i)
+                        {
+                        double pr = Pmatrix[parent_state][i];
+                        //std::cerr << str(boost::format("Pmatrix[%d][%d] = %f") % parent_state % i % pr) << std::endl;
+                        cum += pr;
+                        if (u < cum)
+                            break;
+                        }
+                    ndID.state = (int8_t)i;
+                    }
+                }
 
-		// We are now finished simulating data for one character, so insert the pattern just generated
-		// into the pattern map maintained by sim_data; the 1.0 means that the count for this pattern
-		// should be incremented by 1
-        uint_list_t tmplist;
-        tmplist.push_back(character);
-		sim_data->insertPattern(tmplist, 1.0);
-		}
+            // We are now finished simulating data for one character, so insert the pattern just generated
+            // into the pattern map maintained by sim_data
+            // tmplist is a temporary list containing a single entry (the index of this site)
+            // The 1.0 means that the count for this pattern should be incremented by 1
+            tmplist[0] = character;
+            sim_data->insertPattern(tmplist, 1.0);
+            }
+        }   // subset loop
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2983,7 +3017,7 @@ void TreeLikelihood::debugCompressedDataInfo(
 	unsigned j = 0;	//index into constant states vector
 	for (unsigned i = 0; i < total_patterns; ++i)
 		{
-		const uint_list_t & sites = pattern_to_sites[i];
+		const uint_vect_t & sites = pattern_to_sites[i];//UINT_LIST
 		const int8_vect_t & states = pattern_vect[i];
 		
 		unsigned sub = *(states.begin());
@@ -3228,8 +3262,8 @@ unsigned TreeLikelihood::compressDataMatrix(
 			if (using_unimap)
 				{
 				// get list of sites that had this pattern
-				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
-				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+				const uint_vect_t & sites = pattern_to_sites_map[mapit->first];//UINT_LIST
+				for (uint_vect_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)//UINT_LIST
 					{	
 					// mapit->first holds the pattern in the form of a vector of int8_t values
 					pattern_vect.push_back(mapit->first);
@@ -3237,7 +3271,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 					num_sites_this_subset += 1;
 				
 					// add this sites list to pattern_to_sites vector
-					uint_list_t v(1, *sitesIt);
+					uint_vect_t v(1, *sitesIt);//UINT_LIST
 					pattern_to_sites.push_back(v);
 		
 					charIndexToPatternIndex[*sitesIt] = pattern_index++;
@@ -3255,14 +3289,14 @@ unsigned TreeLikelihood::compressDataMatrix(
 				num_sites_this_subset += (unsigned)mapit->second;
 
 				// get list of sites that had this pattern
-				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				const uint_vect_t & sites = pattern_to_sites_map[mapit->first];//UINT_LIST
 				
 				// add this sites list to pattern_to_sites vector
 				pattern_to_sites.push_back(sites);
 		
 				// For each site index in the sites list, add an element to the map charIndexToPatternIndex
 				// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
-				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+				for (uint_vect_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)//UINT_LIST
 					{
 					charIndexToPatternIndex[*sitesIt] = pattern_index;
 					++n_inc_chars;
@@ -3342,8 +3376,8 @@ void TreeLikelihood::patternMapToVect(
 			if (using_unimap)
 				{
 				// get list of sites that had this pattern
-				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
-				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+				const uint_vect_t & sites = pattern_to_sites_map[mapit->first];//UINT_LIST
+				for (uint_vect_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)//UINT_LIST
 					{	
 					// mapit->first holds the pattern in the form of a vector of int8_t values
 					pattern_vect.push_back(mapit->first);
@@ -3351,7 +3385,7 @@ void TreeLikelihood::patternMapToVect(
 					num_sites_this_subset += 1;
 				
 					// add this sites list to pattern_to_sites vector
-					uint_list_t v(1, *sitesIt);
+					uint_vect_t v(1, *sitesIt);//UINT_LIST
 					pattern_to_sites.push_back(v);
 		
 					charIndexToPatternIndex[*sitesIt] = pattern_index++;
@@ -3369,14 +3403,14 @@ void TreeLikelihood::patternMapToVect(
 				num_sites_this_subset += (unsigned)mapit->second;
 
 				// get list of sites that had this pattern
-				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				const uint_vect_t & sites = pattern_to_sites_map[mapit->first];//UINT_LIST
 				
 				// add this sites list to pattern_to_sites vector
 				pattern_to_sites.push_back(sites);
 		
 				// For each site index in the sites list, add an element to the map charIndexToPatternIndex
 				// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
-				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+				for (uint_vect_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)//UINT_LIST
 					{
 					charIndexToPatternIndex[*sitesIt] = pattern_index;
 					++n_inc_chars;
@@ -3719,7 +3753,7 @@ void TreeLikelihood::storePattern(
 		{
 		// this pattern has not yet been seen, so need to create a list of site indices whose only
 		// element (so far) is site_index and insert this list into the pattern_to_site_map map
-		uint_list_t ilist(1, site_index);	// create a list containing 1 element whose value is site_index
+		uint_vect_t ilist(1, site_index);	// create a list containing 1 element whose value is site_index //UINT_LIST
 		if (codon_model)
 			{
 			ilist.push_back(site_index + 1);

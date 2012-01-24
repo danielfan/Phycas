@@ -167,13 +167,6 @@ class Partition(PhycasCommand):
             xtra = [-1]*(needed_size - curr_size)
             self.sitemodel.extend(xtra)
             
-        #print 'In addSubset:'
-        #print '  adding subset named ',name
-        #print '  curr_size =',curr_size
-        #print '  needed_size =',needed_size
-        #print '  length of self.sitemodel =',len(self.sitemodel)
-        #raw_input('debug check')
-
         # add sites in sitelist to sitemodel (the master list)
         for s in sitelist:
             assigned_index = self.sitemodel[s - 1]
@@ -250,6 +243,13 @@ class Partition(PhycasCommand):
         for s in self.subset:
             size_vect.append(len(s[1]))
         return size_vect;
+        
+    def getNormalizedSubsetRelRates(self):
+        sizes = self.getSubsetSizes()
+        n = sum(sizes)
+        x = sum([rr*float(sz)/float(n) for rr,sz in zip(self.subset_relrates,sizes)])
+        normrr = [rr/x for rr in self.subset_relrates]
+        return normrr
 
     def __call__(self, **kwargs):
         """

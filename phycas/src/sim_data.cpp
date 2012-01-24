@@ -456,13 +456,19 @@ void SimData::insertPatternToRunningAverage(
 |   invalid values. 
 */
 void SimData::insertPattern(
-  const uint_list_t & sitelist, /**< is a list of site indices corresponding to the current pattern */
+  const uint_vect_t & sitelist, /**< is a list of site indices corresponding to the current pattern */  //UINT_LIST
   pattern_count_t count)	/**< is the count to be associated with the pattern now stored in `tmp_pattern' */
 	{
 	// In debug build, check to make sure there are no elements in tmp_pattern that still equal
 	// missing_state (if assert trips, it means that not all elements of tmp_pattern have been 
 	// replaced with actual states)
-	PHYCAS_ASSERT(std::find(tmp_pattern.begin(), tmp_pattern.end(), missing_state) == tmp_pattern.end());
+	//PHYCAS_ASSERT(std::find(tmp_pattern.begin(), tmp_pattern.end(), missing_state) == tmp_pattern.end());
+    //std::cerr << "PATTERN BEING INSERTED: ";
+    //for (pattern_t::iterator it = tmp_pattern.begin(); it != tmp_pattern.end(); it++) {
+    //    std::cerr << (int)(*it);
+    //}
+    //std::cerr << std::endl;
+    //std::cerr << "PATTERN LENGTH: " << tmp_pattern.size() << std::endl;
 
 	// insert the pattern stored in tmp_pattern into sim_pattern_map
 	// Add tmp_pattern to sim_pattern_map if it has not yet been seen, otherwise increment the count 
@@ -484,7 +490,7 @@ void SimData::insertPattern(
 	if (lowbb != pattern_to_sites_map.end() && !(pattern_to_sites_map.key_comp()(tmp_pattern, lowbb->first)))
 		{
 		// Pattern is already in pattern_to_sites_map, so just modify the existing list
-		uint_list_t & existing_sitelist = lowbb->second;
+		uint_vect_t & existing_sitelist = lowbb->second;//UINT_LIST
         unsigned existing_nsites = (unsigned)existing_sitelist.size();
         unsigned additional_sites = (unsigned)sitelist.size();
         existing_sitelist.resize(existing_nsites + additional_sites);
@@ -495,9 +501,13 @@ void SimData::insertPattern(
 		// tmp_pattern has not yet been stored in pattern_to_sites_map
 		pattern_to_sites_map.insert(lowbb, pattern_to_sites_map_t::value_type(tmp_pattern, sitelist));
 		}
-
-    patternVect.push_back(tmp_pattern);
-	total_count += count;
+        
+    for (uint_vect_t::const_iterator i = sitelist.begin(); i != sitelist.end(); ++i)
+        {
+        unsigned pos = (unsigned)(*i);
+        patternVect[pos] = tmp_pattern;
+        total_count += count;        
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -653,6 +663,15 @@ void SimData::clear()
     patternVect.clear();
     pattern_to_sites_map.clear();
     }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Resizes patternVect to the supplied length.
+*/
+void SimData::resizePatternVect(
+  unsigned sz)  /**< new size of patternVect vector */
+    {
+    patternVect.resize(sz);
+    }    
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the data member `sim_pattern_map'.

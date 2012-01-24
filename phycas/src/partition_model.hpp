@@ -58,6 +58,7 @@ public:
 	const std::vector<unsigned>		&	getNumRatesVect() const;
 	unsigned							getNumRates(unsigned i) const {return subset_num_rates[i];}
 	unsigned	 						getNumSites(unsigned i) const; 
+    const std::vector<unsigned>     &   getSiteAssignments() const;
 
 	// Setters
 	void								addModel(ModelShPtr m);
@@ -68,7 +69,8 @@ public:
 	void								setNumSitesVect(const std::vector<unsigned> & nsites);
 	void								setNumStatesVect(const std::vector<unsigned> & nstates);
 	void								setNumRatesVect(const std::vector<unsigned> & nrates);
-
+    void                                setSiteAssignments(const std::vector<unsigned> & v);
+    
 private:
     
 	MultivarProbDistShPtr				subset_relrate_prior;	/**< The prior on subset relative rates */
@@ -77,6 +79,7 @@ private:
     std::vector<unsigned>           	subset_num_sites;		/**< The number of sites in each partition subset */
     std::vector<unsigned>           	subset_num_states;		/**< The number of states for each partition subset */
     std::vector<unsigned>           	subset_num_rates;		/**< The number of relative rate categories for each partition subset */
+    std::vector<unsigned>           	site_assignments;		/**< The index of the model assigned to each site */
     ModelVect							subset_model;			/**< The substitution model for each partition subset */
 };  // class PartitionModel
 

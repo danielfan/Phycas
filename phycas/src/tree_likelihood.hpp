@@ -299,7 +299,7 @@ class TreeLikelihood
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
 		void							calcPMatCommon(unsigned i, double * * * pMatrices, double edgeLength);
 
-		void							calcTMatForSim(TipData &, double);
+		void							calcTMatForSim(unsigned i, TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
 		void							createNewUniventsStructs();
 		LotShPtr						univentRNG;
