@@ -1,0 +1,91 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Thursday, January 26, 2012  15:40]
+[!
+>Data file = Yang_and_Rannala_Karol_nomissambig.nex
+>Heuristic search settings:
+>  Optimality criterion = likelihood
+>    Likelihood settings:
+>      Number of substitution types = 6
+>      User-specified substitution rate matrix:
+>        AC=1.69057 AG=5.50581 AT=4.12802 CG=1.94041 CT=8.53379 GT=1
+>      Assumed state frequencies (set by user):
+>        A=0.25673  C=0.20541  G=0.22386  T=0.31401
+>      These settings correspond to the GTR+G model
+>      Among-site rate variation:
+>        Assumed proportion of invariable sites  = none
+>        Distribution of rates at variable sites = gamma (discrete approximation)
+>          Shape parameter (alpha)   = 0.245853
+>          Number of rate categories = 4
+>          Representation of average rate for each category = mean
+>      Number of distinct data patterns under this model = 1207
+>      Molecular clock not enforced
+>      Starting branch lengths obtained using Rogers-Swofford approximation method
+>      Trees with approximate log likelihoods 5% or further from the target score are rejected without additional iteration
+>      Branch-length optimization = one-dimensional Newton-Raphson with pass limit=20, tolerance=1e-07
+>      Vector processing enabled
+>      Conditional-likelihood rescaling threshold = 1e-20
+>  
+>  Starting tree(s) obtained via stepwise addition
+>    Addition sequence: random
+>    Number of replicates = 1
+>    Starting seed = 1168837965
+>    Number of trees held at each step = 1
+>  Branch-swapping algorithm: tree-bisection-reconnection (TBR) with reconnection limit = 5
+>    Steepest descent option not in effect
+>  Initial 'Maxtrees' setting = 100 (will be auto-increased by 1000)
+>  Branches collapsed (creating polytomies) if branch length is less than or equal to 1e-08
+>  'MulTrees' option in effect
+>  No topological constraints in effect
+>  Trees are unrooted
+>
+>Heuristic search completed
+>  Total number of rearrangements tried = 5699
+>  Score of best tree(s) found = 34177.32
+>  Number of trees retained = 1
+>  Time used = 00:09:11 (CPU time = 00:16:51.8)
+]
+	Translate
+		1 1_Arabidopsis_thaliana,
+		2 2_Taxus_baccata,
+		3 3_Huperzia_lucidula,
+		4 4_Psilotum_nudum,
+		5 5_Dicksonia_antarctica,
+		6 6_Sphagnum_palustre,
+		7 7_Anthoceros_formosae,
+		8 8_Marchantia_polymorpha,
+		9 9_Chara_connivens,
+		10 10_Lamprothamnium_macropogon,
+		11 11_Lychnothamnus_barbatus,
+		12 12_Nitellopsis_obtusa,
+		13 13_Nitella_opaca,
+		14 14_Tolypella_int_prolifera,
+		15 15_Coleochaete_orbicularis,
+		16 16_Coleochaete_soluta_32d1,
+		17 17_Coleochaete_irregularis,
+		18 18_Coleochaete_sieminskiana,
+		19 19_Chaet_globosum_SAG2698,
+		20 20_Chaet_oval,
+		21 21_Onychonema_sp,
+		22 22_Cosmocladium_perissum,
+		23 23_Gonatozygon_monotaenium,
+		24 24_Spirogyra_maxima_2495,
+		25 25_Mesotaenium_caldariorum,
+		26 26_Zygnema_peliosporum_45,
+		27 27_Mougeotia_sp_758,
+		28 28_Klebsormidium_flaccidum,
+		29 29_Klebsormidium_subtilissimum,
+		30 30_Klebsormidium_nitens,
+		31 31_Entransia_fimbriata,
+		32 32_Chlorokybus_atmosphyticus,
+		33 33_Mesostigma_viride,
+		34 34_Mesostigma_viride_NIES,
+		35 35_Volvox_carteri,
+		36 36_Chlamydomonas_reinhardtii,
+		37 37_Paulschulzia_pseudovolvox,
+		38 38_Pteromonas_angulos,
+		39 39_Nephroselmis_olivacea,
+		40 40_Cyanophora_paradoxa
+		;
+tree PAUP_1 = [&U] ((((((((((((1:0.08891127,2:0.06083041):0.03767091,(3:0.05818978,(4:0.07104731,5:0.08945729):0.01552503):0.00862925):0.00701124,6:0.06992401):0.01241258,7:0.06434960):0.02159190,8:0.05667467):0.02102863,(((9:0.00881914,10:0.00720635):0.01829850,(11:0.00712118,12:0.01283963):0.00850723):0.03024222,(13:0.03369206,14:0.03448495):0.00484881):0.07300270):0.00865110,(((15:0.02624336,16:0.02905408):0.01475602,(17:0.01694410,18:0.01835990):0.02555193):0.02407874,(19:0.01596844,20:0.01037460):0.07686190):0.01718520):0.01041853,((((21:0.04323841,22:0.03328148):0.02916061,23:0.07973446):0.02870080,24:0.15063347):0.00130307,((25:0.04635190,27:0.07925817):0.01968795,26:0.06497623):0.01337380):0.01710445):0.00641863,((28:0.05807841,(29:0.01256507,30:0.01341653):0.02345193):0.08330001,31:0.08098489):0.01818206):0.02353633,32:0.07566959):0.01711445,(33:0.00501349,34:0.00392488):0.07748918):0.03346712,((((35:0.03381574,36:0.07283306):0.01285200,37:0.04906875):0.01677391,38:0.05876796):0.05724389,39:0.11457034):0.02792645,40:0.17297878);
+End;
