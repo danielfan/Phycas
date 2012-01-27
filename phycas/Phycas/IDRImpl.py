@@ -1,5 +1,6 @@
 import os,sys,math,random
 from phycas import *
+from MCMCManager import MCMCManager
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 
@@ -28,6 +29,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.ntax = None                # number of taxa in the data matrix
         self.nchar = None               # number of sites in the data matrix
         self.param_names = None         # list of the names of the parameters
+        self.newick = None              # dictionary in which keys are unique tree identifiers, and values are newick-format tree definitions
         self.parameters = None          # dictionary in which keys are unique tree identifiers, and values are lists
                                         #   e.g. self.parameters[tree_id][j] = {'rAG': -4.2432, 'freqC': -2.3243, ...}
                                         #   where tree_id is a list of split representations uniquely identifying a particular tree
@@ -38,6 +40,14 @@ class InflatedDensityRatio(CommonFunctions):
                                         #   where tree_id is a list of split representations uniquely identifying a particular tree
                                         #   and j is the index of the (j+1)th sample from that tree. The keys in the dictionary (e.g. '-**-**--') 
                                         #   are string representations of splits and the values are log-transformed edge lengths
+        self.models = None              # list of models used in the defined partition
+        self.model_names = None         # list of names of models used in the defined partition
+
+        # data members below are needed because must use an MCMCManager to compute posteriors
+        # This is overkill and will be simplified later
+        self.mcmc_manager = None        # manages MarkovChain used to compute posterior
+        self.heat_vector = [1.0]        # specifies that just one chain will be created with power 1.0
+        self.curr_treeid = None         # specifies the current tree id (tuple containing string representations of all splits)
         
     def storeTrees(self, input_trees):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -177,6 +187,9 @@ class InflatedDensityRatio(CommonFunctions):
         self.storeTrees(input_trees)
         self.storeParams(input_params)
         
+        # Initialize the data member that will hold the newick-format tree definitions for each tree sampled
+        self.newick = {}
+        
         # Initialize the data member that will hold all information about edge lengths
         self.edge_lengths = {}
         
@@ -196,6 +209,10 @@ class InflatedDensityRatio(CommonFunctions):
             # where the split object s associated with the edge is used as the key
             edgelen_dict, tree_id = self.fillEdgeLenDict(tree_def)
             
+            # add tree_def to the self.newick dictionary if not already present
+            if not tree_id in self.newick.keys():
+                self.newick[tree_id] = tree_def
+                
             # add edgelen_dict to the appropriate list in the self.edge_lengths dictionary
             if tree_id in self.edge_lengths.keys():
                 # this tree has already been seen, so add to list already established for this tree
@@ -229,26 +246,74 @@ class InflatedDensityRatio(CommonFunctions):
         self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
         self.phycassert(self.ntax > 0, 'Number of taxa in data matrix was 0')
 
-    #def checkLikelihoods(self):
-    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-    #    """
-    #    Calculates log-likelihoods from the supplied parameters and 
-    #    edge_lengths lists and compares with lnL stored in parameters.
-    #    
-    #    """
-    #    pass
-    #    #assert len(parameters) == len(edge_lengths), 'parameters (%d) and edge_lengths (%d) lists not the same length' % (len(parameters), len(edge_lengths))
-    #    #assert len(parameters) == len(self.stored_tree_defs[self.opts.burnin:]), 'parameters and stored_tree_defs lists not the same length'
-    #    #for p,e,d in zip(parameters, edge_lengths, self.stored_tree_defs[self.opts.burnin:]):
-    #    #    self.starting_tree = Phylogeny.Tree()
-    #    #    d.buildTree(self.starting_tree)
-    #    #    ntips = self.starting_tree.getNObservables()
-    #    #    self.starting_tree.recalcAllSplits(ntips)
-    #    #    core = LikelihoodCore(self)
-    #    #    core.setupCore()
-    #    #    core.prepareForLikelihood()
-    #    #    lnL = core.calcLnLikelihood()
-    #    #    self.stdout.info('lnL = %g (%g)' % (lnL,p['lnL']))
+    def checkModel(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Freezes model, creating a default partition if partition not defined
+        by user, then performs various sanity checks to make sure model is
+        internally consistent.
+        
+        """
+        # Create a default partition if a partition was not defined by the user
+        partition.validate(self.nchar)
+        
+        # Ask for a partition report, passing self as the reporter (object that has an output function)
+        partition.partitionReport(self)
+
+        self.models         = [m for (n,s,m) in partition.subset]
+        self.model_names    = [n for (n,s,m) in partition.subset]
+        
+        # Perform sanity checks on models
+        for m,n in zip(self.models, self.model_names):
+            #print '==> checking model %s' % n
+            bad_priors = m.checkPriorSupport()
+            self.phycassert(len(bad_priors) == 0, 'In model %s, prior support is incorrect for these parameters:\n%s' % (n,'  \n'.join([p for p in bad_priors])))
+            
+            if m.edgelen_prior is not None:
+                # set both internal and external edge length priors to edgelen_prior
+                m.internal_edgelen_prior = m.edgelen_prior
+                m.external_edgelen_prior = m.edgelen_prior
+            else:
+                # Ensure that user has specified both internal and external edge length priors
+                self.phycassert(m.internal_edgelen_prior is not None, 'In model %s, internal_edgelen_prior cannot be None if edgelen_prior is None' % n)
+                self.phycassert(m.external_edgelen_prior is not None, 'In model %s, external_edgelen_prior cannot be None if edgelen_prior is None' % n)
+                
+            if m.edgelen_hyperprior is not None:
+                # Ensure that both internal and external edgelen priors are Exponential
+                if m.internal_edgelen_prior.getDistName() != 'Exponential':
+                    m.internal_edgelen_prior = Exponential(1.0)
+                    self.warning('In model %s, internal_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
+                if m.external_edgelen_prior.getDistName() != 'Exponential':
+                    m.external_edgelen_prior = Exponential(1.0)
+                    self.warning('In model %s, external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
+        
+    def getStartingTree(self):
+        self.starting_tree = self.newick[self.curr_treeid]
+        return self.starting_tree
+        
+    def checkPosterior(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calculates log-posterior for sampled parameters and edge_lengths and
+        compares result to the lnL and lnPrior values from the original MCMC
+        analysis. This function is intended as a debugging tool.
+        
+        """
+        self.checkModel()
+        
+        for tid in self.parameters.keys():
+            self.curr_treeid = tid
+            
+            # create chain manager and (single) chain
+            self.mcmc_manager = MCMCManager(self)
+            self.mcmc_manager.createChains()
+            
+            # POL needs to do further work here before anything below here will work correctly
+            cold_chain = self.mcmc_manager.getColdChain()
+            cold_chain.chain_manager.refreshLastLnLike()
+            self.output('Starting log-likelihood = %s' % cold_chain.chain_manager.getLastLnLike())
+            cold_chain.chain_manager.refreshLastLnPrior()
+            self.output('Starting log-prior = %s' % cold_chain.chain_manager.getLastLnPrior())
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -256,19 +321,19 @@ class InflatedDensityRatio(CommonFunctions):
         Summarizes what was found - mostly for debugging purposes.
         
         """
-        self.stdout.info('\nSummary of edge length samples:')
-        self.stdout.info('  Number of distinct tree topologies: %d' % len(self.edge_lengths.keys()))
-        self.stdout.info('  Number of samples within each distinct tree topology:')
-        self.stdout.info('  %12s\t%6s' % ('tree', 'samples'))
+        self.output('\nSummary of edge length samples:')
+        self.output('  Number of distinct tree topologies: %d' % len(self.edge_lengths.keys()))
+        self.output('  Number of samples within each distinct tree topology:')
+        self.output('  %12s\t%6s' % ('tree', 'samples'))
         for i,treeid in enumerate(self.edge_lengths.keys()):
-            self.stdout.info('  %12d\t%6d' % (i+1,len(self.edge_lengths[treeid])))
+            self.output('  %12d\t%6d' % (i+1,len(self.edge_lengths[treeid])))
             
-        self.stdout.info('\nSummary of parameter samples:')
-        self.stdout.info('  Number of distinct tree topologies: %d' % len(self.parameters.keys()))
-        self.stdout.info('  Number of samples within each distinct tree topology:')
-        self.stdout.info('  %12s\t%6s' % ('tree', 'samples'))
+        self.output('\nSummary of parameter samples:')
+        self.output('  Number of distinct tree topologies: %d' % len(self.parameters.keys()))
+        self.output('  Number of samples within each distinct tree topology:')
+        self.output('  %12s\t%6s' % ('tree', 'samples'))
         for i,treeid in enumerate(self.parameters.keys()):
-            self.stdout.info('  %12d\t%6d' % (i+1,len(self.parameters[treeid])))
+            self.output('  %12d\t%6d' % (i+1,len(self.parameters[treeid])))
 
     def marginal_likelihood(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -299,6 +364,8 @@ class InflatedDensityRatio(CommonFunctions):
         
         # Read in the data and store in self.data_matrix
         self.loadData()
-        
+
+        # These are debugging functions whose reports tell us if everything is working as expected
+        self.checkPosterior()
         self.summarize()
         
