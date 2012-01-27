@@ -216,6 +216,7 @@ class LikelihoodCore(object):
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
         if self.parent.data_matrix:
+            #print '~!~!~!~!~! calling copyDataFromDiscreteMatrix !~!~!~!~!~' # temporary
             self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
 
         # Build the starting tree

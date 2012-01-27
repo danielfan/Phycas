@@ -234,8 +234,6 @@ class MarkovChain(LikelihoodCore):
 
         from phycas import partition,model
         if self.parent.opts.partition.noData():
-            #print 'setting noData in setupChain in MarkovChain.py'
-            #raw_input('debug check')
             self.likelihood.setNoData()
             
         LikelihoodCore.prepareForLikelihood(self)

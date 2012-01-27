@@ -9,6 +9,7 @@ class IDR(PhycasCommand):
             ("trees",               TreeCollection(),   "A source of trees (list of trees or the name of the input tree file) to be summarized. This setting should not be None at the time the idr method is called.", TreeSourceValidate),
             ("data_source",         P.characters,       "The DataSource that provides the data, to be used in the IDR analysis. Should be a DataSource object", DataSourceValidate),
             ("burnin",              1,                  "Number of samples from the input files to skip", IntArgValidate(min=0)),
+            ("partition",           partition,          "Specifies the partition to use. By default, uses the predefined partition object."),
             ])
         o = PhycasCommandOutputOptions()
         o.__dict__["_help_order"] = ["log"]
@@ -17,7 +18,6 @@ class IDR(PhycasCommand):
         PhycasCommand.__init__(self, args, "idr", "The idr command is used to estimate the marginal likelihood given a sample of trees and parameters from an MCMC analysis. Note: the model in place when this command is called must be identical to the model used to generate the params and trees files.", o)
 
         # data members hidden from users
-        self.__dict__["partition"]                      = partition
         self.__dict__["use_unimap"]                     = False
         self.__dict__["uf_num_edges"]                   = 50
         self.__dict__["fix_topology"]                   = False

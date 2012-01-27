@@ -309,11 +309,13 @@ class InflatedDensityRatio(CommonFunctions):
             self.mcmc_manager.createChains()
             
             # POL needs to do further work here before anything below here will work correctly
+            # In particular, the parameter values have not been set yet, so the log-likelihood and log-prior
+            # reported reflect the default parameter values, not any sampled parameter vector
             cold_chain = self.mcmc_manager.getColdChain()
             cold_chain.chain_manager.refreshLastLnLike()
-            self.output('Starting log-likelihood = %s' % cold_chain.chain_manager.getLastLnLike())
+            self.output('log-likelihood = %s' % cold_chain.chain_manager.getLastLnLike())
             cold_chain.chain_manager.refreshLastLnPrior()
-            self.output('Starting log-prior = %s' % cold_chain.chain_manager.getLastLnPrior())
+            self.output('log-prior = %s' % cold_chain.chain_manager.getLastLnPrior())
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
