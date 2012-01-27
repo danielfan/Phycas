@@ -159,7 +159,7 @@ import Likelihood
 import PDFGen
 import Phylogeny
 import ProbDist
-from ProbDist import Bernoulli, Beta, BetaPrime, Binomial, Dirichlet, RelativeRateDistribution, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Uniform, Lot
+from ProbDist import Bernoulli, Beta, BetaPrime, Binomial, Dirichlet, RelativeRateDistribution, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Lognormal, Uniform, Lot
 import ReadNexus
 import sys, os
 from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help
@@ -228,6 +228,9 @@ cpo = CPO()
 
 from Phycas.JPG import JPG
 jpg = JPG()
+
+from Phycas.IDR import IDR
+idr = IDR()
 
 from Phycas.Unimap import Unimap
 unimap = Unimap()

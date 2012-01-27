@@ -49,9 +49,13 @@ End;
 
 begin paup;
   log file=logfile.txt start replace;
-  set increase=auto autoinc=1000;
-  gettrees file=Yang_and_Rannala_Karol_nomissambig.nex.t unrooted;
   outgroup 40_Cyanophora_paradoxa;
-  contree all / treefile=consensus.tre replace nostrict majrule;
+  set increase=auto autoinc=1000 criterion=likelihood;
+  nj;
+  lset nst=6 basefreq=estimate rmatrix=estimate rates=gamma shape=estimate;
+  lscores 1;
+  lset nst=6 basefreq=previous rmatrix=previous rates=gamma shape=previous;
+  hs reconlimit=5 nreps=1 start=stepwise addseq=random;  
+  savetrees file=gtrg.tre brlens;
   log stop;
 end;

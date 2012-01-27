@@ -617,6 +617,7 @@
 		D11BACAB11B430400084D645 /* SplitTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SplitTest.py; path = ../../phycas/Tests/SplitTest/SplitTest.py; sourceTree = SOURCE_ROOT; };
 		D11BC11511B74F950011F82A /* char_super_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = char_super_matrix.cpp; path = ../../phycas/src/char_super_matrix.cpp; sourceTree = SOURCE_ROOT; };
 		D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = char_super_matrix.hpp; path = ../../phycas/src/char_super_matrix.hpp; sourceTree = SOURCE_ROOT; };
+		D132DC6B14CF8C3C00B35518 /* GG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GG.py; path = ../../phycas/Phycas/GG.py; sourceTree = "<group>"; };
 		D147CA4711BBF61400AE29FC /* uni738taxa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = uni738taxa.py; path = ../../inprep/unimap738/uni738taxa.py; sourceTree = SOURCE_ROOT; };
 		D155CD40146613E100988FD3 /* JPG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPG.py; path = ../../phycas/Phycas/JPG.py; sourceTree = "<group>"; };
 		D155CD41146613E100988FD3 /* JPGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPGImpl.py; path = ../../phycas/Phycas/JPGImpl.py; sourceTree = "<group>"; };
@@ -628,6 +629,8 @@
 		D19A89B31130507A001004D2 /* lognormal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lognormal.cpp; path = ../../phycas/src/lognormal.cpp; sourceTree = SOURCE_ROOT; };
 		D19A89B41130507A001004D2 /* lognormal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lognormal.hpp; path = ../../phycas/src/lognormal.hpp; sourceTree = SOURCE_ROOT; };
 		D19A89E111307128001004D2 /* _LognormalDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _LognormalDist.py; sourceTree = "<group>"; };
+		D1A31E8614D1AFF200985A38 /* IDR.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = IDR.py; path = ../../phycas/Phycas/IDR.py; sourceTree = "<group>"; };
+		D1A31E8714D1AFF200985A38 /* IDRImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = IDRImpl.py; path = ../../phycas/Phycas/IDRImpl.py; sourceTree = "<group>"; };
 		D1A8CC0411BACBA400A2A901 /* once.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = once.cpp; path = libs/thread/src/pthread/once.cpp; sourceTree = BOOST_ROOT; };
 		D1A8CC0511BACBA400A2A901 /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = thread.cpp; path = libs/thread/src/pthread/thread.cpp; sourceTree = BOOST_ROOT; };
 		D1A8CC0611BACBA400A2A901 /* timeconv.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = timeconv.inl; path = libs/thread/src/pthread/timeconv.inl; sourceTree = BOOST_ROOT; };
@@ -1349,6 +1352,7 @@
 				D155CD40146613E100988FD3 /* JPG.py */,
 				D155CD41146613E100988FD3 /* JPGImpl.py */,
 				D1ABDDE710D2D60000EDC77A /* GammaNylDNA4.py */,
+				D132DC6B14CF8C3C00B35518 /* GG.py */,
 				D1ABDDE810D2D60000EDC77A /* GGImpl.py */,
 				D1ABDDE910D2D60000EDC77A /* Like.py */,
 				D1ABDDEA10D2D60000EDC77A /* LikeImpl.py */,
@@ -1365,6 +1369,8 @@
 				D1ABDDF310D2D60000EDC77A /* Sim.py */,
 				D1ABDDF410D2D60000EDC77A /* SimImpl.py */,
 				D1ABDDF510D2D60000EDC77A /* SS.py */,
+				D1A31E8614D1AFF200985A38 /* IDR.py */,
+				D1A31E8714D1AFF200985A38 /* IDRImpl.py */,
 				D1ABDDF610D2D60000EDC77A /* SumP.py */,
 				D1ABDDF710D2D60000EDC77A /* SumPImpl.py */,
 				D1ABDDF810D2D60000EDC77A /* SumT.py */,

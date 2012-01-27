@@ -433,6 +433,27 @@ class ParamSummarizer(CommonFunctions):
             #except Exception,e:
             #    self.output(' %s' % e.message)
             
+    def idr(self, params):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        This method estimates the marginal likelihood using the inflated 
+        density ratio (IDR) method. The supplied params is a dictionary
+        containing samples of all parameters.
+        
+        """
+        log_c = 0.0
+        
+        # todo: replace the following with something meaningful
+        print 'Parameters passed to the idr function:'
+        for k in params.keys():
+            print ' ',k
+            
+        #             k               r_k is the radius of the density inflation
+        # c = ------------------      k = 2 r_k g(0) is the extra mass added
+        #      Eg[ gPk/g -  1 ]
+        
+        self.output('Log of marginal likelihood (IDR method) = %f' % log_c)
+        
     def harmonic_mean(self, v):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -550,6 +571,7 @@ class ParamSummarizer(CommonFunctions):
                 self.output(gss % sub)
         self.output()
         self.harmonic_mean(params['lnL'])
+        self.idr(params)
         
     def calcLogHM(self, vect_of_log_values):  
         logn = math.log(float(len(vect_of_log_values)))      

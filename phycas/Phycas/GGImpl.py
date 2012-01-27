@@ -1,7 +1,11 @@
-import os,sys,math
+import os,sys,math,random
 from phycas import *
+from MCMCManager import LikelihoodCore
+from phycas.Utilities.PhycasCommand import *
+from phycas.ReadNexus import NexusReader
+from phycas.Utilities.CommonFunctions import CommonFunctions
 
-class GelfandGhosh(object):
+class GelfandGhosh(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Computes Gelfand-Ghosh on a pre-existing MCMC sample.
@@ -359,7 +363,7 @@ class GelfandGhosh(object):
         stopwatch.start()
         prev_secs = 0.0
         for i, t in enumerate(self.trees):
-            if i >= self.gg_burnin:     # POL use slice to get rid of this waste
+            if i >= self.gg_burnin: 
                 tree_description = t.newick
                 tree_name = t.name
                 tree_rooted = t.rooted
