@@ -298,9 +298,9 @@ class InflatedDensityRatio(CommonFunctions):
     def checkPosterior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Calculates log-posterior for sampled parameters and edge_lengths and
-        compares result to the lnL and lnPrior values from the original MCMC
-        analysis. This function is intended as a debugging tool.
+        Calculates log-likelihood and log-prior for sampled parameters and 
+        edge_lengths. This function is intended as a sanity check to ensure
+        that the likelihood machinery is working as expected.
         
         """
         self.checkModel()
@@ -400,6 +400,91 @@ class InflatedDensityRatio(CommonFunctions):
                 c.chain_manager.refreshLastLnPrior()
                 last_log_prior = c.chain_manager.getLastLnPrior()
                 self.output('%.5f\t%.5f' % (last_log_like, last_log_prior))
+                
+    def computeMeanVectorAndVarCovMatrix(self, tid):
+        """
+        Computes sample variance-covariance matrix for parameter vectors sampled from tree with tree id equal to `tid'.
+        
+        """
+        # create list that will store sampled parameter vectors
+        sample = []
+        
+        # obtain and sort keys into the dictionaries of edge lengths
+        edge_length_keys = self.edge_lengths[tid][0].keys()
+        edge_length_keys.sort()
+        
+        # obtain and sort keys into the dictionaries of parameter values, removing quantities 
+        # (e.g. log-likelihood) that do not represent parameter values
+        param_keys = self.parameters[tid][0].keys()
+        param_keys.remove('Gen')
+        param_keys.remove('TL')
+        param_keys.remove('lnL')
+        param_keys.remove('lnPrior')
+        param_keys.sort()
+        
+        param_names = param_keys + edge_length_keys
+        num_params = len(param_keys) + len(edge_length_keys)
+        
+        # loop through all edge length and parameter vectors sampled for this particular tree topology
+        for e,p in zip(self.edge_lengths[tid],self.parameters[tid]):            
+            # build unified parameter vector containing transformed parameter values 
+            # followed by transformed edge lengths
+            param_vect = []
+            for k in param_keys:
+                param_vect.append(p[k])
+            for k in edge_length_keys:
+                param_vect.append(e[k])
+            sample.append(param_vect)
+        sample_size = len(sample)
+        
+        # compute sample mean vector
+        sample_mean = [0.0]*num_params  # initialize vector of length num_params with all zeros
+        sample_sum = [0.0]*num_params  # initialize vector of length num_params with all zeros
+        sample_ss = [0.0]*num_params  # initialize vector of length num_params with all zeros
+        for v in sample:
+            for i,p in enumerate(v):
+                sample_mean[i] += p/float(sample_size)
+                sample_sum[i] += p
+                sample_ss[i] += math.pow(p, 2.0)
+
+        # compute sample variance-covariance matrix
+        sample_varcov = [x[:] for x in [[0.0]*num_params]*num_params]  # initialize num_paramsxnum_params matrix with all zeros
+        n_minus_one = float(sample_size - 1)
+        for i in range(0,num_params):
+            for j in range(i,num_params): 
+                for k in range(sample_size):
+                    sample_varcov[i][j] += (sample[k][i] - sample_mean[i])*(sample[k][j] - sample_mean[j])/n_minus_one
+                if j > i:
+                    sample_varcov[j][i] = sample_varcov[i][j]
+        
+        return sample_mean, sample_varcov
+                
+    def calcIDR(self):
+        """
+        Estimates log-marginal-likelihood using the method described in the Arima paper.
+        
+        """
+        self.checkModel()
+        
+        for tid in self.parameters.keys():
+            self.curr_treeid = tid
+            
+            # create chain manager and (single) chain
+            # chain will obtain tree by calling getStartingTree method (see above)
+            self.mcmc_manager = MCMCManager(self)
+            self.mcmc_manager.createChains()
+            c = self.mcmc_manager.getColdChain()
+            
+            # recalc splits for tree so that we can replace edge lengths using splits as keys
+            tree = c.getTree()
+            ntips = tree.getNObservables()
+            tree.recalcAllSplits(ntips)
+            
+            mu,Sigma = self.computeMeanVectorAndVarCovMatrix(tid)
+            
+            # currently producing some negative variances
+            
+            # much more to do...
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -441,17 +526,14 @@ class InflatedDensityRatio(CommonFunctions):
         
         # Store transformed edge lengths and parameter values in dictionaries self.edge_lengths and self.parameters, respectively
         self.harvestTreesAndParams(input_trees, input_params)
-        
-        # Store transformed parameter values in dictionary self.parameters
-        #self.harvestParameters(input_params)
-                        
-        # Store log-transformed edge lengths in dictionary self.edge_lengths
-        #self.harvestEdgeLengths(input_trees)
-        
+                
         # Read in the data and store in self.data_matrix
         self.loadData()
 
         # These are debugging functions whose reports tell us if everything is working as expected
         #self.checkPosterior()
-        self.summarize()
+        #self.summarize()
+        
+        self.calcIDR()
+        
         
