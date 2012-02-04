@@ -21,6 +21,7 @@ from _BetaPrimeDist import *
 from _DirichletDist import *
 from _MVNormalDist import *
 from _RelRateDist import *
+from _SquareMatrix import *
 
 #print 'importing ProbDist...'
 

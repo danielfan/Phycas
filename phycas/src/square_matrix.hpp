@@ -20,10 +20,18 @@
 #if ! defined(SQUARE_MATRIX_HPP)
 #define SQUARE_MATRIX_HPP
 
+//#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
+#include <boost/shared_ptr.hpp>
+
+extern "C"
+{
+#include "linalg.h"
+}
+
 namespace phycas
 {
 
-void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, const unsigned);
+void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, unsigned dim);
 
 class SquareMatrix
 	{
@@ -38,52 +46,30 @@ class SquareMatrix
 		void							Subtract(const SquareMatrix & other);
 		void							SetToScalar(double scalar);
 		unsigned						GetDimension() const;
-		double * *						GetMatrix() const;
+		double                          Trace() const;
+		double * *						GetMatrixAsRawPointer() const;
 		double *						operator[](unsigned i) const;
 		void							MatrixToString(std::string & s, std::string fmt) const;
 		void							Fill(double value);
+        std::string                     GetStringRepresentation() const;
+        std::string                     GetFormattedStringRepresentation(std::string fmt) const;
+        double                          GetElement(unsigned i, unsigned j) const;
+        void                            SetElement(unsigned i, unsigned j, double v);
+        std::vector<double>             GetMatrix() const;
+        void                            SetMatrix(std::vector<double>);
+        SquareMatrix *                  Inverse() const;
+        SquareMatrix *                  LeftMultiply(SquareMatrix & matrixOnLeft) const;
+        SquareMatrix *                  RightMultiply(SquareMatrix & matrixOnRight) const;
+                
 	protected:
 		static unsigned					k;		//temporary
 		unsigned						id;		//temporary
 		double * *						m;		/**< the two-dimensional matrix of doubles */
-		unsigned						dim;	/**< dimension of both rows and columns */ 
+		unsigned						dim;	/**< the dimension of the matrix */
 	};
+    
+typedef boost::shared_ptr<SquareMatrix> SquareMatrixShPtr;
 
-inline void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, const unsigned dim)
-	{
-	for (unsigned j = 0; j < dim; ++j)
-		{
-		for (unsigned k = 0 ; k < dim; ++k)
-			p_mat_trans_scratch[j][k] = p_mat[k][j];
-		}
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that simply returns the value of `dim' (the row and column dimension).
-*/
-inline unsigned SquareMatrix::GetDimension() const 
-	{
-	return dim;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that simply returns `m'. This allows `m' to be passed to functions that expect a two-dimensional
-|	array of doubles, but keep in mind that this is somewhat unsafe.
-*/
-inline double * * SquareMatrix::GetMatrix() const 
-	{
-	return m;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Operator that allows access to this SquareMatrix object as if it were a two-dimensional array of doubles.
-*/
-inline double * SquareMatrix::operator[](
-  unsigned i) const 
-	{
-	PHYCAS_ASSERT(i < dim); 
-	return m[i];
-	}
 
 }	// namespace phycas
 #endif

@@ -155,6 +155,7 @@ alias probdist_sources
     phycas/src/basic_lot.cpp
     phycas/src/linalg.c
     phycas/src/stop_watch.cpp
+    phycas/src/square_matrix.cpp
     phycas/src/lognormal.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c

@@ -34,6 +34,7 @@
 #include "phycas/src/lognormal.hpp"
 #include "phycas/src/stop_watch.hpp"
 #include "phycas/src/slice_sampler.hpp"
+#include "phycas/src/square_matrix.hpp"
 #include "phycas/src/xprobdist.hpp"
 
 using namespace boost::python;
@@ -136,6 +137,21 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("elapsedSeconds", &phycas::StopWatch::elapsedSeconds)
 		.def("stopTicks", &phycas::StopWatch::stopTicks)
 		//.def("doofus", &phycas::StopWatch::doofus)
+		;
+
+	class_<phycas::SquareMatrix, boost::shared_ptr<phycas::SquareMatrix>, boost::noncopyable>("SquareMatrixBase", init<unsigned, double>())
+		.def(init<const phycas::SquareMatrix &>())
+		.def("inverse", &phycas::SquareMatrix::Inverse, return_value_policy<manage_new_object>())
+		.def("rightMultiply", &phycas::SquareMatrix::RightMultiply, return_value_policy<manage_new_object>())
+		.def("leftMultiply", &phycas::SquareMatrix::LeftMultiply, return_value_policy<manage_new_object>())
+		.def("identity", &phycas::SquareMatrix::Identity)
+		.def("trace", &phycas::SquareMatrix::Trace)
+		.def("getDimension", &phycas::SquareMatrix::GetDimension)
+		.def("__repr__", &phycas::SquareMatrix::GetStringRepresentation)
+		.def("setElement", &phycas::SquareMatrix::SetElement)
+		.def("getElement", &phycas::SquareMatrix::GetElement)
+		.def("setMatrix", &phycas::SquareMatrix::SetMatrix)
+		.def("getMatrix", &phycas::SquareMatrix::GetMatrix)
 		;
 
 //We tell boost::python the smart pointer type we're using, like this:

@@ -43,7 +43,7 @@ UniventProbMgr::UniventProbMgr(
   , storeUnivents(true), isMappingValidVar(false)
 #endif
 	{
-	lnUMat = lnUMatMemMgt.GetMatrix();
+	lnUMat = lnUMatMemMgt.GetMatrixAsRawPointer();
 	
 	unsigned init_max_m = 5;
 	maxm = init_max_m;
@@ -83,7 +83,7 @@ void UniventProbMgr::recalcUMat()
 
 	if (uMatVect[1].GetDimension() == 0)
 		uMatVect[1].CreateMatrix(numStates, 0.0);
-	double * * oneUPtr = uMatVect[1].GetMatrix();
+	double * * oneUPtr = uMatVect[1].GetMatrixAsRawPointer();
 	lambda = model->calcUMat(oneUPtr);
 
     //unsigned prev_maxm = maxm;
@@ -175,14 +175,14 @@ void UniventProbMgr::expandUMatVect(unsigned newMaxM) const
 	uMatVect.resize(newMaxM + 1);
 	// we could get better cache efficiency by storing the transpose of one uMatVect
 	// whenever we calculate it in 
-	const double * const * onePtr = const_cast<const double * const * >(uMatVect[1].GetMatrix());
+	const double * const * onePtr = const_cast<const double * const * >(uMatVect[1].GetMatrixAsRawPointer());
 	for (unsigned k = maxm + 1; k <= newMaxM; ++k)
 		{
 		
 		if (uMatVect[k].GetDimension() == 0)
 			uMatVect[k].CreateMatrix(numStates, 0.0);
-		double * * currPtr = uMatVect[k].GetMatrix();
-		const double * const * prevPtr = const_cast<const double * const * >(uMatVect[k-1].GetMatrix());
+		double * * currPtr = uMatVect[k].GetMatrixAsRawPointer();
+		const double * const * prevPtr = const_cast<const double * const * >(uMatVect[k-1].GetMatrixAsRawPointer());
 		for (unsigned i = 0; i < numStates; ++i)
 			{
 			double * currRow = currPtr[i];
@@ -327,7 +327,7 @@ void UniventProbMgr::unimapEdgeOneSite(
 void UniventProbMgr::sampleUniventsKeepEndStates(Univents & u, const double edgelen, const int8_t * par_states, const double * * p_mat_transposed, Lot &rng) const
 	{
 	const int8_t * des_states = &(u.end_states_vec[0]);
-	double ** p_mat = scratchMatTwo.GetMatrix();
+	double ** p_mat = scratchMatTwo.GetMatrixAsRawPointer();
 	fillTranspose(p_mat, p_mat_transposed, numStates);
 	sampleUniventsImpl(u, edgelen, par_states, des_states, const_cast<const double * const *>(p_mat), rng, NULL);
 	}

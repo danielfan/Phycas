@@ -21,7 +21,7 @@ class InflatedDensityRatio(CommonFunctions):
         """
         CommonFunctions.__init__(self, opts)
         self.sample_size = None         # number of tree definitions and parameter samples
-        self.stored_tree_defs = None    # list of tree definitions from the trees file
+        self.stored_trees = None        # list of trees built from tree definitions in the trees file
         self.param_file_lines = None    # list of lines from the params file (header lines excluded)
         self.starting_tree = None       # the tree to be processed
         self.data_matrix = None         # the data matrix itself
@@ -29,7 +29,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.ntax = None                # number of taxa in the data matrix
         self.nchar = None               # number of sites in the data matrix
         self.param_names = None         # list of the names of the parameters
-        self.newick = None              # dictionary in which keys are unique tree identifiers, and values are newick-format tree definitions
+        self.tree_objects = None        # dictionary in which keys are unique tree identifiers, and values are tree objects
         self.parameters = None          # dictionary in which keys are unique tree identifiers, and values are lists
                                         #   e.g. self.parameters[tree_id][j] = {'rAG': -4.2432, 'freqC': -2.3243, ...}
                                         #   where tree_id is a list of split representations uniquely identifying a particular tree
@@ -53,14 +53,13 @@ class InflatedDensityRatio(CommonFunctions):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Open specified tree file and read trees therein, storing the list of
-        tree definitions (strings) in self.stored_tree_defs.
+        tree objects in self.stored_trees.
         
         """
-        burnin = self.opts.burnin
         self.stdout.info('\nReading %s...' % str(input_trees))
-        self.stored_tree_defs = list(input_trees)
-        self.taxon_labels = input_trees.taxon_labels # this line must follow the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
-        num_stored_trees = len(self.stored_tree_defs)
+        self.stored_trees = list(input_trees)   # this triggers reading the tree file
+        self.taxon_labels = input_trees.taxon_labels # this line must follow the coercion of the trees to a list
+        num_stored_trees = len(self.stored_trees)
         self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  str(input_trees))
         
     def storeParams(self, input_params):
@@ -122,7 +121,7 @@ class InflatedDensityRatio(CommonFunctions):
                 param_dict[h] = math.log(float(p))
         return param_dict
 
-    def fillEdgeLenDict(self, tree_def):
+    def fillEdgeLenDict(self, tree):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Build and return a tuple containing: (1) a dictionary containing the 
@@ -134,9 +133,8 @@ class InflatedDensityRatio(CommonFunctions):
         """
         edgelen_dict = {}
         
-        # Build the tree
-        tree = Phylogeny.Tree()
-        tree_def.buildTree(tree)
+        #tree = Phylogeny.Tree()
+        #tree_def.buildTree(tree)
         tree.rectifyNames(self.taxon_labels)
         ntips = tree.getNObservables()
         tree.recalcAllSplits(ntips)
@@ -173,8 +171,14 @@ class InflatedDensityRatio(CommonFunctions):
                 #if not is_tip_node:                        
                 #    tree_key.append(ss)
 
-                # Create a dictionary entry with ss as key and edge_len as value
-                edgelen_dict[ss] = edge_len
+                # Create a dictionary entry with ss as key and the log-transformed edge_len as value
+                edgelen_dict[ss] = math.log(edge_len)
+                
+        #print 'tree ==>',tree.newick
+        #for ss in edgelen_dict.keys():
+        #    edgelen = math.exp(edgelen_dict[ss])
+        #    print ss,edgelen
+        #raw_input('check edge lengths...')
         return edgelen_dict, tuple(split_list)
         
     def harvestTreesAndParams(self, input_trees, input_params):
@@ -188,7 +192,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.storeParams(input_params)
         
         # Initialize the data member that will hold the newick-format tree definitions for each tree sampled
-        self.newick = {}
+        self.tree_objects = {}
         
         # Initialize the data member that will hold all information about edge lengths
         self.edge_lengths = {}
@@ -198,8 +202,8 @@ class InflatedDensityRatio(CommonFunctions):
         
         self.sample_size = 0
         post_burnin_paramvects = self.param_file_lines[self.opts.burnin+3:] # eliminate burnin samples as well as 2 header lines and starting state (generation 0)
-        post_burnin_treedefs = self.stored_tree_defs[self.opts.burnin+1:]   # eliminate burnin samples as well as starting state (generation 0)
-        for tree_def, param_vect in zip(post_burnin_treedefs,post_burnin_paramvects): 
+        post_burnin_trees = self.stored_trees[self.opts.burnin+1:]   # eliminate burnin samples as well as starting state (generation 0)
+        for tree, param_vect in zip(post_burnin_trees,post_burnin_paramvects): 
             self.sample_size += 1
 
             # This dictionary will be filled with parameter values: e.g. sample_dict['freqA'] = 0.24335
@@ -207,11 +211,11 @@ class InflatedDensityRatio(CommonFunctions):
             
             # This dictionary will be filled with log-transformed edge lengths: e.g. edgelen_dict[s] = -1.10293
             # where the split object s associated with the edge is used as the key
-            edgelen_dict, tree_id = self.fillEdgeLenDict(tree_def)
+            edgelen_dict, tree_id = self.fillEdgeLenDict(tree)
             
-            # add tree_def to the self.newick dictionary if not already present
-            if not tree_id in self.newick.keys():
-                self.newick[tree_id] = tree_def
+            # add tree to the self.tree_objects dictionary if not already present
+            if not tree_id in self.tree_objects.keys():
+                self.tree_objects[tree_id] = tree
                 
             # add edgelen_dict to the appropriate list in the self.edge_lengths dictionary
             if tree_id in self.edge_lengths.keys():
@@ -288,7 +292,7 @@ class InflatedDensityRatio(CommonFunctions):
                     self.warning('In model %s, external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
         
     def getStartingTree(self):
-        self.starting_tree = self.newick[self.curr_treeid]
+        self.starting_tree = self.tree_objects[self.curr_treeid]
         return self.starting_tree
         
     def checkPosterior(self):
@@ -307,15 +311,136 @@ class InflatedDensityRatio(CommonFunctions):
             # create chain manager and (single) chain
             self.mcmc_manager = MCMCManager(self)
             self.mcmc_manager.createChains()
+            c = self.mcmc_manager.getColdChain()
             
-            # POL needs to do further work here before anything below here will work correctly
-            # In particular, the parameter values have not been set yet, so the log-likelihood and log-prior
-            # reported reflect the default parameter values, not any sampled parameter vector
-            cold_chain = self.mcmc_manager.getColdChain()
-            cold_chain.chain_manager.refreshLastLnLike()
-            self.output('log-likelihood = %s' % cold_chain.chain_manager.getLastLnLike())
-            cold_chain.chain_manager.refreshLastLnPrior()
-            self.output('log-prior = %s' % cold_chain.chain_manager.getLastLnPrior())
+            #updaters = {}
+            #for m in c.chain_manager.getAllUpdaters():
+            #    nm = m.getName()
+            #    updaters[nm] = m
+
+            # updater names:
+            #   state_freqs
+            #   relrates
+            #   larget_simon_local
+            #   master_edgelen
+            #   gamma_shape
+            
+            for e,p in zip(self.edge_lengths[tid],self.parameters[tid]):
+                # set parameters
+                if 'rAG' in p.keys():
+                    rAG_on_rAC = math.exp(p['rAG'])
+                    rAT_on_rAC = math.exp(p['rAT'])
+                    rCG_on_rAC = math.exp(p['rCG'])
+                    rCT_on_rAC = math.exp(p['rCT'])
+                    rGT_on_rAC = math.exp(p['rGT'])
+                    rAC = 1.0/(1.0 + rAG_on_rAC + rAT_on_rAC + rCG_on_rAC + rCT_on_rAC + rGT_on_rAC)
+                    rAG = rAC*rAG_on_rAC
+                    rAT = rAC*rAT_on_rAC
+                    rCG = rAC*rCG_on_rAC
+                    rCT = rAC*rCT_on_rAC
+                    rGT = rAC*rGT_on_rAC
+                    print 'GTR rates:',rAC,rAG,rAT,rCG,rCT,rGT
+                    #u = updaters['relrates']
+                    m = c.partition_model.getModel(0)
+                    m.setRelRates([rAC,rAG,rAT,rCG,rCT,rGT])
+                    
+                if 'freqC' in p.keys():
+                    freqC_on_freqA = math.exp(p['freqC'])
+                    freqG_on_freqA = math.exp(p['freqG'])
+                    freqT_on_freqA = math.exp(p['freqT'])
+                    freqA = 1.0/(1.0 + freqC_on_freqA + freqG_on_freqA + freqT_on_freqA)
+                    freqC = freqA*freqC_on_freqA
+                    freqG = freqA*freqG_on_freqA
+                    freqT = freqA*freqT_on_freqA
+                    print 'base freqs:',freqA,freqC,freqG,freqT
+                    #u = updaters['state_freqs']
+                    m = c.partition_model.getModel(0)
+                    m.setStateFreqUnnorm(0, freqA)
+                    m.setStateFreqUnnorm(1, freqC)
+                    m.setStateFreqUnnorm(2, freqG)
+                    m.setStateFreqUnnorm(3, freqT)
+
+                if 'gamma_shape' in p.keys():
+                    shape = math.exp(p['gamma_shape'])
+                    print 'previous gamma shape =',m.getShape()
+                    
+                    print 'gamma_shape:',shape
+                    #u = updaters['gamma_shape']
+                    m.setShape(shape)
+                    
+                # temporary!
+                print 'm.getModelName() =',m.getModelName()
+                #for d in dir(c.partition_model):
+                #    print d
+                nsubsets = c.partition_model.getNumSubsets()
+                print 'c.partition_model.getNumSubsets() =',nsubsets
+                for s in range(nsubsets):
+                    print 'c.partition_model.getSubsetRelRate(%d) =' % s,c.partition_model.getSubsetRelRate(s)
+                    m = c.partition_model.getModel(s)
+                    #for d in dir(m):
+                    #    print d
+                    print 'm.getStateFreqs()  =',m.getStateFreqs()
+                    print 'm.getRelRates()    =',m.getRelRates()
+                    print 'm.getShape()       =',m.getShape()
+                    print 'm.getNGammaRates() =',m.getNGammaRates()
+                raw_input('doof')
+
+                print 'edge lengths:'
+                for ss in e.keys():
+                    edgelen = math.exp(e[ss])
+                    print ss,edgelen
+                                        
+                # set edge lengths
+                tree = c.getTree()
+                #print 'tree:',tree.newick
+                ntips = tree.getNObservables()
+                #print 'ntips=',ntips
+                tree.recalcAllSplits(ntips)
+                
+                nd = tree.getFirstPreorder()
+                assert nd.isRoot(), 'The first preorder node should be the root'
+                treelen = 0.0
+                assert tree.hasEdgeLens(), 'tree has no edge lengths'
+                while True:
+                    nd = nd.getNextPreorder()
+                    if not nd:
+                        break
+                    else:
+                        # Grab the split and invert it if necessary to attain a standard polarity
+                        was_inverted = False
+                        s = nd.getSplit()
+                        if s.isBitSet(0):
+                            was_inverted = True
+                            s.invertSplit()
+                            
+                        # Create a string representation of the split
+                        ss = s.createPatternRepresentation()
+                        
+                        #print '------------------------------------------------------------'
+                        #print 'nd.getNodeName()   =',nd.getNodeName()
+                        #print 'nd.getNodeNumber() =',nd.getNodeNumber()
+                        #print 'nd.getEdgeLen()    =',nd.getEdgeLen()
+                        #print 'nd.getParent()     =',(nd.getParent() is None) and 'None' or nd.getParent().getNodeNumber()
+                        #print 'nd.getLeftChild()  =',(nd.getLeftChild() is None) and 'None' or nd.getLeftChild().getNodeNumber()
+                        #print 'nd.getRightSib()   =',(nd.getRightSib() is None) and 'None' or nd.getRightSib().getNodeNumber()
+                        #print 'nd.isRoot()     =',nd.isRoot()
+                        #print 'nd.isTip()      =',nd.isTip()
+                        #print 'nd.isInternal() =',nd.isInternal()
+                        #print 'was_inverted    =',was_inverted
+                        #print 'ss              =',ss
+                        
+                        log_edge_len = e[ss]
+                        edge_len = math.exp(log_edge_len)
+                        print '%s edge_len = %g' % (ss,edge_len)
+                        nd.setEdgeLen(edge_len)  
+                print 'tree =',tree.newick
+                                    
+                c.likelihood.replaceModel(c.partition_model)
+                c.chain_manager.refreshLastLnLike()
+                self.output('log-likelihood = %s' % c.chain_manager.getLastLnLike())
+                c.chain_manager.refreshLastLnPrior()
+                self.output('log-prior = %s' % c.chain_manager.getLastLnPrior())
+                raw_input('Press return to continue...')
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -336,7 +461,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.output('  %12s\t%6s' % ('tree', 'samples'))
         for i,treeid in enumerate(self.parameters.keys()):
             self.output('  %12d\t%6d' % (i+1,len(self.parameters[treeid])))
-
+            
     def marginal_likelihood(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

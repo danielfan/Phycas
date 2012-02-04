@@ -158,6 +158,7 @@ void MCMCChainManager::refreshLastLnLike()
     if (!found)
         {
         MCMCUpdaterShPtr u = *params_begin;
+        //std::cerr << "***>>> updater calculating likelihood is " << u->getName() << std::endl;
 	    last_ln_like = u->recalcLike();
         }
 #if 0 //@POL this is what should be executed if not doing unimap 

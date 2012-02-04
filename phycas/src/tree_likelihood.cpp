@@ -4144,7 +4144,7 @@ void TreeUniventSubsetStruct::remapUniventsForNode(TreeShPtr t, TreeNode * nd, T
 	const unsigned num_states = getNumStates();
 	const unsigned num_patterns = getNumPatterns();
 	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
-	double * * p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrix();
+	double * * p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrixAsRawPointer();
 	
 	unsigned * * nodeSMat = getNodeSMat(nd, subsetIndex);
 	assert(nodeSMat);

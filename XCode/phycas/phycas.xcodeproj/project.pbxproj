@@ -218,6 +218,7 @@
 		D11D1AA21191C2A7009F9107 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		D11EF46B11AEE2ED00AAD3E0 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
 		D11EF46E11AEE30E00AAD3E0 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		D13A06F414D9DBDE00011217 /* square_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462410CAEFB900CEFDE0 /* square_matrix.cpp */; };
 		D163E44C146A1A6B00F98F75 /* binary_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D163E44B146A1A6B00F98F75 /* binary_model.cpp */; };
 		D183E6D711668139002AB4A3 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 		D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
@@ -618,6 +619,7 @@
 		D11BC11511B74F950011F82A /* char_super_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = char_super_matrix.cpp; path = ../../phycas/src/char_super_matrix.cpp; sourceTree = SOURCE_ROOT; };
 		D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = char_super_matrix.hpp; path = ../../phycas/src/char_super_matrix.hpp; sourceTree = SOURCE_ROOT; };
 		D132DC6B14CF8C3C00B35518 /* GG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GG.py; path = ../../phycas/Phycas/GG.py; sourceTree = "<group>"; };
+		D13A06F314D9D65500011217 /* _SquareMatrix.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _SquareMatrix.py; sourceTree = "<group>"; };
 		D147CA4711BBF61400AE29FC /* uni738taxa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = uni738taxa.py; path = ../../inprep/unimap738/uni738taxa.py; sourceTree = SOURCE_ROOT; };
 		D155CD40146613E100988FD3 /* JPG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPG.py; path = ../../phycas/Phycas/JPG.py; sourceTree = "<group>"; };
 		D155CD41146613E100988FD3 /* JPGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPGImpl.py; path = ../../phycas/Phycas/JPGImpl.py; sourceTree = "<group>"; };
@@ -1130,6 +1132,7 @@
 				7A98F64610CD6E79001E79F7 /* _ExponentialDist.py */,
 				7A98F64010CD6E79001E79F7 /* _BetaPrimeDist.py */,
 				7A98F64210CD6E79001E79F7 /* _BinomialDist.py */,
+				D13A06F314D9D65500011217 /* _SquareMatrix.py */,
 				7A98F65A10CD6E79001E79F7 /* _StopWatch.py */,
 				7A98F64A10CD6E79001E79F7 /* _ImproperUniformDist.py */,
 				7A98F64810CD6E79001E79F7 /* _GammaDist.py */,
@@ -1800,6 +1803,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D13A06F414D9DBDE00011217 /* square_matrix.cpp in Sources */,
 				7A98F30D10CD5025001E79F7 /* boost_assertion_failed.cpp in Sources */,
 				7A98F31810CD5090001E79F7 /* probdist_pymod.cpp in Sources */,
 				7A98F31D10CD5099001E79F7 /* phycas_string.cpp in Sources */,
