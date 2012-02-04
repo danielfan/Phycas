@@ -309,9 +309,15 @@ class InflatedDensityRatio(CommonFunctions):
             self.curr_treeid = tid
             
             # create chain manager and (single) chain
+            # chain will obtain tree by calling getStartingTree method (see above)
             self.mcmc_manager = MCMCManager(self)
             self.mcmc_manager.createChains()
             c = self.mcmc_manager.getColdChain()
+            
+            # recalc splits for tree so that we can replace edge lengths using splits as keys
+            tree = c.getTree()
+            ntips = tree.getNObservables()
+            tree.recalcAllSplits(ntips)
             
             #updaters = {}
             #for m in c.chain_manager.getAllUpdaters():
@@ -325,6 +331,7 @@ class InflatedDensityRatio(CommonFunctions):
             #   master_edgelen
             #   gamma_shape
             
+            # loop through all edge length and parameter vectors sampled for this particular tree topology
             for e,p in zip(self.edge_lengths[tid],self.parameters[tid]):
                 # set parameters
                 if 'rAG' in p.keys():
@@ -339,8 +346,7 @@ class InflatedDensityRatio(CommonFunctions):
                     rCG = rAC*rCG_on_rAC
                     rCT = rAC*rCT_on_rAC
                     rGT = rAC*rGT_on_rAC
-                    print 'GTR rates:',rAC,rAG,rAT,rCG,rCT,rGT
-                    #u = updaters['relrates']
+                    #print 'GTR rates:',rAC,rAG,rAT,rCG,rCT,rGT
                     m = c.partition_model.getModel(0)
                     m.setRelRates([rAC,rAG,rAT,rCG,rCT,rGT])
                     
@@ -352,8 +358,7 @@ class InflatedDensityRatio(CommonFunctions):
                     freqC = freqA*freqC_on_freqA
                     freqG = freqA*freqG_on_freqA
                     freqT = freqA*freqT_on_freqA
-                    print 'base freqs:',freqA,freqC,freqG,freqT
-                    #u = updaters['state_freqs']
+                    #print 'base freqs:',freqA,freqC,freqG,freqT
                     m = c.partition_model.getModel(0)
                     m.setStateFreqUnnorm(0, freqA)
                     m.setStateFreqUnnorm(1, freqC)
@@ -362,41 +367,10 @@ class InflatedDensityRatio(CommonFunctions):
 
                 if 'gamma_shape' in p.keys():
                     shape = math.exp(p['gamma_shape'])
-                    print 'previous gamma shape =',m.getShape()
-                    
-                    print 'gamma_shape:',shape
-                    #u = updaters['gamma_shape']
+                    #print 'gamma_shape:',shape
                     m.setShape(shape)
-                    
-                # temporary!
-                print 'm.getModelName() =',m.getModelName()
-                #for d in dir(c.partition_model):
-                #    print d
-                nsubsets = c.partition_model.getNumSubsets()
-                print 'c.partition_model.getNumSubsets() =',nsubsets
-                for s in range(nsubsets):
-                    print 'c.partition_model.getSubsetRelRate(%d) =' % s,c.partition_model.getSubsetRelRate(s)
-                    m = c.partition_model.getModel(s)
-                    #for d in dir(m):
-                    #    print d
-                    print 'm.getStateFreqs()  =',m.getStateFreqs()
-                    print 'm.getRelRates()    =',m.getRelRates()
-                    print 'm.getShape()       =',m.getShape()
-                    print 'm.getNGammaRates() =',m.getNGammaRates()
-                raw_input('doof')
-
-                print 'edge lengths:'
-                for ss in e.keys():
-                    edgelen = math.exp(e[ss])
-                    print ss,edgelen
-                                        
+                                                            
                 # set edge lengths
-                tree = c.getTree()
-                #print 'tree:',tree.newick
-                ntips = tree.getNObservables()
-                #print 'ntips=',ntips
-                tree.recalcAllSplits(ntips)
-                
                 nd = tree.getFirstPreorder()
                 assert nd.isRoot(), 'The first preorder node should be the root'
                 treelen = 0.0
@@ -416,31 +390,16 @@ class InflatedDensityRatio(CommonFunctions):
                         # Create a string representation of the split
                         ss = s.createPatternRepresentation()
                         
-                        #print '------------------------------------------------------------'
-                        #print 'nd.getNodeName()   =',nd.getNodeName()
-                        #print 'nd.getNodeNumber() =',nd.getNodeNumber()
-                        #print 'nd.getEdgeLen()    =',nd.getEdgeLen()
-                        #print 'nd.getParent()     =',(nd.getParent() is None) and 'None' or nd.getParent().getNodeNumber()
-                        #print 'nd.getLeftChild()  =',(nd.getLeftChild() is None) and 'None' or nd.getLeftChild().getNodeNumber()
-                        #print 'nd.getRightSib()   =',(nd.getRightSib() is None) and 'None' or nd.getRightSib().getNodeNumber()
-                        #print 'nd.isRoot()     =',nd.isRoot()
-                        #print 'nd.isTip()      =',nd.isTip()
-                        #print 'nd.isInternal() =',nd.isInternal()
-                        #print 'was_inverted    =',was_inverted
-                        #print 'ss              =',ss
-                        
                         log_edge_len = e[ss]
                         edge_len = math.exp(log_edge_len)
-                        print '%s edge_len = %g' % (ss,edge_len)
                         nd.setEdgeLen(edge_len)  
-                print 'tree =',tree.newick
                                     
-                c.likelihood.replaceModel(c.partition_model)
+                c.likelihood.replaceModel(c.partition_model)    # if this is not done, new shape parameter value will be ignored
                 c.chain_manager.refreshLastLnLike()
-                self.output('log-likelihood = %s' % c.chain_manager.getLastLnLike())
+                last_log_like = c.chain_manager.getLastLnLike()
                 c.chain_manager.refreshLastLnPrior()
-                self.output('log-prior = %s' % c.chain_manager.getLastLnPrior())
-                raw_input('Press return to continue...')
+                last_log_prior = c.chain_manager.getLastLnPrior()
+                self.output('%.5f\t%.5f' % (last_log_like, last_log_prior))
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -493,6 +452,6 @@ class InflatedDensityRatio(CommonFunctions):
         self.loadData()
 
         # These are debugging functions whose reports tell us if everything is working as expected
-        self.checkPosterior()
+        #self.checkPosterior()
         self.summarize()
         
