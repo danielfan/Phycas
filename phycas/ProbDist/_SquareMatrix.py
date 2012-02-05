@@ -84,6 +84,17 @@ class SquareMatrix(SquareMatrixBase):
             m.append(tmp)
         return m
         
+    def setMatrixFromFlattenedList(self, dim, v):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Replaces existing or creates a new square matrix using the supplied
+        unidimensional list or tuple v. The supplied list v is expected to 
+        have length equal to the square of dim, the number of elements in a
+        single row or column of the matrix.
+        
+        """
+        SquareMatrixBase.setMatrix(self, dim, v)
+        
     def setMatrix(self, m):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

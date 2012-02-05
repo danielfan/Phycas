@@ -159,7 +159,7 @@ import Likelihood
 import PDFGen
 import Phylogeny
 import ProbDist
-from ProbDist import Bernoulli, Beta, BetaPrime, Binomial, Dirichlet, RelativeRateDistribution, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Lognormal, Uniform, Lot
+from ProbDist import SquareMatrix, Bernoulli, Beta, BetaPrime, Binomial, Dirichlet, RelativeRateDistribution, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Lognormal, Uniform, Lot
 import ReadNexus
 import sys, os
 from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help

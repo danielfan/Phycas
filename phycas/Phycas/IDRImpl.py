@@ -458,6 +458,12 @@ class InflatedDensityRatio(CommonFunctions):
                     sample_varcov[j][i] = sample_varcov[i][j]
         
         return sample_mean, sample_varcov
+        
+    def flatten(self, m):
+        f = []
+        for x in m:
+            f.extend(x)
+        return f
                 
     def calcIDR(self):
         """
@@ -481,9 +487,13 @@ class InflatedDensityRatio(CommonFunctions):
             tree.recalcAllSplits(ntips)
             
             mu,Sigma = self.computeMeanVectorAndVarCovMatrix(tid)
+            nparams = len(Sigma)
+            flatSigma = self.flatten(Sigma)
             
-            # currently producing some negative variances
-            
+            S = SquareMatrix(nparams, 0.0)
+            S.setMatrixFromFlattenedList(nparams, flatSigma)
+            invS = S.inverse()
+                        
             # much more to do...
             
     def summarize(self):

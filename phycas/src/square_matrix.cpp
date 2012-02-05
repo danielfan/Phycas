@@ -229,15 +229,14 @@ std::vector<double> SquareMatrix::GetMatrix() const
 	}
     
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the entire matrix as a vector by row.
+|	Copies supplied vector `v' into this matrix. Vector `v' is expected to have length `sz'*`sz', and matrix is read
+|   from `v' by row. The data member `dim' is set equal to `sz'.
 */
-void SquareMatrix::SetMatrix(std::vector<double> v) 
+void SquareMatrix::SetMatrix(unsigned sz, std::vector<double> v) 
 	{
-    float size_squared = (float)v.size();
-    unsigned sz = (int)sqrt(size_squared);
-	PHYCAS_ASSERT(sz > 0); 
+	PHYCAS_ASSERT(sz == (int)sqrt(v.size())); 
     CreateMatrix(sz, 0.0);
-    double * ptr = (double *)&m[0];
+    double * ptr = (double *)&m[0][0];
     for (std::vector<double>::iterator it = v.begin(); it != v.end(); ++it)
         {
         double val = *it;
@@ -347,7 +346,7 @@ SquareMatrix * SquareMatrix::Inverse() const
     double ** a = tmp->GetMatrixAsRawPointer();
     SquareMatrix * inv = new SquareMatrix(*this);
     double ** a_inv = inv->GetMatrixAsRawPointer();
-    
+
     // double **  a           matrix represented as vector of row pointers 
     // int        n           order of matrix
     // double *   col         work vector of size n 

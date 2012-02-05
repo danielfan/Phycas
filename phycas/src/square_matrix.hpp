@@ -56,7 +56,7 @@ class SquareMatrix
         double                          GetElement(unsigned i, unsigned j) const;
         void                            SetElement(unsigned i, unsigned j, double v);
         std::vector<double>             GetMatrix() const;
-        void                            SetMatrix(std::vector<double>);
+        void                            SetMatrix(unsigned sz, std::vector<double>);
         SquareMatrix *                  Inverse() const;
         SquareMatrix *                  LeftMultiply(SquareMatrix & matrixOnLeft) const;
         SquareMatrix *                  RightMultiply(SquareMatrix & matrixOnRight) const;
