@@ -41,6 +41,14 @@ class SquareMatrix(SquareMatrixBase):
         """
         return SquareMatrixBase.inverse(self)
     
+    def pow(self, p):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a SquareMatrix that is raised to the (postive) power p.
+        
+        """
+        return SquareMatrixBase.pow(self, p)
+    
     def getDimension(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -118,3 +126,39 @@ class SquareMatrix(SquareMatrixBase):
         s = SquareMatrixBase.__repr__(self)
         return s
         
+    def leftMultiplyMatrix(self, matrixOnLeft):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a SquareMatrix that equals the product of supplied 
+        matrixOnLeft with this matrix (on right).
+        
+        """
+        return SquareMatrixBase.leftMultiplyMatrix(self, matrixOnLeft)
+    
+    def rightMultiplyMatrix(self, matrixOnRight):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a SquareMatrix that equals the product of this matrix (on 
+        left) with supplied matrixOnRight.
+        
+        """
+        return SquareMatrixBase.rightMultiplyMatrix(self, matrixOnRight)
+    
+    def leftMultiplyVector(self, vectorOnLeft):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a SquareMatrix that equals the product of supplied 
+        (transposed) vectorOnLeft with this matrix (on right).
+        
+        """
+        return SquareMatrixBase.leftMultiplyVector(self, vectorOnLeft)
+    
+    def rightMultiplyVector(self, vectorOnRight):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a SquareMatrix that equals the product of this matrix (on 
+        left) with supplied vectorOnRight.
+        
+        """
+        return SquareMatrixBase.rightMultiplyVector(self, vectorOnRight)
+    

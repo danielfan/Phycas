@@ -457,7 +457,7 @@ class InflatedDensityRatio(CommonFunctions):
                 if j > i:
                     sample_varcov[j][i] = sample_varcov[i][j]
         
-        return sample_mean, sample_varcov
+        return sample, sample_mean, sample_varcov
         
     def flatten(self, m):
         f = []
@@ -468,7 +468,38 @@ class InflatedDensityRatio(CommonFunctions):
     def calcIDR(self):
         """
         Estimates log-marginal-likelihood using the method described in the Arima paper.
-        
+        The inflated density ratio estimator for a p-dimensional posterior
+        distribution is defined as
+
+                               k
+             c_idr = -----------------------------
+                      1   __ n   gPk(theta_i)
+                      -   \      ------------ - 1
+                      n   /       g(theta_i)
+                          -- i=1
+         
+         where:
+
+              theta_i is the ith. p-dimensional standardized sample vector (out of n total) 
+                 from the posterior distribution g
+
+              theta_i = Sigma^{-0.5} * (x_i - mu)
+                 where mu is the posterior sample mean vector and Sigma is the posterior
+                 sample variance-covariance matrix 
+              
+              k = g0 * V_p 
+
+              g0 is g evaluated at the posterior mean
+
+                       \pi^{p/2}
+              V_p = --------------- r^p   <-- volume of a p-sphere
+                    \Gamma(p/2 + 1)
+
+              gPk(theta_i) is the density of the point z*theta_i
+
+                  /        r_k^p      \ 1/p
+              z = |  1 - -----------  |        ||theta_i|| is length of theta_i vector
+                  \     ||theta_i||^p /
         """
         self.checkModel()
         
@@ -486,15 +517,35 @@ class InflatedDensityRatio(CommonFunctions):
             ntips = tree.getNObservables()
             tree.recalcAllSplits(ntips)
             
-            mu,Sigma = self.computeMeanVectorAndVarCovMatrix(tid)
+            # compute sample mean vector (mu) and sample variance-covariance matrix (Sigma)
+            # x stores the posterior samples for tree with tree id equal to tid
+            # x is a 2-d list, with n rows (sample size) and p columns (parameters)
+            # mu is a 1-d list with p elements
+            # Sigma is a 2-d list with p rows and p columns
+            x,mu,Sigma = self.computeMeanVectorAndVarCovMatrix(tid)
             nparams = len(Sigma)
+            
+            # sample variance-covariance matrix must be flattened to get it into a SquareMatrix object
             flatSigma = self.flatten(Sigma)
             
+            # create a SquareMatrix object to hold inverse of variance-covariance matrix
             S = SquareMatrix(nparams, 0.0)
             S.setMatrixFromFlattenedList(nparams, flatSigma)
             invS = S.inverse()
-                        
-            # much more to do...
+            invSqrtS = S.pow(0.5)
+            
+            # let xx hold the standardized samples
+            xx = []
+            for v in x:
+                row = []
+                for i,p in eumerate(v):
+                    pcentered = p - mu[i]
+                    pscaled = invSqrtS.rightMultiplyVector(pcentered)
+                    row.append(pscaled)
+                xx.append(row)
+                
+            # for each vector in xx, compute ratio gpK(theta)/g(theta) and add to sum
+            sumRatios
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -525,6 +576,24 @@ class InflatedDensityRatio(CommonFunctions):
         From these, it estimates the marginal likelihood using the IDR method.
         
         """
+        A = SquareMatrix(3, 0.0)
+        A.setMatrixFromFlattenedList(3,[0.90,0.05,0.05,0.05,0.90,0.05,0.05,0.05,0.90])
+        print 'Here is A:'
+        print A
+        B = A.pow(0.5)
+        print 'Here is B - A^0.5:'
+        print B
+        C = B.rightMultiplyVector((1.0,2.0,3.0))
+        print 'Here is C = B.(1,2,3):'
+        print C
+        D = B.leftMultiplyVector((1.0,2.0,3.0))
+        print 'Here is D = (1,2,3).B:'
+        print D
+        print 'Here is A flattened into a list:'
+        print A.getMatrix()
+        raw_input('debug stop')
+        return  
+        
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
         self.stdout.phycassert(input_trees is not None, 'trees cannot be None when the idr method is called')

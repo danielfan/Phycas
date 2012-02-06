@@ -336,6 +336,61 @@ void SquareMatrix::MatrixToString(
 	}
     
 /*----------------------------------------------------------------------------------------------------------------------
+|	Creates and returns a matrix that represents this matrix raised to the power `p'.
+*/
+SquareMatrix * SquareMatrix::Power(
+  double p) const   /**< the power to which this matrix should be raised */
+    {
+	PHYCAS_ASSERT(dim > 0);
+	//PHYCAS_ASSERT(p > 0.0);
+    double * fv = new double[dim];
+    double * w = new double[dim];
+    double ** a = this->GetMatrixAsRawPointer();
+    SquareMatrix * Z = new SquareMatrix(dim, 0.0);
+    double ** z = Z->GetMatrixAsRawPointer();
+
+	// Calculate eigenvalues (w) and eigenvectors (z)
+    // int n        input: the order of the matrix a
+    // double **a   input: the real symmetric matrix
+    // double *fv   input: temporary storage array of at least n elements
+    // double **z   output: the eigenvectors
+    // double *w    output: the eigenvalues in ascending order
+	int err_code = EigenRealSymmetric(dim, a, w, z, fv);
+    if (err_code != 0)
+        {
+        delete Z;
+        delete [] fv;
+        delete [] w;
+        return 0;
+        }
+    
+    SquareMatrix * Zinv = Z->Inverse();
+    SquareMatrix * Lp = new SquareMatrix(dim, 0.0);
+    
+    // create diagonal matrix of scaled eigenvalues
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        double v = p*w[i];
+        Lp->SetElement(i, i, v);
+        }
+    
+    // Zinv * A * Z = L
+    //            A = Z * L * Zinv
+    //          A^p = Z * L^p * Zinv
+    SquareMatrix * ZLp = Z->RightMultiplyMatrix(*Lp);
+    SquareMatrix * Ap = ZLp->RightMultiplyMatrix(*Zinv);
+    
+    delete Z;
+    delete Zinv;
+    delete Lp;
+    delete ZLp;
+    delete [] fv;
+    delete [] w;
+    
+    return Ap;
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
 |	Creates and returns a matrix that represents the inverse of this SquareMatrix.
 */
 SquareMatrix * SquareMatrix::Inverse() const
@@ -367,7 +422,7 @@ SquareMatrix * SquareMatrix::Inverse() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates and returns a matrix that represents the product of `matrixOnLeft' with this matrix.
 */
-SquareMatrix * SquareMatrix::LeftMultiply(SquareMatrix & matrixOnLeft) const
+SquareMatrix * SquareMatrix::LeftMultiplyMatrix(SquareMatrix & matrixOnLeft) const
     {
     double ** l = matrixOnLeft.GetMatrixAsRawPointer();
     double ** r = GetMatrixAsRawPointer();
@@ -392,7 +447,7 @@ SquareMatrix * SquareMatrix::LeftMultiply(SquareMatrix & matrixOnLeft) const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates and returns a matrix that represents the product of this matrix with `matrixOnRight'.
 */
-SquareMatrix * SquareMatrix::RightMultiply(SquareMatrix & matrixOnRight) const
+SquareMatrix * SquareMatrix::RightMultiplyMatrix(SquareMatrix & matrixOnRight) const
     {
     double ** l = GetMatrixAsRawPointer();
     double ** r = matrixOnRight.GetMatrixAsRawPointer();
@@ -412,6 +467,50 @@ SquareMatrix * SquareMatrix::RightMultiply(SquareMatrix & matrixOnRight) const
             }
         }
     return tmp;
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates and returns a matrix that represents the product of  (transposed) `vectorOnLeft' (1xdim) and this 
+|   matrix (dimxdim). Returns transposed vector (1xdim).
+*/
+std::vector<double> SquareMatrix::LeftMultiplyVector(const std::vector<double> & vectorOnLeft) const
+    {
+    double ** r = GetMatrixAsRawPointer();
+    //work.clear();
+    std::vector<double> tmp;
+    
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        double vsum = 0.0;
+        for (unsigned k = 0; k < dim; ++k)
+            {
+            vsum += vectorOnLeft[k]*r[k][i];
+            }
+        tmp.push_back(vsum);
+        }
+    return tmp;    
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates and returns a matrix that represents the product of this matrix (dimxdim)with `vectorOnRight' (dimx1).
+|   Returns vector (dimx1).
+*/
+std::vector<double> SquareMatrix::RightMultiplyVector(const std::vector<double> & vectorOnRight) const
+    {
+    double ** l = GetMatrixAsRawPointer();
+    //work.clear();
+    std::vector<double> tmp;
+    
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        double vsum = 0.0;
+        for (unsigned k = 0; k < dim; ++k)
+            {
+            vsum += l[i][k]*vectorOnRight[k];
+            }
+        tmp.push_back(vsum);
+        }
+    return tmp;    
     }
     
     

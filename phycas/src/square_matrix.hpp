@@ -57,15 +57,19 @@ class SquareMatrix
         void                            SetElement(unsigned i, unsigned j, double v);
         std::vector<double>             GetMatrix() const;
         void                            SetMatrix(unsigned sz, std::vector<double>);
+        SquareMatrix *                  Power(double p) const;
         SquareMatrix *                  Inverse() const;
-        SquareMatrix *                  LeftMultiply(SquareMatrix & matrixOnLeft) const;
-        SquareMatrix *                  RightMultiply(SquareMatrix & matrixOnRight) const;
+        SquareMatrix *                  LeftMultiplyMatrix(SquareMatrix & matrixOnLeft) const;
+        SquareMatrix *                  RightMultiplyMatrix(SquareMatrix & matrixOnRight) const;
+        std::vector<double>             LeftMultiplyVector(const std::vector<double> & vectorOnLeft) const;
+        std::vector<double>             RightMultiplyVector(const std::vector<double> & vectorOnRight) const;
                 
 	protected:
 		static unsigned					k;		//temporary
 		unsigned						id;		//temporary
 		double * *						m;		/**< the two-dimensional matrix of doubles */
 		unsigned						dim;	/**< the dimension of the matrix */
+        //mutable std::vector<double>     work;   /**< used as workspace whenever a reference to a vector needs to be returned */
 	};
     
 typedef boost::shared_ptr<SquareMatrix> SquareMatrixShPtr;
