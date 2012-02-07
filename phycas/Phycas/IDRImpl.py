@@ -764,7 +764,11 @@ class InflatedDensityRatio(CommonFunctions):
                 pscaled = self.sqrtSinv.rightMultiplyVector(tuple(pcentered))
                 self.stdsample.append(pscaled)
                 
-            self.output('\nCalculating estimator for each value of rk:')
+            percents = []
+            radii = []
+            marglikes = []
+            altmarglikes = []
+            self.output('\nCalculating estimator for each requested value of rk:')
             for rk in self.opts.rk:
                 self.insideBall = 0
                 log_ratios = []
@@ -772,6 +776,7 @@ class InflatedDensityRatio(CommonFunctions):
                 # for each vector in self.stdsample, compute log ratio log[gpK(theta)/g(theta)] and 
                 # keep track of largest
                 max_log_ratio = None
+                min_log_ratio = None
                 for i,v in enumerate(self.stdsample):
                     log_g = self.log_posterior[i]
                     log_gpk = self.calcLogGpk(v, rk)
@@ -779,6 +784,8 @@ class InflatedDensityRatio(CommonFunctions):
                     log_ratios.append(log_ratio)
                     if max_log_ratio is None or log_ratio > max_log_ratio:
                         max_log_ratio = log_ratio
+                    if min_log_ratio is None or log_ratio < min_log_ratio:
+                        min_log_ratio = log_ratio
                 pct_inside = 100.0*float(self.insideBall)/float(self.n)
 
                 # sum log ratios, subtracting largest from each to avoid underflow
@@ -796,7 +803,29 @@ class InflatedDensityRatio(CommonFunctions):
                 
                 # finally, compute estimator
                 log_c_idr = log_k - math.log(expected_ratio - 1.0)
-                self.output('  log(c_idr) = %g (rk = %g, %.1f%% of samples inside ball)' % (log_c_idr,rk, pct_inside))
+                alt_log_c_idr = log_k - log_expected_ratio  # alternate version ignores the "- 1.0" in the denominator to remain in log scale throughout
+                
+                percents.append(pct_inside)
+                radii.append(rk)
+                marglikes.append(log_c_idr)
+                altmarglikes.append(alt_log_c_idr)
+                self.output('  log(c_idr) = %g (rk = %g, %.1f%% of samples inside ball, min = %g, max = %g)' % (log_c_idr,rk, pct_inside,min_log_ratio,max_log_ratio))
+                
+            # temporary debugging code (but may end up being useful enough to create user setting for specifying R file)
+            rfile = open('idr.R', 'w')
+            rfile.write('marglike    = c(%s)\n' % ','.join(['%g' % m for m in marglikes]))
+            rfile.write('altmarglike = c(%s)\n' % ','.join(['%g' % m for m in altmarglikes]))
+            rfile.write('radius      = c(%s)\n' % ','.join(['%g' % r for r in radii]))
+            rfile.write('pctinside   = c(%s)\n' % ','.join(['%g' % p for p in percents]))
+            rfile.write('quartz(bg="white")\n')
+            rfile.write('plot(pctinside,marglike,main="Log(marginal likelihood) vs. Percent inside ball")\n')
+            rfile.write('quartz(bg="white")\n')
+            rfile.write('plot(radius,marglike,type="l",main="Log(marginal likelihood) vs. Radius of ball")\n')
+            rfile.write('quartz(bg="white")\n')
+            rfile.write('plot(pctinside,altmarglike,main="Log(alt. marginal likelihood) vs. Percent inside ball")\n')
+            rfile.write('quartz(bg="white")\n')
+            rfile.write('plot(radius,altmarglike,type="l",main="Log(alt. marginal likelihood) vs. Radius of ball")\n')
+            rfile.close()
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
