@@ -28,8 +28,9 @@ class InflatedDensityRatio(CommonFunctions):
         self.taxon_labels = None        # list of taxon labels from the data matrix
         self.ntax = None                # number of taxa in the data matrix
         self.nchar = None               # number of sites in the data matrix
-        self.param_names = None         # list of the names of the parameters
         self.tree_objects = None        # dictionary in which keys are unique tree identifiers, and values are tree objects
+        self.param_headers = None       # list of parameter headers from the param file (self.param_names is a subset of this list)
+        self.log_posterior = None       # list of log posterior values gleaned from the params file
         self.parameters = None          # dictionary in which keys are unique tree identifiers, and values are lists
                                         #   e.g. self.parameters[tree_id][j] = {'rAG': -4.2432, 'freqC': -2.3243, ...}
                                         #   where tree_id is a list of split representations uniquely identifying a particular tree
@@ -42,7 +43,22 @@ class InflatedDensityRatio(CommonFunctions):
                                         #   are string representations of splits and the values are log-transformed edge lengths
         self.models = None              # list of models used in the defined partition
         self.model_names = None         # list of names of models used in the defined partition
-
+        self.rk = 0.01                  # radius of "ball" to be used
+ 
+        self.param_names = None         # list of the names of the parameters
+        self.c = None                   # current cold chain
+        self.n = None                   # sample size
+        self.p = None                   # number of parameters
+        self.sample = None              # self.n by self.p list representing the log-transformed (but not standardized) posterior sample
+        self.stdsample = None           # self.n by self.p list representing the log-transformed and standardized posterior sample
+        self.S = None                   # SquareMatrix representing the sample variance-covariance matrix (from sampled parameter vectors)
+        self.Sinv = None                # SquareMatrix representinginverse of the sample variance-covariance matrix (from sampled parameter vectors)
+        self.sqrtS = None               # SquareMatrix representingsquare root of the sample variance-covariance matrix 
+        self.sqrtSinv = None            # SquareMatrix representingsquare root of the inverse of the sample variance-covariance matrix
+        self.mu = None                  # the posterior mean vector (average of the sampled parameter vectors)
+        self.log_g0 = None              # the log of the posterior evaluated at self.mu
+        self.insideBall = None          # keeps track of number of samples that fall inside the ball of radius self.rk
+        
         # data members below are needed because must use an MCMCManager to compute posteriors
         # This is overkill and will be simplified later
         self.mcmc_manager = None        # manages MarkovChain used to compute posterior
@@ -68,14 +84,14 @@ class InflatedDensityRatio(CommonFunctions):
         Open specified params file and read parameters therein, storing the
         list of lines that represent sampled parameter vectors in 
         self.param_file_lines and the header (containing the names of the 
-        parameters) in the list self.param_names.
+        parameters) in the list self.param_headers.
         
         """
         burnin = self.opts.burnin
         self.param_file_lines = open(input_params, 'r').readlines()
         self.stdout.phycassert(len(self.param_file_lines) >= 3 + burnin, "File '%s' does not look like a parameter file (too few lines)")
-        self.param_names = self.param_file_lines[1].split()
-        self.stdout.phycassert(self.param_names[1] != 'beta', "File '%s' appears to be the result of a stepping-stone analysis. This method requires a sample from the posterior (not power posterior) distribution." % input_params)
+        self.param_headers = self.param_file_lines[1].split()
+        self.stdout.phycassert(self.param_headers[1] != 'beta', "File '%s' appears to be the result of a stepping-stone analysis. This method requires a sample from the posterior (not power posterior) distribution." % input_params)
 
     def fillParamDict(self, param_vect):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -88,15 +104,25 @@ class InflatedDensityRatio(CommonFunctions):
         param_dict = {}
         
         param_list = param_vect.split()
-        assert len(param_list) == len(self.param_names), 'Number of parameters in sample (%d) of parameter file differs from the number of parameters listed in the header line (%d)' % (len(param_list).len(self.param_names))
+        assert len(param_list) == len(self.param_headers), 'Number of parameters in sample (%d) of parameter file differs from the number of parameters listed in the header line (%d)' % (len(param_list).len(self.param_headers))
         
         log_freqA = None
         log_rAC = None
-        for h,p in zip(self.param_names,param_list):
+        log_like = None
+        for h,p in zip(self.param_headers,param_list):
             if 'brlen' in h:
                 # branch length parameters are gleaned from trees, so ignore the (redundant) edge lengths in the params file
                 pass
-            elif h in ['Gen', 'lnL', 'lnPrior', 'TL']:
+            elif h in 'lnL':
+                assert log_like is None, 'expecting log_like to be None in fillParamDict'
+                param_dict[h] = p
+                log_like = float(p)
+            elif h in 'lnPrior':
+                assert log_like is not None, 'expecting log_like to be not None in fillParamDict'
+                param_dict[h] = p
+                self.log_posterior.append(float(log_like) + float(p))
+                log_like = None
+            elif h in ['Gen', 'TL']:
                 # quantities that should be saved but not transformed
                 param_dict[h] = p
             elif 'freqA' in h:
@@ -201,15 +227,16 @@ class InflatedDensityRatio(CommonFunctions):
         self.parameters = {}
         
         self.sample_size = 0
+        self.log_posterior = []
         post_burnin_paramvects = self.param_file_lines[self.opts.burnin+3:] # eliminate burnin samples as well as 2 header lines and starting state (generation 0)
         post_burnin_trees = self.stored_trees[self.opts.burnin+1:]   # eliminate burnin samples as well as starting state (generation 0)
         for tree, param_vect in zip(post_burnin_trees,post_burnin_paramvects): 
             self.sample_size += 1
 
-            # This dictionary will be filled with parameter values: e.g. sample_dict['freqA'] = 0.24335
+            # This dictionary will be filled with transformed parameter values: e.g. sample_dict['freqC'] = log(.251/.249); here, freqA=0.249
             param_dict = self.fillParamDict(param_vect)
             
-            # This dictionary will be filled with log-transformed edge lengths: e.g. edgelen_dict[s] = -1.10293
+            # This dictionary will be filled with log-transformed edge lengths: e.g. edgelen_dict[s] = log(.0023)
             # where the split object s associated with the edge is used as the key
             edgelen_dict, tree_id = self.fillEdgeLenDict(tree)
             
@@ -407,63 +434,259 @@ class InflatedDensityRatio(CommonFunctions):
         
         """
         # create list that will store sampled parameter vectors
-        sample = []
+        self.sample = []
         
         # obtain and sort keys into the dictionaries of edge lengths
-        edge_length_keys = self.edge_lengths[tid][0].keys()
+        edge_length_keys = self.edge_lengths[tid][0].keys() # could use any, but 0th is convenient
         edge_length_keys.sort()
         
         # obtain and sort keys into the dictionaries of parameter values, removing quantities 
         # (e.g. log-likelihood) that do not represent parameter values
-        param_keys = self.parameters[tid][0].keys()
+        param_keys = self.parameters[tid][0].keys() # could use any, but 0th is convenient
         param_keys.remove('Gen')
         param_keys.remove('TL')
         param_keys.remove('lnL')
         param_keys.remove('lnPrior')
         param_keys.sort()
         
-        param_names = param_keys + edge_length_keys
-        num_params = len(param_keys) + len(edge_length_keys)
+        self.param_names = param_keys + edge_length_keys
+        self.p = len(self.param_names)
         
         # loop through all edge length and parameter vectors sampled for this particular tree topology
-        for e,p in zip(self.edge_lengths[tid],self.parameters[tid]):            
+        # and build up self.sample
+        for edgelen,param in zip(self.edge_lengths[tid],self.parameters[tid]):            
             # build unified parameter vector containing transformed parameter values 
             # followed by transformed edge lengths
             param_vect = []
             for k in param_keys:
-                param_vect.append(p[k])
+                param_vect.append(param[k])
             for k in edge_length_keys:
-                param_vect.append(e[k])
-            sample.append(param_vect)
-        sample_size = len(sample)
+                param_vect.append(edgelen[k])
+            self.sample.append(param_vect)
+        self.n = len(self.sample)
         
         # compute sample mean vector
-        sample_mean = [0.0]*num_params  # initialize vector of length num_params with all zeros
-        sample_sum = [0.0]*num_params  # initialize vector of length num_params with all zeros
-        sample_ss = [0.0]*num_params  # initialize vector of length num_params with all zeros
-        for v in sample:
+        self.mu = [0.0]*self.p  # initialize vector of length self.p with all zeros
+        sample_sum = [0.0]*self.p  # initialize vector of length self.p with all zeros
+        sample_ss = [0.0]*self.p  # initialize vector of length self.p with all zeros
+        for v in self.sample:
             for i,p in enumerate(v):
-                sample_mean[i] += p/float(sample_size)
+                self.mu[i] += p/float(self.n)
                 sample_sum[i] += p
                 sample_ss[i] += math.pow(p, 2.0)
 
         # compute sample variance-covariance matrix
-        sample_varcov = [x[:] for x in [[0.0]*num_params]*num_params]  # initialize num_paramsxnum_params matrix with all zeros
-        n_minus_one = float(sample_size - 1)
-        for i in range(0,num_params):
-            for j in range(i,num_params): 
-                for k in range(sample_size):
-                    sample_varcov[i][j] += (sample[k][i] - sample_mean[i])*(sample[k][j] - sample_mean[j])/n_minus_one
+        Sigma = [x[:] for x in [[0.0]*self.p]*self.p]  # initialize num_paramsxnum_params matrix with all zeros
+        n_minus_one = float(self.n - 1)
+        for i in range(0,self.p):
+            for j in range(i,self.p): 
+                for k in range(self.n):
+                    Sigma[i][j] += (self.sample[k][i] - self.mu[i])*(self.sample[k][j] - self.mu[j])/n_minus_one
                 if j > i:
-                    sample_varcov[j][i] = sample_varcov[i][j]
+                    Sigma[j][i] = Sigma[i][j]
+                    
+        # sample variance-covariance matrix must be flattened to get it into a SquareMatrix object
+        flatSigma = self.flatten(Sigma)
         
-        return sample, sample_mean, sample_varcov
+        # create a SquareMatrix object to hold inverse of variance-covariance matrix
+        self.S = SquareMatrix(self.p, 0.0)
+        self.S.setMatrixFromFlattenedList(self.p, flatSigma)
         
     def flatten(self, m):
         f = []
         for x in m:
             f.extend(x)
         return f
+        
+    def calcLogVp(self, p, r):
+        """
+        Computes volume of a p-sphere:
+        
+                       \pi^{p/2}
+              V_p = --------------- r^p
+                    \Gamma(p/2 + 1)
+                    
+        Returns log of V_p.
+        """
+        log_r_to_p = p*math.log(r)
+        log_numer = float(p)*math.log(math.pi)/2.0
+        log_denom = ProbDist.lnGamma(1.0 + float(p)/2.0)
+        return log_r_to_p + log_numer - log_denom
+        
+    def logTransform(self, v):
+        """
+        Log-transform parameters so that their support is -infinity to +infinity. For
+        branch lengths, gamma shape parameters, and other parameters with support 0 to
+        infinity, this involves taking the logarithm of the original value. For base
+        frequencies and GTR exchangeabilities, which are constrained to sum to 1, use the
+        additive log-ratio transformation described by Arima and Tardella (2010).
+        """
+        #if 'rAG' in p.keys():
+        #    rAG_on_rAC = math.exp(p['rAG'])
+        #    rAT_on_rAC = math.exp(p['rAT'])
+        #    rCG_on_rAC = math.exp(p['rCG'])
+        #    rCT_on_rAC = math.exp(p['rCT'])
+        #    rGT_on_rAC = math.exp(p['rGT'])
+        #    rAC = 1.0/(1.0 + rAG_on_rAC + rAT_on_rAC + rCG_on_rAC + rCT_on_rAC + rGT_on_rAC)
+        #    rAG = rAC*rAG_on_rAC
+        #    rAT = rAC*rAT_on_rAC
+        #    rCG = rAC*rCG_on_rAC
+        #    rCT = rAC*rCT_on_rAC
+        #    rGT = rAC*rGT_on_rAC
+        #    #print 'GTR rates:',rAC,rAG,rAT,rCG,rCT,rGT
+        #    m = c.partition_model.getModel(0)
+        #    m.setRelRates([rAC,rAG,rAT,rCG,rCT,rGT])
+        #    
+        #if 'freqC' in p.keys():
+        #    freqC_on_freqA = math.exp(p['freqC'])
+        #    freqG_on_freqA = math.exp(p['freqG'])
+        #    freqT_on_freqA = math.exp(p['freqT'])
+        #    freqA = 1.0/(1.0 + freqC_on_freqA + freqG_on_freqA + freqT_on_freqA)
+        #    freqC = freqA*freqC_on_freqA
+        #    freqG = freqA*freqG_on_freqA
+        #    freqT = freqA*freqT_on_freqA
+        #    #print 'base freqs:',freqA,freqC,freqG,freqT
+        #    m = c.partition_model.getModel(0)
+        #    m.setStateFreqUnnorm(0, freqA)
+        #    m.setStateFreqUnnorm(1, freqC)
+        #    m.setStateFreqUnnorm(2, freqG)
+        #    m.setStateFreqUnnorm(3, freqT)
+        #
+        #if 'gamma_shape' in p.keys():
+        #    shape = math.exp(p['gamma_shape'])
+        #    #print 'gamma_shape:',shape
+        #    m.setShape(shape)
+        pass
+                
+    def deLogTransform(self, v):
+        """
+        Return log-transformed parameters with support -infinity to +infinity to their
+        original scale. For branch lengths, gamma shape parameters, and other parameters 
+        with support 0 to infinity, this involves applying the exponential function to the
+        transformed value. For base frequencies and GTR exchangeabilities, which are 
+        constrained to sum to 1, use the additive logistic transformation described by 
+        Arima and Tardella (2010).
+        """
+        logCoverA = None
+        logGoverA = None
+        logToverA = None
+        logAGoverAC = None
+        logAToverAC = None
+        logCGoverAC = None
+        logCToverAC = None
+        logGToverAC = None
+        for param_name,param_value in zip(self.param_names,v):
+            if ('freqC' in param_name):
+                assert logCoverA is None, 'expecting freqC to be first frequency in function deLogTransform'
+                assert logGoverA is None, 'expecting freqC to be first frequency in function deLogTransform'
+                assert logToverA is None, 'expecting freqC to be first frequency in function deLogTransform'
+                logCoverA = param_value
+            elif ('freqG' in param_name):
+                logGoverA = param_value
+            elif ('freqT' in param_name):
+                assert logCoverA is not None, 'expecting to find freqC before freqT in function deLogTransform'
+                assert logGoverA is not None, 'expecting to find freqG before freqT in function deLogTransform'
+                logToverA = param_value
+                freqA = 1.0/(1.0 + math.exp(logCoverA) + math.exp(logGoverA) + math.exp(logToverA))
+                freqC = freqA*math.exp(logCoverA)
+                freqG = freqA*math.exp(logGoverA)
+                freqT = freqA*math.exp(logToverA)
+                m = self.c.partition_model.getModel(0)
+                m.setStateFreqUnnorm(0, freqA)
+                m.setStateFreqUnnorm(1, freqC)
+                m.setStateFreqUnnorm(2, freqG)
+                m.setStateFreqUnnorm(3, freqT)
+                logCoverA = None
+                logGoverA = None
+                logToverA = None
+            elif 'rAG' in param_name:
+                assert logAGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                assert logAToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                assert logCGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                assert logCToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                assert logGToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                logAGoverAC = param_value
+            elif 'rAT' in param_name:
+                logAToverAC = param_value
+            elif 'rCG' in param_name:
+                logCGoverAC = param_value
+            elif 'rCT' in param_name:
+                logCToverAC = param_value
+            elif 'rGT' in param_name:
+                assert logAGoverAC is not None, 'expecting to find rAG before rGT in function deLogTransform'
+                assert logAToverAC is not None, 'expecting to find rAT before rGT in function deLogTransform'
+                assert logCGoverAC is not None, 'expecting to find rCG before rGT in function deLogTransform'
+                assert logCToverAC is not None, 'expecting to find rCT before rGT in function deLogTransform'
+                logGToverAC = param_value
+                rAC = 1.0/(1.0 + math.exp(logAGoverAC) + math.exp(logAToverAC) + math.exp(logCGoverAC) + math.exp(logCToverAC) + math.exp(logGToverAC))
+                rAG = rAC*math.exp(logAGoverAC)
+                rAT = rAC*math.exp(logAToverAC)
+                rCG = rAC*math.exp(logCGoverAC)
+                rCT = rAC*math.exp(logCToverAC)
+                rGT = rAC*math.exp(logGToverAC)
+                m = self.c.partition_model.getModel(0)
+                m.setRelRates([rAC,rAG,rAT,rCG,rCT,rGT])
+                logAGoverAC = None
+                logAToverAC = None
+                logCGoverAC = None
+                logCToverAC = None
+                logGToverAC = None
+            elif 'gamma_shape' in param_name:
+                shape = math.exp(param_value)
+                m = self.c.partition_model.getModel(0)
+                m.setShape(shape)
+                
+    def calcLogG(self, v):
+        """
+        Computes and returns the log of the posterior using the parameter values in the supplied
+        tuple v. This function expects v to contain a transformed and standardized parameter sample:
+        e.g. parameters with support zero-infinity have been log-transformed (base frequencies and
+        GTR relative rates are handled specially because of constraints), and the entire vector 
+        has been standardized by subtracting the posterior mean and pre-multiplying by the square
+        root of the inverse variance-covariance matrix. This function reverses the standardization
+        and transformation and calls the ordinary machinery of the supplied cold chain c to compute
+        the log-likelihood and log-prior.
+        """
+        # first, destandardize by pre-multiplying by square root of var-cov matrix and adding mean vector
+        tmp = self.sqrtS.rightMultiplyVector(v)
+        destandardized = [m+t for m,t in zip(self.mu,tmp)]
+        
+        # now undo the log-transformation
+        orig_param_vect = self.deLogTransform(destandardized)
+        
+        # calculate the log-likelihood an log-prior
+        self.c.likelihood.replaceModel(self.c.partition_model)    # if this is not done, new shape parameter value will be ignored
+        self.c.chain_manager.refreshLastLnLike()
+        log_like = self.c.chain_manager.getLastLnLike()
+        self.c.chain_manager.refreshLastLnPrior()
+        log_prior = self.c.chain_manager.getLastLnPrior()
+        log_posterior = log_like + log_prior
+        return log_posterior
+                
+    def calcLogGpk(self, v, r):
+        """
+        If the length ||v|| of the supplied (log-transformed, standardized) parameter vector <= r, 
+        returns calcLogG([0.0]*self.p), i.e. the log-posterior evaluated at the mean. If ||v|| > r, returns 
+        the log-posterior for the vector z*v, where z is a scalar defined as
+        
+                  /         r^p    \ 1/p
+              z = |  1 - --------  |     ,
+                  \       ||v||^p  /
+                  
+        v is the supplied parameter vector, and p is the number of elements in v.
+        """
+        fp = float(self.p)
+        vsum = sum([x*x for x in v])
+        vlen = math.log(vsum)/fp
+        if vlen <= r:
+            self.insideBall += 1
+            return calcLogG([0.0]*self.p)
+            
+        # scale v by z
+        logz = (1.0/fp)*math.log(1.0 - math.pow(r, fp)/vsum)
+        z = math.exp(logz)
+        vscaled = [x*z for x in v]
+        return self.calcLogG(vscaled)
                 
     def calcIDR(self):
         """
@@ -510,42 +733,63 @@ class InflatedDensityRatio(CommonFunctions):
             # chain will obtain tree by calling getStartingTree method (see above)
             self.mcmc_manager = MCMCManager(self)
             self.mcmc_manager.createChains()
-            c = self.mcmc_manager.getColdChain()
+            self.c = self.mcmc_manager.getColdChain()
             
             # recalc splits for tree so that we can replace edge lengths using splits as keys
-            tree = c.getTree()
+            tree = self.c.getTree()
             ntips = tree.getNObservables()
             tree.recalcAllSplits(ntips)
             
-            # compute sample mean vector (mu) and sample variance-covariance matrix (Sigma)
-            # x stores the posterior samples for tree with tree id equal to tid
-            # x is a 2-d list, with n rows (sample size) and p columns (parameters)
-            # mu is a 1-d list with p elements
-            # Sigma is a 2-d list with p rows and p columns
-            x,mu,Sigma = self.computeMeanVectorAndVarCovMatrix(tid)
-            nparams = len(Sigma)
+            # compute sample mean vector (self.mu) and sample variance-covariance matrix (self.S)
+            # self.sample stores the posterior samples for tree with tree id equal to tid
+            # self.sample is a 2-d list, with self.n rows (sample size) and self.p columns (parameters)
+            # self.mu is a 1-d list with self.p elements
+            # self.S is a 2-d list with self.p rows and self.p columns
+            self.computeMeanVectorAndVarCovMatrix(tid)
             
-            # sample variance-covariance matrix must be flattened to get it into a SquareMatrix object
-            flatSigma = self.flatten(Sigma)
+            self.Sinv = self.S.inverse()
+            self.sqrtS = self.S.pow(0.5)
+            self.sqrtSinv = self.Sinv.pow(0.5)
             
-            # create a SquareMatrix object to hold inverse of variance-covariance matrix
-            S = SquareMatrix(nparams, 0.0)
-            S.setMatrixFromFlattenedList(nparams, flatSigma)
-            invS = S.inverse()
-            invSqrtS = S.pow(0.5)
-            
-            # let xx hold the standardized samples
-            xx = []
-            for v in x:
-                row = []
-                for i,p in eumerate(v):
-                    pcentered = p - mu[i]
-                    pscaled = invSqrtS.rightMultiplyVector(pcentered)
-                    row.append(pscaled)
-                xx.append(row)
+            # standardize the sample vectors
+            self.stdsample = []
+            for v in self.sample:
+                pcentered = []
+                for i,p in enumerate(v):
+                    pcentered.append(p - self.mu[i])
+                pscaled = self.sqrtSinv.rightMultiplyVector(tuple(pcentered))
+                self.stdsample.append(pscaled)
                 
-            # for each vector in xx, compute ratio gpK(theta)/g(theta) and add to sum
-            sumRatios
+            # for each vector in self.stdsample, compute log ratio log[gpK(theta)/g(theta)] and 
+            # keep track of largest
+            self.insideBall = 0
+            max_log_ratio = None
+            log_ratios = []
+            for i,v in enumerate(self.stdsample):
+                log_g = self.log_posterior[i]
+                log_gpk = self.calcLogGpk(v, self.rk)
+                log_ratio = log_gpk - log_g
+                log_ratios.append(log_ratio)
+                if max_log_ratio is None or log_ratio > max_log_ratio:
+                    max_log_ratio = log_ratio
+            pct_inside = 100.0*float(self.insideBall)/float(self.n)
+
+            # sum log ratios, subtracting largest from each to avoid underflow
+            sum_ratios = 0.0
+            for logr in log_ratios:
+                r = math.exp(logr - max_log_ratio)
+                sum_ratios += r
+            sample_size = len(self.stdsample)
+            expected_ratio = sum_ratios/float(sample_size)
+            
+            # calculate k, the volume of the inflated region
+            self.log_g0 = self.calcLogG([0.0]*self.p)
+            log_k = self.log_g0 + self.calcLogVp(self.p, self.rk)
+            
+            # finally, compute estimator
+            raw_input('expected_ratio = %g' % expected_ratio)
+            log_c_idr = log_k - math.log(expected_ratio - 1.0)
+            self.output('\nlog(c_idr) = %g (%.1f%% of samples inside ball)\n' % (log_c_idr,pct_inside))
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -576,23 +820,6 @@ class InflatedDensityRatio(CommonFunctions):
         From these, it estimates the marginal likelihood using the IDR method.
         
         """
-        A = SquareMatrix(3, 0.0)
-        A.setMatrixFromFlattenedList(3,[0.90,0.05,0.05,0.05,0.90,0.05,0.05,0.05,0.90])
-        print 'Here is A:'
-        print A
-        B = A.pow(0.5)
-        print 'Here is B - A^0.5:'
-        print B
-        C = B.rightMultiplyVector((1.0,2.0,3.0))
-        print 'Here is C = B.(1,2,3):'
-        print C
-        D = B.leftMultiplyVector((1.0,2.0,3.0))
-        print 'Here is D = (1,2,3).B:'
-        print D
-        print 'Here is A flattened into a list:'
-        print A.getMatrix()
-        raw_input('debug stop')
-        return  
         
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
