@@ -10,6 +10,7 @@ class IDR(PhycasCommand):
             ("data_source",         P.characters,       "The DataSource that provides the data, to be used in the IDR analysis. Should be a DataSource object", DataSourceValidate),
             ("burnin",              1,                  "Number of samples from the input files to skip", IntArgValidate(min=0)),
             ("partition",           partition,          "Specifies the partition to use. By default, uses the predefined partition object."),
+            ("rk",                  [0.01,0.05,0.1,0.5],"Specifies a list of values of rk to use. This range should be set so that the percentage of samples falling inside the ball is low but intermediate (e.g. 10-40)."),
             ])
         o = PhycasCommandOutputOptions()
         o.__dict__["_help_order"] = ["log"]

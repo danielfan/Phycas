@@ -43,7 +43,6 @@ class InflatedDensityRatio(CommonFunctions):
                                         #   are string representations of splits and the values are log-transformed edge lengths
         self.models = None              # list of models used in the defined partition
         self.model_names = None         # list of names of models used in the defined partition
-        self.rk = 0.01                  # radius of "ball" to be used
  
         self.param_names = None         # list of the names of the parameters
         self.c = None                   # current cold chain
@@ -57,7 +56,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.sqrtSinv = None            # SquareMatrix representingsquare root of the inverse of the sample variance-covariance matrix
         self.mu = None                  # the posterior mean vector (average of the sampled parameter vectors)
         self.log_g0 = None              # the log of the posterior evaluated at self.mu
-        self.insideBall = None          # keeps track of number of samples that fall inside the ball of radius self.rk
+        self.insideBall = None          # keeps track of number of samples that fall inside the ball of radius rk
         
         # data members below are needed because must use an MCMCManager to compute posteriors
         # This is overkill and will be simplified later
@@ -663,6 +662,10 @@ class InflatedDensityRatio(CommonFunctions):
         log_posterior = log_like + log_prior
         return log_posterior
                 
+    def calcLogG0(self):
+        if self.log_g0 is None:
+            self.log_g0 = self.calcLogG([0.0]*self.p)
+                
     def calcLogGpk(self, v, r):
         """
         If the length ||v|| of the supplied (log-transformed, standardized) parameter vector <= r, 
@@ -680,14 +683,15 @@ class InflatedDensityRatio(CommonFunctions):
         vlen = math.log(vsum)/fp
         if vlen <= r:
             self.insideBall += 1
-            return calcLogG([0.0]*self.p)
+            self.calcLogG0()    # calculate self.log_g0 if necessary
+            return self.log_g0
             
         # scale v by z
         logz = (1.0/fp)*math.log(1.0 - math.pow(r, fp)/vsum)
         z = math.exp(logz)
         vscaled = [x*z for x in v]
         return self.calcLogG(vscaled)
-                
+        
     def calcIDR(self):
         """
         Estimates log-marginal-likelihood using the method described in the Arima paper.
@@ -760,36 +764,39 @@ class InflatedDensityRatio(CommonFunctions):
                 pscaled = self.sqrtSinv.rightMultiplyVector(tuple(pcentered))
                 self.stdsample.append(pscaled)
                 
-            # for each vector in self.stdsample, compute log ratio log[gpK(theta)/g(theta)] and 
-            # keep track of largest
-            self.insideBall = 0
-            max_log_ratio = None
-            log_ratios = []
-            for i,v in enumerate(self.stdsample):
-                log_g = self.log_posterior[i]
-                log_gpk = self.calcLogGpk(v, self.rk)
-                log_ratio = log_gpk - log_g
-                log_ratios.append(log_ratio)
-                if max_log_ratio is None or log_ratio > max_log_ratio:
-                    max_log_ratio = log_ratio
-            pct_inside = 100.0*float(self.insideBall)/float(self.n)
+            self.output('\nCalculating estimator for each value of rk:')
+            for rk in self.opts.rk:
+                self.insideBall = 0
+                log_ratios = []
+                
+                # for each vector in self.stdsample, compute log ratio log[gpK(theta)/g(theta)] and 
+                # keep track of largest
+                max_log_ratio = None
+                for i,v in enumerate(self.stdsample):
+                    log_g = self.log_posterior[i]
+                    log_gpk = self.calcLogGpk(v, rk)
+                    log_ratio = log_gpk - log_g
+                    log_ratios.append(log_ratio)
+                    if max_log_ratio is None or log_ratio > max_log_ratio:
+                        max_log_ratio = log_ratio
+                pct_inside = 100.0*float(self.insideBall)/float(self.n)
 
-            # sum log ratios, subtracting largest from each to avoid underflow
-            sum_ratios = 0.0
-            for logr in log_ratios:
-                r = math.exp(logr - max_log_ratio)
-                sum_ratios += r
-            sample_size = len(self.stdsample)
-            expected_ratio = sum_ratios/float(sample_size)
-            
-            # calculate k, the volume of the inflated region
-            self.log_g0 = self.calcLogG([0.0]*self.p)
-            log_k = self.log_g0 + self.calcLogVp(self.p, self.rk)
-            
-            # finally, compute estimator
-            raw_input('expected_ratio = %g' % expected_ratio)
-            log_c_idr = log_k - math.log(expected_ratio - 1.0)
-            self.output('\nlog(c_idr) = %g (%.1f%% of samples inside ball)\n' % (log_c_idr,pct_inside))
+                # sum log ratios, subtracting largest from each to avoid underflow
+                sum_ratios = 0.0
+                for logr in log_ratios:
+                    r = math.exp(logr - max_log_ratio)
+                    sum_ratios += r
+                assert self.sample_size == len(self.stdsample), 'sample size of standardized sample (%d) was not the value expected (%d)' % (len(self.stdsample), self.sample_size)
+                log_expected_ratio = max_log_ratio + math.log(sum_ratios) - math.log(float(self.sample_size))
+                expected_ratio = math.exp(log_expected_ratio)
+                
+                # calculate k, the volume of the inflated region
+                self.calcLogG0() # calculate self.log_g0 if necessary
+                log_k = self.log_g0 + self.calcLogVp(self.p, rk)
+                
+                # finally, compute estimator
+                log_c_idr = log_k - math.log(expected_ratio - 1.0)
+                self.output('  log(c_idr) = %g (rk = %g, %.1f%% of samples inside ball)' % (log_c_idr,rk, pct_inside))
             
     def summarize(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
