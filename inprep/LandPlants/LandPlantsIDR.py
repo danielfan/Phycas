@@ -17,8 +17,8 @@ model.update_freqs_separately = False
 model.update_relrates_separately = False
 
 idr.burnin = 100
-#idr.rk = [.09]
-idr.rk = [.080,.081,.082,.083,.084,.085,.086,.087,.088,.089,.090,.091,.092,.093,.094,.095,.096,.097,.098,.099,.100]
+idr.rk = [.09]
+#idr.rk = [.080,.081,.082,.083,.084,.085,.086,.087,.088,.089,.090,.091,.092,.093,.094,.095,.096,.097,.098,.099,.100]
 idr.params = 'landplants.p'
 idr.trees = TreeCollection(filename='landplants.t')
 idr.data_source = 'Yang_and_Rannala_Karol_nomissambig.nex'

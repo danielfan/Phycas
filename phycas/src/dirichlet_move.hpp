@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 #include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
+#include "phycas/src/partition_model.hpp"		// for PartitionModelShPtr definition
 
 namespace phycas
 {

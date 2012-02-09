@@ -989,5 +989,13 @@ void MCMCUpdater::fitLognormalWorkingPrior()
 		ref_dist = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
 		}
 	}
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls recalcRelativeRates() function of the `likelihood' data member. 
+*/
+void MCMCUpdater::recalcRelativeRates()
+	{
+    likelihood->recalcRelativeRates();
+    }
 	
 }	// namespace phycas

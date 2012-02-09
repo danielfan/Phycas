@@ -1,7 +1,7 @@
-Third-party source code used in Phycas/PhyPy
---------------------------------------------
+Third-party source code used in Phycas
+--------------------------------------
 
-The PhyPy library makes use of a small number of third-party source code
+Phycas makes use of a small number of third-party source code
 files. 
 
 DCDFLIB is used for numerical integration of probability distributions. The
@@ -10,8 +10,8 @@ library can be obtained from
   http://www.csit.fsu.edu/~burkardt/cpp_src/dcdflib/dcdflib.html 
 
 num_util was used for interfacing with numarray. The numarray library is
-no longer used in PhyPy, and if this functionality is eventually restored
-to PhyPy, NumPy will be used rather than numarray. This version of num_util 
+no longer used in Phycas, and if this functionality is eventually restored, 
+NumPy will be used rather than numarray. This version of num_util 
 does not appear to be available anymore, but the new version can be obtained
 from 
 

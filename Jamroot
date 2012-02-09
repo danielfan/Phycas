@@ -215,6 +215,8 @@ alias likelihood_sources
     phycas/src/omega_param.cpp 
     phycas/src/phycas_string.cpp 
     phycas/src/pinvar_param.cpp 
+    phycas/src/thirdparty/praxis/minfit.c
+    phycas/src/thirdparty/praxis/praxis.c
     phycas/src/probability_distribution.cpp 
     phycas/src/relative_rate_distribution.cpp 
     phycas/src/q_matrix.cpp

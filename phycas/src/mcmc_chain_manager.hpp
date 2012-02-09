@@ -29,6 +29,10 @@ struct CIPRES_Matrix;
 namespace phycas
 {
 
+extern "C" { 
+double rosen(double * x, int n);
+}
+
 class MCMCChainManager;
 typedef boost::enable_shared_from_this<MCMCChainManager> MCMCChainManagerThisShPtr;
 
@@ -82,6 +86,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					reviseExternalEdgeLenPrior(double mu);
 		double					reviseAllEdgeLenPriors(double mu);
 		
+        void                    praxisLocatePosteriorMode();
+        double                  praxisCalcLogPosterior(double * x, int n);      
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
 		
@@ -164,6 +170,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		MCMCUpdaterVect			edge_len_params;		/**< Vector of edge length parameters */
 		MCMCUpdaterVect		    edge_len_hyperparams;	/**< Vector of edge length hyperparameters */
 		MCMCUpdaterVect			all_updaters;			/**< Vector of all updaters (includes moves, model_params, edge_len_params and edge_len_hyperparams); empty until finalize() is called, after which it contains a copy of everything in moves, model_params, edge_len_params and edge_len_hyperparam */
+        
+        double_vect_t           praxis_param_values;    /**< vector of all parameter values used by praxis routine in search for posterior mode */
+        MCMCUpdaterVect         praxis_stewards;        /**< vector of prior steward MCMCUpdaterShPtrs used by praxis routine in search for posterior mode */
 	};
 
 typedef boost::shared_ptr<MCMCChainManager>		ChainManagerShPtr;

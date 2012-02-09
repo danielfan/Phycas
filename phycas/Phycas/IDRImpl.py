@@ -57,6 +57,8 @@ class InflatedDensityRatio(CommonFunctions):
         self.mu = None                  # the posterior mean vector (average of the sampled parameter vectors)
         self.log_g0 = None              # the log of the posterior evaluated at self.mu
         self.insideBall = None          # keeps track of number of samples that fall inside the ball of radius rk
+        self.mode = None                # vector of length self.p that stores the mode of the posterior
+        self.log_mode_posterior = None  # float that stores the log posterior at self.mode
         
         # data members below are needed because must use an MCMCManager to compute posteriors
         # This is overkill and will be simplified later
@@ -324,6 +326,7 @@ class InflatedDensityRatio(CommonFunctions):
     def checkPosterior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
+        NOTE: THIS FUNCTION IS NO LONGER USED AND SHOULD BE ELIMINATED
         Calculates log-likelihood and log-prior for sampled parameters and 
         edge_lengths. This function is intended as a sanity check to ensure
         that the likelihood machinery is working as expected.
@@ -427,6 +430,18 @@ class InflatedDensityRatio(CommonFunctions):
                 last_log_prior = c.chain_manager.getLastLnPrior()
                 self.output('%.5f\t%.5f' % (last_log_like, last_log_prior))
                 
+    def locatePosteriorMode(self, starting_point):
+        """
+        Searches for the mode of the posterior starting from the supplied starting_point.
+        
+        """
+        self.c.chain_manager.praxisLocatePosteriorMode()
+        #self.mode = self.c.chain_manager.locatePosteriorMode()
+        #last_log_like = self.c.chain_manager.getLastLnLike()
+        #last_log_prior = self.c.chain_manager.getLastLnPrior()
+        #self.log_mode_posterior = last_log_like + last_log_prior
+        #min = praxis(fun, x, n)
+        
     def computeMeanVectorAndVarCovMatrix(self, tid):
         """
         Computes sample variance-covariance matrix for parameter vectors sampled from tree with tree id equal to `tid'.
@@ -684,13 +699,13 @@ class InflatedDensityRatio(CommonFunctions):
         if vlen <= r:
             self.insideBall += 1
             self.calcLogG0()    # calculate self.log_g0 if necessary
-            return self.log_g0
+            return (self.log_g0, True)
             
         # scale v by z
         logz = (1.0/fp)*math.log(1.0 - math.pow(r, fp)/vsum)
         z = math.exp(logz)
         vscaled = [x*z for x in v]
-        return self.calcLogG(vscaled)
+        return (self.calcLogG(vscaled), False)
         
     def calcIDR(self):
         """
@@ -755,6 +770,9 @@ class InflatedDensityRatio(CommonFunctions):
             self.sqrtS = self.S.pow(0.5)
             self.sqrtSinv = self.Sinv.pow(0.5)
             
+            # find the posterior mode
+            self.locatePosteriorMode(self.mu)
+            
             # standardize the sample vectors
             self.stdsample = []
             for v in self.sample:
@@ -771,60 +789,96 @@ class InflatedDensityRatio(CommonFunctions):
             self.output('\nCalculating estimator for each requested value of rk:')
             for rk in self.opts.rk:
                 self.insideBall = 0
-                log_ratios = []
+                log_ratios_in = []
+                log_ratios_out = []
                 
                 # for each vector in self.stdsample, compute log ratio log[gpK(theta)/g(theta)] and 
                 # keep track of largest
-                max_log_ratio = None
-                min_log_ratio = None
+                max_log_ratio_in = None
+                max_log_ratio_out = None
+                min_log_ratio_in = None
+                min_log_ratio_out = None
                 for i,v in enumerate(self.stdsample):
                     log_g = self.log_posterior[i]
-                    log_gpk = self.calcLogGpk(v, rk)
+                    log_gpk,is_inside = self.calcLogGpk(v, rk)
                     log_ratio = log_gpk - log_g
-                    log_ratios.append(log_ratio)
-                    if max_log_ratio is None or log_ratio > max_log_ratio:
-                        max_log_ratio = log_ratio
-                    if min_log_ratio is None or log_ratio < min_log_ratio:
-                        min_log_ratio = log_ratio
+                    if is_inside:
+                        log_ratios_in.append(log_ratio)
+                        if max_log_ratio_in is None or log_ratio > max_log_ratio_in:
+                            max_log_ratio_in = log_ratio
+                        if min_log_ratio_in is None or log_ratio < min_log_ratio_in:
+                            min_log_ratio_in = log_ratio
+                    else:
+                        log_ratios_out.append(log_ratio)
+                        if max_log_ratio_out is None or log_ratio > max_log_ratio_out:
+                            max_log_ratio_out = log_ratio
+                        if min_log_ratio_out is None or log_ratio < min_log_ratio_out:
+                            min_log_ratio_out = log_ratio
                 pct_inside = 100.0*float(self.insideBall)/float(self.n)
 
                 # sum log ratios, subtracting largest from each to avoid underflow
-                sum_ratios = 0.0
-                for logr in log_ratios:
-                    r = math.exp(logr - max_log_ratio)
-                    sum_ratios += r
+                sum_ratios_in = 0.0
+                for logr in log_ratios_in:
+                    r = math.exp(logr - max_log_ratio_in)
+                    sum_ratios_in += r
+                sum_ratios_out = 0.0
+                for logr in log_ratios_out:
+                    r = math.exp(logr - max_log_ratio_out)
+                    sum_ratios_out += r
                 assert self.sample_size == len(self.stdsample), 'sample size of standardized sample (%d) was not the value expected (%d)' % (len(self.stdsample), self.sample_size)
-                log_expected_ratio = max_log_ratio + math.log(sum_ratios) - math.log(float(self.sample_size))
-                expected_ratio = math.exp(log_expected_ratio)
+                #log_expected_ratio = max_log_ratio + math.log(sum_ratios_in + sum_ratios_out) - math.log(float(self.sample_size))
+                #expected_ratio = math.exp(log_expected_ratio)
+
+                Tin = len(log_ratios_in)
+                log_expected_ratio_in = max_log_ratio_in + math.log(sum_ratios_in) - math.log(float(Tin))
+                expected_ratio_in = math.exp(log_expected_ratio_in)
+                print
+                print 'Tin                   = %g' % Tin
+                print 'max_log_ratio_in      = %g' % max_log_ratio_in
+                print 'log_expected_ratio_in = %g' % log_expected_ratio_in
+                print 'expected_ratio_in     = %g' % expected_ratio_in
+                print 'expected_ratio_in*    = %g' % math.exp(log_expected_ratio_in - max_log_ratio_in)
+                print '* without exp(max_log_ratio_in) term'
+                
+                Tout = len(log_ratios_out)
+                log_expected_ratio_out = max_log_ratio_out + math.log(sum_ratios_out) - math.log(float(Tout))
+                expected_ratio_out = math.exp(log_expected_ratio_out)
+                print
+                print 'Tout                   = %g' % Tout
+                print 'max_log_ratio_out      = %g' % max_log_ratio_out
+                print 'log_expected_ratio_out = %g' % log_expected_ratio_out
+                print 'expected_ratio_out     = %g' % expected_ratio_out
+                print 'expected_ratio_out*    = %g' % math.exp(log_expected_ratio_out - max_log_ratio_out)
+                print '* without exp(max_log_ratio_out) term'
+                
+                Ttotal = Tin + Tout
+                expected_ratio_total = Tin*expected_ratio_in/Ttotal + Tout*expected_ratio_out/Ttotal
+                print
+                print 'Ttotal                 = %g' % Ttotal
+                print 'expected_ratio_total   = %g' % expected_ratio_total
                 
                 # calculate k, the volume of the inflated region
                 self.calcLogG0() # calculate self.log_g0 if necessary
-                log_k = self.log_g0 + self.calcLogVp(self.p, rk)
+                log_Vp = self.calcLogVp(self.p, rk)
+                log_k = self.log_g0 + log_Vp
                 
                 # finally, compute estimator
-                log_c_idr = log_k - math.log(expected_ratio - 1.0)
-                alt_log_c_idr = log_k - log_expected_ratio  # alternate version ignores the "- 1.0" in the denominator to remain in log scale throughout
+                log_c_idr = log_k - math.log(expected_ratio_total - 1.0)
                 
                 percents.append(pct_inside)
                 radii.append(rk)
                 marglikes.append(log_c_idr)
-                altmarglikes.append(alt_log_c_idr)
-                self.output('  log(c_idr) = %g (rk = %g, %.1f%% of samples inside ball, min = %g, max = %g)' % (log_c_idr,rk, pct_inside,min_log_ratio,max_log_ratio))
+                self.output('  log(c_idr) = %g (rk = %g, %.1f%% of samples inside ball, logVp = %g, logG0 = %g)' % (log_c_idr,rk, pct_inside,log_Vp,self.log_g0))
                 
             # temporary debugging code (but may end up being useful enough to create user setting for specifying R file)
             rfile = open('idr.R', 'w')
             rfile.write('marglike    = c(%s)\n' % ','.join(['%g' % m for m in marglikes]))
-            rfile.write('altmarglike = c(%s)\n' % ','.join(['%g' % m for m in altmarglikes]))
             rfile.write('radius      = c(%s)\n' % ','.join(['%g' % r for r in radii]))
             rfile.write('pctinside   = c(%s)\n' % ','.join(['%g' % p for p in percents]))
             rfile.write('quartz(bg="white")\n')
             rfile.write('plot(pctinside,marglike,main="Log(marginal likelihood) vs. Percent inside ball")\n')
             rfile.write('quartz(bg="white")\n')
             rfile.write('plot(radius,marglike,type="l",main="Log(marginal likelihood) vs. Radius of ball")\n')
-            rfile.write('quartz(bg="white")\n')
-            rfile.write('plot(pctinside,altmarglike,main="Log(alt. marginal likelihood) vs. Percent inside ball")\n')
-            rfile.write('quartz(bg="white")\n')
-            rfile.write('plot(radius,altmarglike,type="l",main="Log(alt. marginal likelihood) vs. Radius of ball")\n')
             rfile.close()
             
     def summarize(self):

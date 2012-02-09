@@ -29,6 +29,24 @@
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/mapping_move.hpp"
+#include "phycas/src/dirichlet_move.hpp"
+
+extern "C"
+{
+#include "phycas/src/thirdparty/praxis/machine.h"
+double praxis(double (*_fun)(double *, int), double * _x, int _n);
+double praxisWrapper(double * x, int n);
+}
+
+//@POL should use ChainManagerShPtr here
+phycas::MCMCChainManager * praxisMCMCChainManager = 0;
+
+double praxisWrapper(double * x, int n)
+    {
+    assert(praxisMCMCChainManager);
+    return -1.0*praxisMCMCChainManager->praxisCalcLogPosterior(x, n);
+    }
+
 namespace phycas
 {
 
@@ -123,8 +141,150 @@ void MCMCChainManager::releaseUpdaters()
 	//	}
 	edge_len_hyperparams.clear();
     }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	TODO.
+*/
+void MCMCChainManager::praxisLocatePosteriorMode()
+	{	
+	// Might need to add more checks here
+	if (dirty)
+		{
+		throw XLikelihood("cannot call refreshLastLnPrior() for chain manager before calling finalize()");
+		}
 
-
+    praxis_param_values.clear();
+    praxis_stewards.clear();
+    
+    std::cerr << "\n@@@@@@@@@@ Building vector of parameter names in MCMCChainManager::praxisLocatePosteriorMode() @@@@@@@@@@" << std::endl;
+    std::cerr << "@@@@@@@@@@ ignored steward names:" << std::endl;
+    
+	// Visit all updaters and let those who are prior stewards add their name to praxis_stewards.
+	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		const MCMCUpdaterShPtr s = *it;
+		if (s->isPriorSteward() && !s->isFixed())
+			{
+            const std::string & nm = s->getName();
+            if (nm.find("state_freqs") != std::string::npos) 
+                {
+                const StateFreqMove & state_freq_move = dynamic_cast<const StateFreqMove &>(*s);
+                std::vector<double> state_freqs(4, 0.0);
+                state_freq_move.getCurrValuesFromModel(state_freqs);
+                double log_freqA = log(state_freqs[0]);
+                state_freqs[0] = log(state_freqs[1]) - log_freqA;   // freqC
+                state_freqs[1] = log(state_freqs[2]) - log_freqA;   // freqG
+                state_freqs[2] = log(state_freqs[3]) - log_freqA;   // freqT
+                state_freqs.resize(3);
+                std::copy(state_freqs.begin(), state_freqs.end(), std::back_inserter(praxis_param_values));
+                praxis_stewards.push_back(s);
+                }
+            else if (nm.find("relrates") != std::string::npos) 
+                {
+                const RelRatesMove & relrates_move = dynamic_cast<const RelRatesMove &>(*s);
+                std::vector<double> relative_rates(6, 0.0);
+                relrates_move.getCurrValuesFromModel(relative_rates);
+                double log_rAC = log(relative_rates[0]);
+                relative_rates[0] = log(relative_rates[1]) - log_rAC;   // rAG
+                relative_rates[1] = log(relative_rates[2]) - log_rAC;   // rAT
+                relative_rates[2] = log(relative_rates[3]) - log_rAC;   // rCG
+                relative_rates[3] = log(relative_rates[4]) - log_rAC;   // rCT
+                relative_rates[4] = log(relative_rates[5]) - log_rAC;   // rGT
+                relative_rates.resize(5);
+                std::copy(relative_rates.begin(), relative_rates.end(), std::back_inserter(praxis_param_values));
+                praxis_stewards.push_back(s);
+                }
+            else if (nm.find("gamma_shape") != std::string::npos) 
+                {
+                const DiscreteGammaShapeParam & gamma_shape_parameter = dynamic_cast<const DiscreteGammaShapeParam &>(*s);
+                double log_shape = log(gamma_shape_parameter.getCurrValueFromModel());
+                praxis_param_values.push_back(log_shape);
+                praxis_stewards.push_back(s);
+                }
+            else 
+                {
+                std::cerr << nm << " " << std::endl;
+                }
+			}
+		}
+    std::cerr << "\n@@@@@@@@@@ praxis_stewards names:" << std::endl;
+    for (MCMCUpdaterVect::iterator s = praxis_stewards.begin(); s != praxis_stewards.end(); ++s)
+        {
+        std::cerr << (*s)->getName() << " ";
+        }
+    std::cerr << "\n@@@@@@@@@@ praxis_param_values:" << std::endl;
+    std::copy(praxis_param_values.begin(), praxis_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
+    
+    // Note: praxisMCMCChainManager is a global (see top of this file)
+    praxisMCMCChainManager = this;
+    int n = (int)praxis_param_values.size();
+    double fx = praxis(praxisWrapper, &praxis_param_values[0], n);
+    std::cerr << boost::str(boost::format("Minimum = %e\n") % fx) << std::endl;    
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Refreshes `last_ln_like' and `last_ln_prior' by calling refreshLastLnLike() and refreshLastLnPrior(), respectively,
+|   then returning `last_ln_like' + `last_ln_prior'.
+*/
+double MCMCChainManager::praxisCalcLogPosterior(double * x, int n)
+	{
+    double * cursor = &x[0];
+    std::cerr << "---> | ";
+    for (MCMCUpdaterVect::iterator s = praxis_stewards.begin(); s != praxis_stewards.end(); ++s)
+        {
+        const std::string & nm = (*s)->getName();
+        MCMCUpdaterShPtr p = (*s);
+        MCMCUpdater & u = (*p);
+        if (nm.find("state_freqs") != std::string::npos) 
+            {
+            StateFreqMove & state_freq_move = dynamic_cast<StateFreqMove &>(u);
+            std::vector<double> state_freqs(4, 1.0);
+            std::vector<double>::iterator it = state_freqs.begin();
+            std::copy(cursor, cursor + 3, ++it);
+            double freqA = 1.0/(1.0 + exp(state_freqs[1]) + exp(state_freqs[2]) + exp(state_freqs[3]));
+            for (unsigned i = 0; i < 4; ++i)
+                {
+                state_freqs[i] = freqA*exp(state_freqs[i]);
+                std::cerr << boost::str(boost::format("%g") % state_freqs[i]) << " | ";
+                }
+            state_freq_move.sendCurrValuesToModel(state_freqs);
+            cursor += 3;
+            }
+        else if (nm.find("relrates") != std::string::npos) 
+            {
+            RelRatesMove & relrates_move = dynamic_cast<RelRatesMove &>(u);
+            std::vector<double> relative_rates(6, 1.0);
+            std::vector<double>::iterator it = relative_rates.begin();
+            std::copy(cursor, cursor + 5, ++it);
+            double rAC = 1.0/(1.0 + exp(relative_rates[1]) + exp(relative_rates[2]) + exp(relative_rates[3]) + exp(relative_rates[4]) + exp(relative_rates[5]));
+            for (unsigned i = 0; i < 6; ++i)
+                {
+                relative_rates[i] = rAC*exp(relative_rates[i]);
+                std::cerr << boost::str(boost::format("%g") % relative_rates[i]) << " | ";
+                }
+            relrates_move.sendCurrValuesToModel(relative_rates);
+            cursor += 5;
+            }
+        else if (nm.find("gamma_shape") != std::string::npos) 
+            {
+            DiscreteGammaShapeParam & gamma_shape_parameter = dynamic_cast<DiscreteGammaShapeParam &>(u);
+            double shape = exp(*cursor);
+            std::cerr << boost::str(boost::format("%g") % shape) << " | ";
+            gamma_shape_parameter.sendCurrValueToModel(shape);
+            gamma_shape_parameter.recalcRelativeRates();
+            cursor++;
+            }
+        else
+            {
+            std::cerr << "\n@@@@@@@@@@ warning: unhandled prior steward (" << nm << ") in MCMCChainManager::praxisCalcLogPosterior" << std::endl;
+            }
+        }
+    std::cerr << std::endl;
+    refreshLastLnLike();
+    refreshLastLnPrior();
+    return last_ln_like + last_ln_prior;
+    }
+    
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_like' by calling recalcLike() for the first updater in the `all_updaters' vector.
 */
