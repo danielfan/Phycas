@@ -302,6 +302,9 @@ class UniformDistribution : public ProbabilityDistribution
 		double		GetLnPDF(double x) const; 
 		double		GetRelativeLnPDF(double x) const; 
 		void		SetMeanAndVariance(double mean, double var);
+        
+        virtual double GetLeftSupportBoundary() const;
+        virtual double GetRightSupportBoundary() const;
 
 	protected:
 		double a;				/**< the left bound */

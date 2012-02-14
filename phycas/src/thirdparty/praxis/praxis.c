@@ -80,7 +80,7 @@ double tol = SQREPSILON,
        scbd = 1.0,
        step = 1.0;
 int    ktm = 1,
-       prin = 2,
+       prin = 1,    /* POL originally 2 */
        maxfun = 0,
        illc = 0;
        
@@ -97,7 +97,7 @@ static double d[N], y[N], z[N],
 /* these will be set by praxis to point to its arguments */
 static int n;
 double *x;
-double (*fun)(double *, int);
+double (*fun)(double *, int);   /* POL originally double (*fun)() */
 
 /* these will be set by praxis to the global control parameters */
 static double h, macheps, t;

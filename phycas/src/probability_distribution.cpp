@@ -1283,6 +1283,22 @@ double UniformDistribution::GetRelativeLnPDF(
 	else
 		return 0.0;
 	}
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `a', the left boundary of the support of this Uniform distribution.
+*/
+double UniformDistribution::GetLeftSupportBoundary() const
+    {
+    return a;
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `b', the right boundary of the support of this Uniform distribution.
+*/
+double UniformDistribution::GetRightSupportBoundary() const
+    {
+    return b;
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows distribution to be specified in terms of the mean and variance rather than the left and right bounds. 

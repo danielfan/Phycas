@@ -21,6 +21,7 @@
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
+#include "boost/cast.hpp"
 
 namespace phycas
 {
@@ -150,7 +151,40 @@ void DiscreteGammaShapeParam::educateWorkingPrior()
 void DiscreteGammaShapeParam::finalizeWorkingPrior()
 	{
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	fitGammaWorkingPrior();
+    std::string s = prior->GetDistributionDescription();
+#if 0
+    //POL This code was originally intended to allow MrBayes' Uniform(0,200) prior on the shape parameter, 
+    // but it is just too much trouble, so I returned to allowing only priors with matching support
+    if (s.find("Uniform") != std::string::npos) 
+        {
+        double a = 0.0;     //temporary! hack  need to figure out why dynamic_cast<UniformDistribution *>(prior.get()) results in "bad cast"
+        double b = 200.0;   //temporary! hack
+        double minv = b;
+        double maxv = a;
+        for (double_vect_t::iterator it = fitting_sample.begin(); it != fitting_sample.end(); ++it)
+            {
+            double v = *it;
+            if (v > maxv)
+                maxv = v;
+            if (v < minv)
+                minv = v;
+            }
+        if (maxv < minv)
+            {
+            // just use original boundaries
+            minv = a;
+            maxv = b;
+            }
+        ref_dist = ProbDistShPtr(new UniformDistribution(minv, maxv));        
+        std::cerr << "GetDistributionDescription = " << s << std::endl;
+        std::cerr << "a = " << a << std::endl;
+        std::cerr << "b = " << b << std::endl;
+        std::cerr << "minv = " << minv << std::endl;
+        std::cerr << "maxv = " << maxv << std::endl;
+        std::cerr << "\n***\n***\n***\n***\n***\n***\n***\n***\n***\n" << std::endl;
+        }
+#endif
+    fitGammaWorkingPrior();
 	//fitLognormalWorkingPrior();
 	}
 }

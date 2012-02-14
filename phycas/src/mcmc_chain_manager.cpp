@@ -33,18 +33,20 @@
 
 extern "C"
 {
-#include "phycas/src/thirdparty/praxis/machine.h"
-double praxis(double (*_fun)(double *, int), double * _x, int _n);
-double praxisWrapper(double * x, int n);
+//#include "phycas/src/thirdparty/praxis/machine.h"
+//double praxis(double (*_fun)(double *, int), double * _x, int _n);
+//double praxisWrapper(double * x, int n);
+#include "phycas/src/thirdparty/praxis/dls_core.h"
+#include "phycas/src/thirdparty/praxis/dls_brent.h"
 }
 
 //@POL should use ChainManagerShPtr here
 phycas::MCMCChainManager * praxisMCMCChainManager = 0;
 
-double praxisWrapper(double * x, int n)
+double praxisWrapper(double * x, void *data)
     {
     assert(praxisMCMCChainManager);
-    return -1.0*praxisMCMCChainManager->praxisCalcLogPosterior(x, n);
+    return -1.0*praxisMCMCChainManager->praxisCalcLogPosterior(x);
     }
 
 namespace phycas
@@ -143,7 +145,9 @@ void MCMCChainManager::releaseUpdaters()
     }
     
 /*----------------------------------------------------------------------------------------------------------------------
-|	TODO.
+|	Locates the mode of the posterior distribution. The supplied `starting_point' is informational only; the actual 
+|   starting point is represented by the current state of the model. It is thus the duty of the caller to ensure that the
+|   model is setup to match the value of `starting_point'.
 */
 void MCMCChainManager::praxisLocatePosteriorMode()
 	{	
@@ -155,6 +159,9 @@ void MCMCChainManager::praxisLocatePosteriorMode()
 
     praxis_param_values.clear();
     praxis_stewards.clear();
+    
+    double_vect_t tmp_param_values;
+    //double TL = 0.0;
     
     std::cerr << "\n@@@@@@@@@@ Building vector of parameter names in MCMCChainManager::praxisLocatePosteriorMode() @@@@@@@@@@" << std::endl;
     std::cerr << "@@@@@@@@@@ ignored steward names:" << std::endl;
@@ -171,6 +178,10 @@ void MCMCChainManager::praxisLocatePosteriorMode()
                 const StateFreqMove & state_freq_move = dynamic_cast<const StateFreqMove &>(*s);
                 std::vector<double> state_freqs(4, 0.0);
                 state_freq_move.getCurrValuesFromModel(state_freqs);
+                tmp_param_values.push_back(state_freqs[0]);
+                tmp_param_values.push_back(state_freqs[1]);
+                tmp_param_values.push_back(state_freqs[2]);
+                tmp_param_values.push_back(state_freqs[3]);
                 double log_freqA = log(state_freqs[0]);
                 state_freqs[0] = log(state_freqs[1]) - log_freqA;   // freqC
                 state_freqs[1] = log(state_freqs[2]) - log_freqA;   // freqG
@@ -184,6 +195,12 @@ void MCMCChainManager::praxisLocatePosteriorMode()
                 const RelRatesMove & relrates_move = dynamic_cast<const RelRatesMove &>(*s);
                 std::vector<double> relative_rates(6, 0.0);
                 relrates_move.getCurrValuesFromModel(relative_rates);
+                tmp_param_values.push_back(relative_rates[0]);
+                tmp_param_values.push_back(relative_rates[1]);
+                tmp_param_values.push_back(relative_rates[2]);
+                tmp_param_values.push_back(relative_rates[3]);
+                tmp_param_values.push_back(relative_rates[4]);
+                tmp_param_values.push_back(relative_rates[5]);
                 double log_rAC = log(relative_rates[0]);
                 relative_rates[0] = log(relative_rates[1]) - log_rAC;   // rAG
                 relative_rates[1] = log(relative_rates[2]) - log_rAC;   // rAT
@@ -197,8 +214,26 @@ void MCMCChainManager::praxisLocatePosteriorMode()
             else if (nm.find("gamma_shape") != std::string::npos) 
                 {
                 const DiscreteGammaShapeParam & gamma_shape_parameter = dynamic_cast<const DiscreteGammaShapeParam &>(*s);
-                double log_shape = log(gamma_shape_parameter.getCurrValueFromModel());
+                double shape = gamma_shape_parameter.getCurrValueFromModel();
+                double log_shape = log(shape);
+                tmp_param_values.push_back(shape);
                 praxis_param_values.push_back(log_shape);
+                praxis_stewards.push_back(s);
+                }
+            else if (nm.find("master_edgelen") != std::string::npos) 
+                {
+                EdgeLenMasterParam & edgelen_master_parameter = dynamic_cast<EdgeLenMasterParam &>(*s);
+                TreeShPtr tree = edgelen_master_parameter.getTree();
+                TreeNode * nd = tree->GetFirstPreorder();
+                for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+                    {
+                    double edge_len = (nd->GetEdgeLen());
+                    //TL += edge_len;
+                    tmp_param_values.push_back(edge_len);
+                    double log_edge_len = log(edge_len);
+                    praxis_param_values.push_back(log_edge_len);
+                    }
+                std::cerr << boost::str(boost::format("tree = %s") % tree->MakeNewick()) << std::endl;
                 praxis_stewards.push_back(s);
                 }
             else 
@@ -215,21 +250,84 @@ void MCMCChainManager::praxisLocatePosteriorMode()
     std::cerr << "\n@@@@@@@@@@ praxis_param_values:" << std::endl;
     std::copy(praxis_param_values.begin(), praxis_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
     
+    std::cerr << "\n@@@@@@@@@@ tmp_param_values:" << std::endl;
+    std::copy(tmp_param_values.begin(), tmp_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
+    
+    int n = (int)praxis_param_values.size();
+    double fx = praxisCalcLogPosterior(&praxis_param_values[0]);
+    std::cerr << boost::str(boost::format("\nPosterior at starting point = %g\n") % fx) << std::endl;    
+
     // Note: praxisMCMCChainManager is a global (see top of this file)
     praxisMCMCChainManager = this;
-    int n = (int)praxis_param_values.size();
-    double fx = praxis(praxisWrapper, &praxis_param_values[0], n);
-    std::cerr << boost::str(boost::format("Minimum = %e\n") % fx) << std::endl;    
+    //fx = praxis(praxisWrapper, &praxis_param_values[0], n);
+    
+    //|		============
+    //|		praxis usage
+    //|		============
+    //|
+    //|			 1. Allocate and initialize a praxis object using newPraxisData:
+    //|
+    //|					PraxisData * praxd = newPraxisData(x, n, single_precision);
+    //|					
+    //|				  		x = array for parameter vector (must be large enough to store n doubles)
+    //|						n = number of parameters in function being optimized
+    //|						single_precision = true if function evaluation is only done at single-precision accuracy,
+    //|						                   false otherwise (i.e., function is evaluated in double precision).
+    //|
+    //|			 2.	Initialize x to contain the starting parameter values (in most cases, the better the guess, the faster
+    //|			    the convergence will be)
+    //|
+    //|			 3. Invoke the praxis routine:
+    //|		 		
+    //|			 		fx_opt = praxis(tol, h, n, f, data, praxd);
+    //|					
+    //|						tol   = tolerance limit used to test for convergence (if passed as 0, a default of 1e-5
+    //|						        will be used)
+    //|						h     = maximum step size used to test for convergence (if passed as 0, a default of 1.0
+    //|							    will be used)
+    //|						n     = the number of parameters in the function being minimized
+    //|						f	  = the function being minimized (see above)
+    //|						data  = an option pointer to arbitrary data that the function may need to compute its value;
+    //|						        if the function needs no additional data, pass NULL
+    //|						praxd = a praxis object previously allocated by newPraxisData
+    //|						
+    //|					On return, fx_opt will be the value of the minimized function, and praxd->h will contain the
+    //|					corresponding optimized parameter values.
+    //|
+    //|			 4. Destroy the praxis object (to avoid leaking memory);
+    //|
+    //|					deletePraxisData(praxd);
+    //|
+    //|	@note	'gAborted' is a variable that can be set to request cancellation without terminating the program (e.g., by
+    //|			a signal handler invoked when ctrl-C is pressed).  By default it is just #define'd to 0 in the header; if
+    //|			you want to provide this capability, you will need to provide a mechanism for setting gAborted externally.
+    //PUBLIC double praxis(
+    //  double		tol,		/* tolerance used for convergence criterion */
+    //  double		h,			/* maximum step size (e.g., 1.0) */
+    //  int			n,			/* number of parameters to function */
+    //  MinimizeFxn	f,			/* the function to be minimized, declared as "double fxn(double *x, void *data)" */
+    //  void *		data,		/* pointer to data to be passed to 'f' */
+    //  PraxisData *	praxd)		/* an object already allocated by newPraxisData */
+
+    if (true)
+        {
+        PraxisData * praxd = newPraxisData(&praxis_param_values[0], n, false);
+        double tol = 1e-5;
+        double h = 1.0;
+        double fx_opt = praxis(tol, h, n, praxisWrapper, NULL, praxd);
+        std::cerr << boost::str(boost::format("Minimum = %g\n") % fx_opt) << std::endl;    
+        deletePraxisData(praxd);
+        }
     }
     
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_like' and `last_ln_prior' by calling refreshLastLnLike() and refreshLastLnPrior(), respectively,
 |   then returning `last_ln_like' + `last_ln_prior'.
 */
-double MCMCChainManager::praxisCalcLogPosterior(double * x, int n)
+double MCMCChainManager::praxisCalcLogPosterior(double * x)
 	{
     double * cursor = &x[0];
-    std::cerr << "---> | ";
+    //std::cerr << "\n--->\n";
     for (MCMCUpdaterVect::iterator s = praxis_stewards.begin(); s != praxis_stewards.end(); ++s)
         {
         const std::string & nm = (*s)->getName();
@@ -242,10 +340,12 @@ double MCMCChainManager::praxisCalcLogPosterior(double * x, int n)
             std::vector<double>::iterator it = state_freqs.begin();
             std::copy(cursor, cursor + 3, ++it);
             double freqA = 1.0/(1.0 + exp(state_freqs[1]) + exp(state_freqs[2]) + exp(state_freqs[3]));
-            for (unsigned i = 0; i < 4; ++i)
+            state_freqs[0] = freqA;
+            //std::cerr << boost::str(boost::format("freq[0] = %g") % state_freqs[0]) << std::endl;
+            for (unsigned i = 1; i < 4; ++i)
                 {
                 state_freqs[i] = freqA*exp(state_freqs[i]);
-                std::cerr << boost::str(boost::format("%g") % state_freqs[i]) << " | ";
+                //std::cerr << boost::str(boost::format("freq[%d] = %g") % i % state_freqs[i]) << std::endl;
                 }
             state_freq_move.sendCurrValuesToModel(state_freqs);
             cursor += 3;
@@ -257,10 +357,12 @@ double MCMCChainManager::praxisCalcLogPosterior(double * x, int n)
             std::vector<double>::iterator it = relative_rates.begin();
             std::copy(cursor, cursor + 5, ++it);
             double rAC = 1.0/(1.0 + exp(relative_rates[1]) + exp(relative_rates[2]) + exp(relative_rates[3]) + exp(relative_rates[4]) + exp(relative_rates[5]));
-            for (unsigned i = 0; i < 6; ++i)
+            relative_rates[0] = rAC;
+            //std::cerr << boost::str(boost::format("relrate[0] = %g") % relative_rates[0]) << std::endl;
+            for (unsigned i = 1; i < 6; ++i)
                 {
                 relative_rates[i] = rAC*exp(relative_rates[i]);
-                std::cerr << boost::str(boost::format("%g") % relative_rates[i]) << " | ";
+                //std::cerr << boost::str(boost::format("relrate[%d] = %g") % i % relative_rates[i]) << std::endl;
                 }
             relrates_move.sendCurrValuesToModel(relative_rates);
             cursor += 5;
@@ -269,19 +371,35 @@ double MCMCChainManager::praxisCalcLogPosterior(double * x, int n)
             {
             DiscreteGammaShapeParam & gamma_shape_parameter = dynamic_cast<DiscreteGammaShapeParam &>(u);
             double shape = exp(*cursor);
-            std::cerr << boost::str(boost::format("%g") % shape) << " | ";
+            //std::cerr << boost::str(boost::format("shape = %g") % shape) << std::endl;
             gamma_shape_parameter.sendCurrValueToModel(shape);
             gamma_shape_parameter.recalcRelativeRates();
             cursor++;
+            }
+        else if (nm.find("master_edgelen") != std::string::npos) 
+            {
+            EdgeLenMasterParam & edgelen_master_parameter = dynamic_cast<EdgeLenMasterParam &>(u);
+            TreeShPtr tree = edgelen_master_parameter.getTree();
+            TreeNode * nd = tree->GetFirstPreorder();
+            //double TL = 0.0;
+            for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+                {
+                double edge_len = exp(*cursor);
+                //TL += edge_len;
+                nd->SetEdgeLen(edge_len);
+                cursor++;
+                }
+            //std::cerr << boost::str(boost::format("\npraxisCalcLogPosterior tree = %s\n") % tree->MakeNewick()) << std::endl;
+            //std::cerr << boost::str(boost::format("TL (after) = %g") % TL) << std::endl;
             }
         else
             {
             std::cerr << "\n@@@@@@@@@@ warning: unhandled prior steward (" << nm << ") in MCMCChainManager::praxisCalcLogPosterior" << std::endl;
             }
         }
-    std::cerr << std::endl;
     refreshLastLnLike();
     refreshLastLnPrior();
+    //std::cerr << "lnP = " << (last_ln_like + last_ln_prior) << std::endl;
     return last_ln_like + last_ln_prior;
     }
     

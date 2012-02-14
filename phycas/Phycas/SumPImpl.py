@@ -356,9 +356,12 @@ class ParamSummarizer(CommonFunctions):
             s = []
             for b in betas:
                 p = params[h][b]
+                print 'trying h = %s, b = %g...' % (h,b)
                 try:
                     r,ess = self.autocorr_ess(p)
                 except VarianceZeroError:
+                    s.append('%12s' % '---')
+                except OverflowError:
                     s.append('%12s' % '---')
                 else:
                     s.append('%12.5f' % r)

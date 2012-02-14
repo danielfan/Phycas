@@ -1,0 +1,57 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Sunday, February 12, 2012 12:40:06  ET]
+[!
+>Data file = hadamard2.nex
+>Heuristic search settings:
+>  Optimality criterion = likelihood
+>    Likelihood settings:
+>      Number of substitution types = 6
+>      User-specified substitution rate matrix:
+>        AC=1.35843 AG=4.22026 AT=0.891234 CG=0.970402 CT=4.20818 GT=1
+>      Assumed state frequencies (set by user):
+>        A=0.24569  C=0.24709  G=0.24660  T=0.26061
+>      These settings correspond to the GTR+G model
+>      Among-site rate variation:
+>        Assumed proportion of invariable sites  = none
+>        Distribution of rates at variable sites = gamma (discrete approximation)
+>          Shape parameter (alpha)   = 500
+>          Number of rate categories = 4
+>          Representation of average rate for each category = mean
+>      Number of distinct data patterns under this model = 631
+>      Molecular clock not enforced
+>      Starting branch lengths obtained using Rogers-Swofford approximation method
+>      Trees with approximate log likelihoods 5% or further from the target score are rejected
+>        without additional iteration
+>      Branch-length optimization = one-dimensional Newton-Raphson with pass limit=20,
+>                                   tolerance=1e-07
+>      Vector processing enabled
+>      Conditional-likelihood rescaling threshold = 1e-20
+>  
+>  Starting tree(s) obtained via stepwise addition
+>    Addition sequence: as-is
+>    Number of trees held at each step = 1
+>  Branch-swapping algorithm: tree-bisection-reconnection (TBR) with reconnection limit = 8
+>    Steepest descent option not in effect
+>  Initial 'Maxtrees' setting = 100
+>  Branches collapsed (creating polytomies) if branch length is less than or equal to 1e-08
+>  'MulTrees' option in effect
+>  No topological constraints in effect
+>  Trees are unrooted
+>
+>Heuristic search completed
+>  Total number of rearrangements tried = 34
+>  Score of best tree(s) found = 7198.161
+>  Number of trees retained = 1
+>  Time used = 0.09 sec (CPU time = 0.15 sec)
+]
+	Translate
+		1 A,
+		2 B,
+		3 C,
+		4 D,
+		5 E,
+		6 F
+		;
+tree PAUP_1 = [&U] (1:0,((((2:0.42549850,6:0.85640725):0.28678670,5:0.25718078):0.09449950,4:0.40359241):0.22071671,3:0.21503818):0.67608638);
+End;

@@ -569,7 +569,7 @@ class MarkovChain(LikelihoodCore):
             self.bush_move = Likelihood.BushMove()
 
             # Set up the topology prior
-            self.topo_prior_calculator = self.bush_move.getTopoPriorCalculator()
+            self.topo_prior_calculator = self.bush_move.getPolytomyTopoPriorCalculator()
             self.topo_prior_calculator.chooseUnrooted()
             self.topo_prior_calculator.setC(self.parent.opts.topo_prior_C)
             if self.parent.opts.polytomy_prior:

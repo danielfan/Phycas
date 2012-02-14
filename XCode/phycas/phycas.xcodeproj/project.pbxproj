@@ -214,8 +214,6 @@
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
 		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
 		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
-		D1043A7914E41458009F77A3 /* minfit.c in Sources */ = {isa = PBXBuildFile; fileRef = D15CDDE614E31114000738B3 /* minfit.c */; };
-		D1043A7A14E46018009F77A3 /* praxis.c in Sources */ = {isa = PBXBuildFile; fileRef = D15CDDE714E31114000738B3 /* praxis.c */; };
 		D11BC11711B74F950011F82A /* char_super_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11BC11511B74F950011F82A /* char_super_matrix.cpp */; };
 		D11D1AA21191C2A7009F9107 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		D11EF46B11AEE2ED00AAD3E0 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
@@ -230,6 +228,7 @@
 		D1A8CC0A11BACBC200A2A901 /* tss_null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1A8CC0911BACBC200A2A901 /* tss_null.cpp */; };
 		D1A8CC0B11BACBD300A2A901 /* timeconv.inl in Headers */ = {isa = PBXBuildFile; fileRef = D1A8CC0611BACBA400A2A901 /* timeconv.inl */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
+		D1EAB48B14E74D520017FE02 /* dls_brent.c in Sources */ = {isa = PBXBuildFile; fileRef = D1EAB48814E74BD20017FE02 /* dls_brent.c */; };
 		D1EAD40F1468823E00361263 /* irreversible_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1EEBF561468330A000AB033 /* irreversible_model.cpp */; };
 		D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 /* End PBXBuildFile section */
@@ -628,9 +627,6 @@
 		D155CD40146613E100988FD3 /* JPG.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPG.py; path = ../../phycas/Phycas/JPG.py; sourceTree = "<group>"; };
 		D155CD41146613E100988FD3 /* JPGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = JPGImpl.py; path = ../../phycas/Phycas/JPGImpl.py; sourceTree = "<group>"; };
 		D1595F981222D95D00D9378D /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHANGES; path = ../../CHANGES; sourceTree = SOURCE_ROOT; };
-		D15CDDE514E31114000738B3 /* machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = machine.h; path = praxis/machine.h; sourceTree = "<group>"; };
-		D15CDDE614E31114000738B3 /* minfit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minfit.c; path = praxis/minfit.c; sourceTree = "<group>"; };
-		D15CDDE714E31114000738B3 /* praxis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = praxis.c; path = praxis/praxis.c; sourceTree = "<group>"; };
 		D163E44B146A1A6B00F98F75 /* binary_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = binary_model.cpp; path = ../../phycas/src/binary_model.cpp; sourceTree = "<group>"; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
@@ -679,6 +675,9 @@
 		D1D3ED1C11C021C100A53554 /* nanissue.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = nanissue.py; path = ../../inprep/jockusch_problem/nanissue.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
+		D1EAB48814E74BD20017FE02 /* dls_brent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dls_brent.c; path = praxis/dls_brent.c; sourceTree = "<group>"; };
+		D1EAB48914E74BD20017FE02 /* dls_brent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dls_brent.h; path = praxis/dls_brent.h; sourceTree = "<group>"; };
+		D1EAB48A14E74BD20017FE02 /* dls_core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dls_core.h; path = praxis/dls_core.h; sourceTree = "<group>"; };
 		D1EEBF561468330A000AB033 /* irreversible_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = irreversible_model.cpp; path = ../../phycas/src/irreversible_model.cpp; sourceTree = "<group>"; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
 		D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = relative_rate_distribution.cpp; path = ../../phycas/src/relative_rate_distribution.cpp; sourceTree = SOURCE_ROOT; };
@@ -1309,9 +1308,9 @@
 		D15CDDE814E31121000738B3 /* praxis */ = {
 			isa = PBXGroup;
 			children = (
-				D15CDDE514E31114000738B3 /* machine.h */,
-				D15CDDE614E31114000738B3 /* minfit.c */,
-				D15CDDE714E31114000738B3 /* praxis.c */,
+				D1EAB48814E74BD20017FE02 /* dls_brent.c */,
+				D1EAB48914E74BD20017FE02 /* dls_brent.h */,
+				D1EAB48A14E74BD20017FE02 /* dls_core.h */,
 			);
 			name = praxis;
 			sourceTree = "<group>";
@@ -1845,8 +1844,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1043A7A14E46018009F77A3 /* praxis.c in Sources */,
-				D1043A7914E41458009F77A3 /* minfit.c in Sources */,
+				D1EAB48B14E74D520017FE02 /* dls_brent.c in Sources */,
 				7A98F38210CD5730001E79F7 /* boost_assertion_failed.cpp in Sources */,
 				7A98F39C10CD5821001E79F7 /* tree_likelihood.cpp in Sources */,
 				7A98F3A010CD582C001E79F7 /* basic_cdf.cpp in Sources */,

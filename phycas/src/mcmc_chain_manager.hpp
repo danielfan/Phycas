@@ -87,7 +87,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					reviseAllEdgeLenPriors(double mu);
 		
         void                    praxisLocatePosteriorMode();
-        double                  praxisCalcLogPosterior(double * x, int n);      
+        double                  praxisCalcLogPosterior(double * x);      
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
 		
