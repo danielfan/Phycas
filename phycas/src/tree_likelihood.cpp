@@ -2399,7 +2399,35 @@ double TreeLikelihood::calcLnL(
 	{
 	if (no_data)
 		return 0.0;
-
+		
+	if (!beagleLib) {
+		beagleLib = BeagleLibShPtr(new BeagleLib);
+		beagleLib->Init(t->GetNTips(), 1, 4, (unsigned)pattern_counts.size());
+		
+		std::vector<double> freqs(4, 0.25);
+		beagleLib->SetStateFrequencies(freqs);
+		
+		beagleLib->SetTipStates();
+		
+		std::vector<double> rates(1, 1.0);
+		std::vector<double> weights(1, 1.0);
+		beagleLib->SetCategoryRatesAndWeights(rates, weights);
+		
+		beagleLib->SetPatternWeights(pattern_counts);
+		
+		std::vector<double> eigenValues(4, -4.0);
+		eigenValues[0] = 0.0;
+		
+		double tmp[16] = {1,1,1,1,-1,0,0,1,-1,0,1,0,-1,1,0,0};
+		std::vector<double> eigenVectors(tmp, tmp+16);
+		
+		double tmp2[16] = {0.25, -0.25, -0.25, -0.25, 0.25, -0.25, -0.25, 0.75, 0.25, -0.25, 0.75, -0.25, 0.25, 0.75, -0.25, -0.25};
+		std::vector<double> inverseEigenVectors(tmp2, tmp2+16);		
+		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
+		
+		std::cerr << "Setting up BeagleLib from TreeLikelihood::calcLnL.\n";
+	}
+		
 //@TEMP force crash to test entry into debugger
 //char*p=NULL;
 //*p='a';

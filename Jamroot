@@ -34,7 +34,7 @@ if $(NCL_ALREADY_INSTALLED) {
         if $(OSTYPE) = "darwin" {
             echo "  Looks like this is a Mac, so using toolset darwin" ;
             using darwin ;
-            alias tool_specific_requirements : : : : <toolset>darwin  <cflags>"${CFLAGS}" <cxxflags>"-g -include phycas/src/std_force_include.hpp $CXXFLAGS -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl ${LDFLAGS}" ;
+            alias tool_specific_requirements : : : : <toolset>darwin  <cflags>"${CFLAGS}" <cxxflags>"-g -include phycas/src/std_force_include.hpp $CXXFLAGS -I$NCL_INSTALL_DIR/include -I/usr/local/include/libhmsbeagle-1 -I/usr/local/cuda/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl ${LDFLAGS} -L/usr/local/lib -lhmsbeagle -L/usr/local/cuda/lib -lcuda" ;
         }
         else {
             echo "  Could not identify platform.  Expecting an environmental variable:" ;
@@ -182,6 +182,7 @@ alias likelihood_sources
     phycas/src/basic_lot.cpp
     phycas/src/basic_tree.cpp 
     phycas/src/basic_tree_node.cpp 
+    phycas/src/beaglelib.cpp 
     phycas/src/boost_assertion_failed.cpp
     phycas/src/bush_move.cpp 
     phycas/src/codon_model.cpp
@@ -189,6 +190,7 @@ alias likelihood_sources
     phycas/src/cond_likelihood_storage.cpp
     phycas/src/discrete_gamma_shape_param.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/praxis/dls_brent.c
     phycas/src/edgelen_master_param.cpp
     phycas/src/edge_move.cpp 
     phycas/src/gtr_model.cpp 
@@ -215,7 +217,6 @@ alias likelihood_sources
     phycas/src/omega_param.cpp 
     phycas/src/phycas_string.cpp 
     phycas/src/pinvar_param.cpp 
-    phycas/src/thirdparty/praxis/dls_brent.c
     phycas/src/probability_distribution.cpp 
     phycas/src/relative_rate_distribution.cpp 
     phycas/src/q_matrix.cpp

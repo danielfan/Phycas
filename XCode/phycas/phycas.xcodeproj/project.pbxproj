@@ -319,6 +319,13 @@
 		2DF0601511B969EC002120A6 /* libboost_thread.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libboost_thread.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasTarget.xcconfig; sourceTree = "<group>"; };
+		655E63D214EED27F00457B4F /* CodonTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodonTest.py; sourceTree = "<group>"; };
+		655E63D314EED27F00457B4F /* params.p */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = params.p; sourceTree = "<group>"; };
+		655E63D514EED27F00457B4F /* params.p */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = params.p; sourceTree = "<group>"; };
+		655E63D614EED27F00457B4F /* trees.t */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trees.t; sourceTree = "<group>"; };
+		655E63D714EED27F00457B4F /* trees.t */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trees.t; sourceTree = "<group>"; };
+		655E63D814EED3AE00457B4F /* beaglelib.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = beaglelib.hpp; path = ../../phycas/src/beaglelib.hpp; sourceTree = SOURCE_ROOT; };
+		655E63D914EED3AE00457B4F /* beaglelib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = beaglelib.cpp; path = ../../phycas/src/beaglelib.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_cdf.cpp; path = ../../phycas/src/basic_cdf.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945B010CAEFB900CEFDE0 /* basic_cdf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = basic_cdf.hpp; path = ../../phycas/src/basic_cdf.hpp; sourceTree = SOURCE_ROOT; };
 		7A0945B110CAEFB900CEFDE0 /* basic_cdf.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = basic_cdf.inl; path = ../../phycas/src/basic_cdf.inl; sourceTree = SOURCE_ROOT; };
@@ -821,6 +828,8 @@
 		08FB77ACFE841707C02AAC07 /* C++ Source */ = {
 			isa = PBXGroup;
 			children = (
+				655E63D814EED3AE00457B4F /* beaglelib.hpp */,
+				655E63D914EED3AE00457B4F /* beaglelib.cpp */,
 				7A09462C10CAEFB900CEFDE0 /* thirdparty */,
 				7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */,
 				7A0945B010CAEFB900CEFDE0 /* basic_cdf.hpp */,
@@ -1002,6 +1011,27 @@
 				5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */,
 			);
 			name = "Configuration Files";
+			sourceTree = "<group>";
+		};
+		655E63D114EED27F00457B4F /* CodonTest */ = {
+			isa = PBXGroup;
+			children = (
+				655E63D214EED27F00457B4F /* CodonTest.py */,
+				655E63D314EED27F00457B4F /* params.p */,
+				655E63D414EED27F00457B4F /* reference_output */,
+				655E63D714EED27F00457B4F /* trees.t */,
+			);
+			name = CodonTest;
+			path = ../../phycas/Tests/CodonTest;
+			sourceTree = SOURCE_ROOT;
+		};
+		655E63D414EED27F00457B4F /* reference_output */ = {
+			isa = PBXGroup;
+			children = (
+				655E63D514EED27F00457B4F /* params.p */,
+				655E63D614EED27F00457B4F /* trees.t */,
+			);
+			path = reference_output;
 			sourceTree = "<group>";
 		};
 		7A09462C10CAEFB900CEFDE0 /* thirdparty */ = {
@@ -1406,6 +1436,7 @@
 		D1AC9561111A0A9E00335CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				655E63D114EED27F00457B4F /* CodonTest */,
 				D1C50BC411B456B5008D9B73 /* Unimap */,
 				D11BACAA11B4301A0084D645 /* SplitTest */,
 				D1D66463112051D800BA8E47 /* partition */,

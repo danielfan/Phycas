@@ -5,6 +5,7 @@ from phycas.Utilities.CommonFunctions import CommonFunctions
 from MCMCManager import MCMCManager
 from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader
+from phycas.Likelihood import BeagleLibBase 
 
 
 def check(msg = 'check'):
@@ -1063,6 +1064,10 @@ class MCMCImpl(CommonFunctions):
             print v
             ref_dist_map[k.strip()] = eval(v.strip())
         return (ref_dist_tree,ref_dist_map)
+		
+    def checkForBeaglelib(self):
+        self.beagle = BeagleLibBase()
+        self.beagle.listResources()
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1071,6 +1076,7 @@ class MCMCImpl(CommonFunctions):
         
         """        
         self.setup()
+        self.checkForBeaglelib()
         
         # If user has set quiet to True, then phycas.output calls will have no effect
         self.quiet = self.opts.quiet

@@ -57,6 +57,7 @@ class MCMC(PhycasCommand):
                 ("ntax",                       0,    "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 ("ndecimals",                  8,    "Number of decimal places used for sampled parameter values", IntArgValidate(min=1)),
                 ("save_sitelikes",         False,    "Saves file of site log-likelihoods (name determined by mcmc.out.sitelikes) that sump command can use in computing conditional predictive ordinates", BoolArgValidate),
+                ("use_beaglelib",          False,    "Use GPU if available.", BoolArgValidate),
                 ])
 
         # Specify output options
@@ -144,3 +145,6 @@ class MCMC(PhycasCommand):
             
         mcmc_impl.unsetSiteLikeFile()
 
+        raw_input("before")
+        mcmc_impl = None
+        raw_input("after")

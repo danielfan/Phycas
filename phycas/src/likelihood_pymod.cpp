@@ -46,6 +46,8 @@
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/partition_model.hpp"
 #include "phycas/src/char_super_matrix.hpp"
+#include "phycas/src/beaglelib.hpp"
+
 void model_pymod();
 void updater_pymod();
 
@@ -99,6 +101,10 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensity> >("AdHocDensityBase", no_init)
 		;
+	class_<phycas::BeagleLib, boost::noncopyable, boost::shared_ptr<phycas::BeagleLib> >("BeagleLibBase")
+		.def("init", &BeagleLib::Init)
+		.def("listResources", &BeagleLib::ListResources)
+	;
 	class_<phycas::MCMCChainManager, boost::noncopyable, boost::shared_ptr<phycas::MCMCChainManager> >("MCMCChainManagerBase")
 		.def("finalize", &MCMCChainManager::finalize)
 		.def("calcJointLnPrior", &MCMCChainManager::calcJointLnPrior)
@@ -108,7 +114,6 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("addEdgeLenParam", &MCMCChainManager::addEdgeLenParam)
 		.def("addEdgeLenHyperparam", &MCMCChainManager::addEdgeLenHyperparam)
 		.def("setEdgeLenHyperparam", &MCMCChainManager::setEdgeLenHyperparam)
-		.def("praxisLocatePosteriorMode", &MCMCChainManager::praxisLocatePosteriorMode)
 		.def("getLastLnLike", &MCMCChainManager::getLastLnLike)
 		.def("getLastLnPrior", &MCMCChainManager::getLastLnPrior)
         .def("getAllUpdaters", &MCMCChainManager::getAllUpdaters, return_value_policy<copy_const_reference>())
