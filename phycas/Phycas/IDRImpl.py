@@ -4,8 +4,14 @@ from MCMCManager import MCMCManager
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 
-def pause():
-    raw_input('Press return to continue...')
+# TODO: 
+# - assumes no data partitioning at present
+
+def pause(msg = None):
+    if msg is None:
+        raw_input('Press return to continue...')
+    else:
+        raw_input(msg)
 
 class InflatedDensityRatio(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -23,6 +29,7 @@ class InflatedDensityRatio(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
+        self.logDetSqrtS = None         # holds log of the determinant of S^{1/2}, where S is the sample variance-covariance matrix of log-transformed parameter vectors (this quantity represents the Jacobian for the standardization part of the overall transformation)
         self.stored_trees = None        # list of trees built from tree definitions in the trees file
         self.param_file_lines = None    # list of lines from the params file (header lines excluded)
         self.starting_tree = None       # the tree to be processed
@@ -55,7 +62,7 @@ class InflatedDensityRatio(CommonFunctions):
         self.sample = None              # self.n by self.p list representing the log-transformed (but not standardized) posterior sample
         self.stdsample = None           # self.n by self.p list representing the log-transformed and standardized posterior sample
         self.S = None                   # SquareMatrix representing the sample variance-covariance matrix (from sampled parameter vectors)
-        self.Sinv = None                # SquareMatrix representinginverse of the sample variance-covariance matrix (from sampled parameter vectors)
+        #self.Sinv = None                # SquareMatrix representinginverse of the sample variance-covariance matrix (from sampled parameter vectors)
         self.sqrtS = None               # SquareMatrix representingsquare root of the sample variance-covariance matrix 
         self.sqrtSinv = None            # SquareMatrix representingsquare root of the inverse of the sample variance-covariance matrix
         self.mu = None                  # the posterior mean vector (average of the sampled parameter vectors)
@@ -480,11 +487,49 @@ class InflatedDensityRatio(CommonFunctions):
             f.extend(x)
         return f
         
-    def computeMeanVectorAndVarCovMatrix(self, tid):
+    def computeMeanVectorAndVarCovMatrix(self, sample_matrix):
         """
         Computes sample mean vector and sample variance-covariance matrix for parameter vectors 
-        sampled from tree with tree id equal to `tid'. Note that both the mean vector and the
+        in supplied sample_matrix from tree with tree id equal to `tid'. Note that both the mean vector and the
         variance-covariance matrix exist in log-transformed parameter space.
+        
+        """
+        # sanity checks
+        p = len(sample_matrix[0])
+        assert p == self.p, 'length of parameter vector inconsistent (in computeMeanVectorAndVarCovMatrix)'
+        n = len(sample_matrix)
+        assert n == self.n, 'sample size inconsistent (in computeMeanVectorAndVarCovMatrix)'
+
+        # compute sample mean vector
+        mu = [0.0]*p  # initialize vector of length p with all zeros
+        sample_sum = [0.0]*p  # initialize vector of length p with all zeros
+        sample_ss = [0.0]*p  # initialize vector of length p with all zeros
+        for v in sample_matrix:
+            for i,param in enumerate(v):
+                mu[i] += param/float(n)
+                sample_sum[i] += param
+                sample_ss[i] += math.pow(param, 2.0)
+                
+        # compute sample variance-covariance matrix
+        Sigma = [x[:] for x in [[0.0]*p]*p]  # initialize p x p matrix with all zeros
+        for i in range(0,p):
+            for j in range(i,p): 
+                for k in range(n):
+                    Sigma[i][j] += (sample_matrix[k][i] - mu[i])*(sample_matrix[k][j] - mu[j])/float(n - 1)
+                if j > i:
+                    Sigma[j][i] = Sigma[i][j]
+                    
+        # create a SquareMatrix object to hold variance-covariance matrix
+        flatSigma = self.flatten(Sigma) # SquareMatrix requires a flattened matrix (rows appended to each other in a 1-d list)
+        S = SquareMatrix(p, 0.0)
+        S.setMatrixFromFlattenedList(p, flatSigma)
+        
+        return (mu, S)
+        
+    def meanAndCovForTreeSample(self, tid):
+        """
+        Builds self.sample, self.param_names for tree with tree id tid using information in the self.edge_lengths and
+        self.parameters maps.
         
         """
         # create list that will store sampled (and log-transformed) parameter vectors
@@ -519,31 +564,8 @@ class InflatedDensityRatio(CommonFunctions):
             self.sample.append(param_vect)
         assert self.n == len(self.sample), 'Sample size is not equal to length of self.sample list'
         assert self.n > 0, 'Cannot build variance-covariance matrix for IDR method because sample size < 2'
-        
-        # compute sample mean vector
-        self.mu = [0.0]*self.p  # initialize vector of length self.p with all zeros
-        sample_sum = [0.0]*self.p  # initialize vector of length self.p with all zeros
-        sample_ss = [0.0]*self.p  # initialize vector of length self.p with all zeros
-        for v in self.sample:
-            for i,p in enumerate(v):
-                self.mu[i] += p/float(self.n)
-                sample_sum[i] += p
-                sample_ss[i] += math.pow(p, 2.0)
-                
-        # compute sample variance-covariance matrix
-        Sigma = [x[:] for x in [[0.0]*self.p]*self.p]  # initialize self.p x self.p matrix with all zeros
-        n_minus_one = float(self.n - 1)
-        for i in range(0,self.p):
-            for j in range(i,self.p): 
-                for k in range(self.n):
-                    Sigma[i][j] += (self.sample[k][i] - self.mu[i])*(self.sample[k][j] - self.mu[j])/n_minus_one
-                if j > i:
-                    Sigma[j][i] = Sigma[i][j]
-                    
-        # create a SquareMatrix object to hold variance-covariance matrix
-        flatSigma = self.flatten(Sigma) # SquareMatrix requires a flattened matrix (rows appended to each other in a 1-d list)
-        self.S = SquareMatrix(self.p, 0.0)
-        self.S.setMatrixFromFlattenedList(self.p, flatSigma)
+
+        self.mu, self.S = self.computeMeanVectorAndVarCovMatrix(self.sample)
         
     def calcLogVp(self, p, r):
         """
@@ -594,16 +616,95 @@ class InflatedDensityRatio(CommonFunctions):
         r = math.exp(log_r)
         return r
         
-    def deLogTransform(self, v, debugging=False):
+    def logTransformedFromModel(self, debugging=False):
         """
-        Return log-transformed parameters with support -infinity to +infinity to their
-        original scale. For branch lengths, gamma shape parameters, and other parameters 
-        with support 0 to infinity, this involves applying the exponential function to the
-        transformed value. For base frequencies and GTR exchangeabilities, which are 
-        constrained to sum to 1, use the additive logistic transformation described by 
+        Obtain parameters in original scale from model, then return the log-transformed 
+        parameter vector. For branch lengths, gamma shape parameters, and other parameters 
+        with support 0 to infinity, this involves applying the log function to the
+        original parameter value. For base frequencies and GTR exchangeabilities, which are 
+        constrained to sum to 1, use the additive log-ratio transformation described by 
+        Arima and Tardella (2010).
+        """
+        freqA = None
+        freqC = None
+        freqG = None
+        freqT = None
+        rAC = None
+        rAG = None
+        rAT = None
+        rCG = None
+        rCT = None
+        rGT = None
+        shape = None
+        m = self.c.partition_model.getModel(0)
+        transformed = []
+        for param_name in self.param_names:
+            if ('freqG' in param_name) or ('freqT' in param_name):
+                pass
+            elif ('freqC' in param_name):
+                state_freqs = m.getStateFreqs()
+                freqA = state_freqs[0]
+                freqC = state_freqs[1]
+                freqG = state_freqs[2]
+                freqT = state_freqs[3]
+                logFreqA = math.log(freqA)
+                transformed.append(math.log(freqC) - logFreqA)
+                transformed.append(math.log(freqC) - logFreqA)
+                transformed.append(math.log(freqC) - logFreqA)
+            elif ('rAT' in param_name) or ('rCG' in param_name) or ('rCT' in param_name) or ('rGT' in param_name):
+                pass
+            elif ('rAG' in param_name):
+                rel_rates = m.getRelRates()
+                rAC = rel_rates[0]
+                rAG = rel_rates[1]
+                rAT = rel_rates[2]
+                rCG = rel_rates[3]
+                rCT = rel_rates[4]
+                rGT = rel_rates[5]
+                logrAC = math.log(rAC)
+                transformed.append(math.log(rAG) - logrAC)
+                transformed.append(math.log(rAT) - logrAC)
+                transformed.append(math.log(rCG) - logrAC)
+                transformed.append(math.log(rCT) - logrAC)
+                transformed.append(math.log(rGT) - logrAC)
+            elif 'gamma_shape' in param_name:
+                shape = m.getShape()
+                transformed.append(math.log(shape))
+            else:
+                # must be an edge length
+                nd = self.curr_tree_node[param_name]
+                edge_len = nd.getEdgeLen()
+                transformed.append(math.log(edge_len))
+                
+        if debugging:
+            print 'In logTransformedFromModel:'
+            print '  freqA = %g' % freqA
+            print '  freqC = %g' % freqC
+            print '  freqG = %g' % freqG
+            print '  freqT = %g' % freqT
+            print '  rAC   = %g' % rAC
+            print '  rAG   = %g' % rAG
+            print '  rAT   = %g' % rAT
+            print '  rCG   = %g' % rCG
+            print '  rCT   = %g' % rCT
+            print '  rGT   = %g' % rGT
+            print '  shape = %g' % shape
+            print self.curr_tree.makeNewick()
+            pause()
+            
+        return transformed
+                
+    def deLogTransformedToModel(self, v, debugging=False):
+        """
+        Return log-transformed parameters supplied via vector v, which have support -infinity 
+        to +infinity to their original scale. For branch lengths, gamma shape parameters, and 
+        other parameters with support 0 to infinity, this involves applying the exponential 
+        function to the log-transformed value. For base frequencies and GTR exchangeabilities,  
+        which are constrained to sum to 1, use the additive logistic transformation described by 
         Arima and Tardella (2010). Set up the model with these de-transformed parameter
         values so that the log-likelihood and log-prior can be computed.
         """
+        log_detJ = self.logDetSqrtS # this is the log determinant of the Jacobian for the standardization part of the transformation
         freqA = None
         freqC = None
         freqG = None
@@ -626,20 +727,25 @@ class InflatedDensityRatio(CommonFunctions):
         z = 0
         for param_name,param_value in zip(self.param_names,v):
             if ('freqC' in param_name):
-                assert logCoverA is None, 'expecting freqC to be first frequency in function deLogTransform'
-                assert logGoverA is None, 'expecting freqC to be first frequency in function deLogTransform'
-                assert logToverA is None, 'expecting freqC to be first frequency in function deLogTransform'
+                assert logCoverA is None, 'expecting freqC to be first frequency in function deLogTransformedToModel'
+                assert logGoverA is None, 'expecting freqC to be first frequency in function deLogTransformedToModel'
+                assert logToverA is None, 'expecting freqC to be first frequency in function deLogTransformedToModel'
                 logCoverA = param_value
             elif ('freqG' in param_name):
                 logGoverA = param_value
             elif ('freqT' in param_name):
-                assert logCoverA is not None, 'expecting to find freqC before freqT in function deLogTransform'
-                assert logGoverA is not None, 'expecting to find freqG before freqT in function deLogTransform'
+                assert logCoverA is not None, 'expecting to find freqC before freqT in function deLogTransformedToModel'
+                assert logGoverA is not None, 'expecting to find freqG before freqT in function deLogTransformedToModel'
                 logToverA = param_value
-                freqA = 1.0/(1.0 + math.exp(logCoverA) + math.exp(logGoverA) + math.exp(logToverA))
-                freqC = freqA*math.exp(logCoverA)
-                freqG = freqA*math.exp(logGoverA)
-                freqT = freqA*math.exp(logToverA)
+                CoverA = math.exp(logCoverA)
+                GoverA = math.exp(logGoverA)
+                ToverA = math.exp(logToverA)
+                phi = 1.0 + CoverA + GoverA + ToverA
+                log_detJ += -4.0*math.log(phi)
+                freqA = 1.0/phi
+                freqC = freqA*CoverA
+                freqG = freqA*GoverA
+                freqT = freqA*ToverA
                 m = self.c.partition_model.getModel(0)
                 m.setStateFreqUnnorm(0, freqA)
                 m.setStateFreqUnnorm(1, freqC)
@@ -649,11 +755,11 @@ class InflatedDensityRatio(CommonFunctions):
                 logGoverA = None
                 logToverA = None
             elif 'rAG' in param_name:
-                assert logAGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
-                assert logAToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
-                assert logCGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
-                assert logCToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
-                assert logGToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransform'
+                assert logAGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransformedToModel'
+                assert logAToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransformedToModel'
+                assert logCGoverAC is None, 'expecting rAG to be first exchangeability in function deLogTransformedToModel'
+                assert logCToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransformedToModel'
+                assert logGToverAC is None, 'expecting rAG to be first exchangeability in function deLogTransformedToModel'
                 logAGoverAC = param_value
             elif 'rAT' in param_name:
                 logAToverAC = param_value
@@ -662,17 +768,24 @@ class InflatedDensityRatio(CommonFunctions):
             elif 'rCT' in param_name:
                 logCToverAC = param_value
             elif 'rGT' in param_name:
-                assert logAGoverAC is not None, 'expecting to find rAG before rGT in function deLogTransform'
-                assert logAToverAC is not None, 'expecting to find rAT before rGT in function deLogTransform'
-                assert logCGoverAC is not None, 'expecting to find rCG before rGT in function deLogTransform'
-                assert logCToverAC is not None, 'expecting to find rCT before rGT in function deLogTransform'
+                assert logAGoverAC is not None, 'expecting to find rAG before rGT in function deLogTransformedToModel'
+                assert logAToverAC is not None, 'expecting to find rAT before rGT in function deLogTransformedToModel'
+                assert logCGoverAC is not None, 'expecting to find rCG before rGT in function deLogTransformedToModel'
+                assert logCToverAC is not None, 'expecting to find rCT before rGT in function deLogTransformedToModel'
                 logGToverAC = param_value
-                rAC = 1.0/(1.0 + math.exp(logAGoverAC) + math.exp(logAToverAC) + math.exp(logCGoverAC) + math.exp(logCToverAC) + math.exp(logGToverAC))
-                rAG = rAC*math.exp(logAGoverAC)
-                rAT = rAC*math.exp(logAToverAC)
-                rCG = rAC*math.exp(logCGoverAC)
-                rCT = rAC*math.exp(logCToverAC)
-                rGT = rAC*math.exp(logGToverAC)
+                AGoverAC = math.exp(logAGoverAC)
+                AToverAC = math.exp(logAToverAC)
+                CGoverAC = math.exp(logCGoverAC)
+                CToverAC = math.exp(logCToverAC)
+                GToverAC = math.exp(logGToverAC)
+                phi = 1.0 + AGoverAC + AToverAC + CGoverAC + CToverAC + GToverAC
+                log_detJ += -6.0*math.log(phi)
+                rAC = 1.0/phi
+                rAG = rAC*AGoverAC
+                rAT = rAC*AToverAC
+                rCG = rAC*CGoverAC
+                rCT = rAC*CToverAC
+                rGT = rAC*GToverAC
                 m = self.c.partition_model.getModel(0)
                 m.setRelRates([rAC,rAG,rAT,rCG,rCT,rGT])
                 logAGoverAC = None
@@ -682,17 +795,19 @@ class InflatedDensityRatio(CommonFunctions):
                 logGToverAC = None
             elif 'gamma_shape' in param_name:
                 shape = math.exp(param_value)
+                log_detJ += shape
                 m = self.c.partition_model.getModel(0)
                 m.setShape(shape)
             else:
                 # must be an edge length
                 nd = self.curr_tree_node[param_name]
                 edge_len = math.exp(param_value)
+                log_detJ += edge_len
                 nd.setEdgeLen(edge_len)
                 #print 'setting edge length %g --> %s|%s' % (edge_len, nd.getNodeName(), param_name)
                 
         if debugging:
-            print 'In deLogTransform:'
+            print 'In deLogTransformedToModel:'
             print '  freqA = %g' % freqA
             print '  freqC = %g' % freqC
             print '  freqG = %g' % freqG
@@ -705,18 +820,33 @@ class InflatedDensityRatio(CommonFunctions):
             print '  rGT   = %g' % rGT
             print '  shape = %g' % shape
             print self.curr_tree.makeNewick()
+            print '  log_detJ = %g' % log_detJ
             pause()
+            
+        return log_detJ
                 
+    def createParamVectorFromModel(self, debugging = False):
+        # build unstandardized but log-transformed parameter vector by querying model
+        transformed = self.logTransformedFromModel(debugging)
+        
+        # now standardize by subtracting mean vector and then pre-multiplying by inverse square root of var-cov matrix
+        centered = [t-m for m,t in zip(self.mu,transformed)]
+        standardized = self.sqrtSinv.rightMultiplyVector(centered)
+        
+        return standardized
+                        
     def setupModelUsingParamVector(self, v, debugging = False):
         # first, destandardize by pre-multiplying by square root of var-cov matrix and adding mean vector
         tmp = self.sqrtS.rightMultiplyVector(v)
         destandardized = [m+t for m,t in zip(self.mu,tmp)]
         
         # now undo the log-transformation
-        self.deLogTransform(destandardized, debugging)
+        log_detJ = self.deLogTransformedToModel(destandardized, debugging)
         
         # if this is not done, new shape parameter value will be ignored
-        self.c.likelihood.replaceModel(self.c.partition_model)    
+        self.c.likelihood.replaceModel(self.c.partition_model)
+        
+        return log_detJ
                 
     def calcLogG(self, v, debugging = False):
         """
@@ -730,7 +860,8 @@ class InflatedDensityRatio(CommonFunctions):
         the log-likelihood and log-prior.
         """
         # replace model parameters with de-standardized and de-transformed values
-        self.setupModelUsingParamVector(v, debugging)
+        # log_detJ is the log of the determinant of the Jacobian (for the overall transformation)
+        log_detJ = self.setupModelUsingParamVector(v, debugging)
         
         # calculate the log-likelihood and log-prior
         self.c.chain_manager.refreshLastLnLike()
@@ -738,12 +869,13 @@ class InflatedDensityRatio(CommonFunctions):
         self.c.chain_manager.refreshLastLnPrior()
         log_prior = self.c.chain_manager.getLastLnPrior()
         log_posterior = log_like + log_prior
-        return (log_like, log_prior, log_posterior)
+        return (log_like, log_prior, log_posterior, log_detJ)
                 
     def calcLogG0(self):
         if self.log_g0 is None:
-            lnL, lnP, self.log_g0 = self.calcLogG([0.0]*self.p)
-                
+            lnLike, lnPrior, lnPost, lnDetJ = self.calcLogG([0.0]*self.p)
+            self.log_g0 = lnPost + lnDetJ
+        
     def calcLogGpk(self, v, r):
         """
         If the length ||v|| of the supplied (log-transformed, standardized) parameter vector <= r, 
@@ -758,19 +890,26 @@ class InflatedDensityRatio(CommonFunctions):
         """
         fp = float(self.p)
         vsum = sum([x*x for x in v])
-        vlen = math.log(vsum)/fp
-        if vlen <= r:
+        vlen = math.sqrt(vsum)
+        if vlen < r:
             self.insideBall += 1
             return (self.log_g0, True)
             
         # scale v by z
-        logz = (1.0/fp)*math.log(1.0 - math.pow(r, fp)/vsum)
+        logz = (1.0/fp)*math.log(1.0 - math.pow(r/vlen, fp))
         z = math.exp(logz)
         vscaled = [x*z for x in v]
-        lnL, lnPrior, lnPost = self.calcLogG(vscaled)
-        return (lnPost, False)
+        lnL, lnPrior, lnPost, lnDetJ = self.calcLogG(vscaled)
+        return (lnPost + lnDetJ, False)
                         
     def checkStandardization(self):
+        """
+        Checks to ensure that the standardization can be reversed (i.e. you can recover self.sample 
+        from self.stdsample by premultiplying by self.sqrtS and then adding self.mu). Also checks to
+        be sure that the means and covariances of self.stdsample are all near 0.0 and the variances 
+        of self.stdsample are all near 1.0.
+        """
+        # First check de-standardization
         for v,v0 in zip(self.stdsample,self.sample):
             tmp = self.sqrtS.rightMultiplyVector(v)
             destandardized = [m+t for m,t in zip(self.mu,tmp)]
@@ -778,6 +917,21 @@ class InflatedDensityRatio(CommonFunctions):
             for x,y in zip(destandardized,v0):
                 sum_diffs += math.fabs(x-y)
             assert sum_diffs < 1.e-8, 'sum_diffs (%g) exceeds 1.e-8' % sum_diffs
+
+        # Now check means, variances and covariances
+        #print 'Checking standardized means, variances and covariances...'
+        mu, S = self.computeMeanVectorAndVarCovMatrix(self.stdsample)
+        for i,m in enumerate(mu):
+            #print '  mean[%d] = %g' % (i,m)
+            assert m < 1.e-8, 'mean (%g) for parameter %d exceeds 1.e-8' % (m,i+1)
+        for i in range(self.p):
+            v = S.getElement(i,i)
+            #print '  variance[%d] = %g' % (i,v)
+            assert math.fabs(v - 1.0) < 1.e-8, 'variance (%g) for parameter %d differs from 1.0 by an amount > 1.e-8' % (v,i+1)
+            for j in range(i+1,self.p - i):
+                c = S.getElement(i,j)
+                #print '  covariance[%d][%d] = %g' % (i,j,c)
+                assert c < 1.e-8, 'covariance (%g) for parameters %d,%d exceeds 1.e-8' % (c,i+1,j+1)
             
     def calcIDR(self):
         """
@@ -838,13 +992,14 @@ class InflatedDensityRatio(CommonFunctions):
             # self.sample is a 2-d list, with self.n rows (sample size) and self.p columns (parameters)
             # self.mu is a 1-d list with self.p elements
             # self.S is a 2-d list with self.p rows and self.p columns
-            self.computeMeanVectorAndVarCovMatrix(tid)
+            self.meanAndCovForTreeSample(tid)
                         
             # From self.S, create derivative matrices that we will need later
-            self.Sinv = self.S.inverse()            # S inverse
-            self.sqrtS = self.S.pow(0.5)            # square root of S
-            self.sqrtSinv = self.sqrtS.inverse()    # square root of S inverse
-            
+            #self.Sinv = self.S.inverse()        # S inverse
+            self.sqrtS = self.S.pow(0.5)        # square root of S
+            self.sqrtSinv = self.S.pow(-0.5)    # square root of S inverse
+            self.logDetSqrtS = self.sqrtS.logDeterminant()
+
             # standardize the sample vectors
             self.stdsample = []
             for v in self.sample:
@@ -860,7 +1015,14 @@ class InflatedDensityRatio(CommonFunctions):
             self.calcLogG0()     
 
             # find the posterior mode
-            #self.c.chain_manager.praxisLocatePosteriorMode()
+            self.c.chain_manager.praxisLocatePosteriorMode()
+            new_mu = self.logTransformedFromModel()
+            
+            tmp = 0.0
+            for a,b in zip(new_mu,self.mu):
+                tmp += math.pow(a-b,2.0)
+            print 'Distance from self.mu to mode = %g' % math.sqrt(tmp)
+            self.mu = new_mu
             
             # Loop through each requested value of rk and compute estimate corresponding with each
             self.output('\nCalculating estimator for each requested value of rk:')
@@ -885,17 +1047,9 @@ class InflatedDensityRatio(CommonFunctions):
                 min_log_ratio_in = None
                 min_log_ratio_out = None
                 for i,v in enumerate(self.stdsample):
-                    log_g = self.log_posterior[i]
-                    #print 'sum(v)                    = %g' % sum(v)
-                    #print '(from param file) lnPrior = %g' % self.log_prior[i]
-                    #print '(from param file) lnLike  = %g' % self.log_like[i]
-                    #print '(from param file) log_g   = %g' % log_g
-                    #lnL, lnPrior, recalculated_log_g = self.calcLogG(v)
-                    #print '(recalculated)    lnPrior = %g' % lnPrior
-                    #print '(recalculated)    lnLike  = %g' % lnL
-                    #print '(recalculated)    log_g   = %g' % recalculated_log_g
-                    #print 'sum(v)                    = %g' % sum(v)
-                    #pause()
+                    #log_g = self.log_posterior[i]
+                    lnLike, lnPrior, lnPost, lnDetJ = self.calcLogG(v)
+                    log_g = lnPost + lnDetJ
                     
                     log_gpk,is_inside = self.calcLogGpk(v, rk)
                     log_ratio = log_gpk - log_g
@@ -912,7 +1066,6 @@ class InflatedDensityRatio(CommonFunctions):
                         if min_log_ratio_out is None or log_ratio < min_log_ratio_out:
                             min_log_ratio_out = log_ratio
                 pct_inside = 100.0*float(self.insideBall)/float(self.n)
-
                 print 'pct_inside =',pct_inside
 
                 # sum log ratios, subtracting largest from each to avoid underflow
@@ -933,33 +1086,29 @@ class InflatedDensityRatio(CommonFunctions):
                 expected_ratio_in = 0.0
                 if Tin > 0:
                     log_expected_ratio_in = max_log_ratio_in + math.log(sum_ratios_in) - math.log(float(Tin))
-                    expected_ratio_in = float(Tin)*math.exp(log_expected_ratio_in)
+                    expected_ratio_in = math.exp(log_expected_ratio_in)
                     if debugging:
                         print
                         print 'Tin                   = %g' % Tin
                         print 'max_log_ratio_in      = %g' % max_log_ratio_in
                         print 'log_expected_ratio_in = %g' % log_expected_ratio_in
                         print 'expected_ratio_in     = %g' % expected_ratio_in
-                        print 'expected_ratio_in*    = %g' % math.exp(log_expected_ratio_in - max_log_ratio_in)
-                        print '* without exp(max_log_ratio_in) term'
                 
                 Tout = len(log_ratios_out)
                 print 'Tout =',Tout
                 expected_ratio_out = 0.0
                 if Tout > 0:
                     log_expected_ratio_out = max_log_ratio_out + math.log(sum_ratios_out) - math.log(float(Tout))
-                    expected_ratio_out = float(Tout)*math.exp(log_expected_ratio_out)
+                    expected_ratio_out = math.exp(log_expected_ratio_out)
                     if debugging:
                         print
                         print 'Tout                   = %g' % Tout
                         print 'max_log_ratio_out      = %g' % max_log_ratio_out
                         print 'log_expected_ratio_out = %g' % log_expected_ratio_out
                         print 'expected_ratio_out     = %g' % expected_ratio_out
-                        print 'expected_ratio_out*    = %g' % math.exp(log_expected_ratio_out - max_log_ratio_out)
-                        print '* without exp(max_log_ratio_out) term'
                 
                 Ttotal = Tin + Tout
-                expected_ratio_total = (expected_ratio_in + expected_ratio_out)/float(Ttotal)
+                expected_ratio_total = float(Tin)*expected_ratio_in/float(Ttotal) + float(Tout)*expected_ratio_out/float(Ttotal)
                 if debugging:
                     print
                     print 'Ttotal                 = %g' % Ttotal
@@ -971,7 +1120,6 @@ class InflatedDensityRatio(CommonFunctions):
                 print 'log(k) =',log_k
                 
                 # finally, compute estimator
-                print 'expected_ratio_total =',expected_ratio_total
                 percents.append(pct_inside)
                 radii.append(rk)
                 if expected_ratio_total <= 1.0:

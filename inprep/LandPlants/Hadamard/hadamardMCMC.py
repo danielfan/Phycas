@@ -60,8 +60,8 @@ mcmc.sample_every = 20
 #mcmc()
 
 idr.burnin = 100
-idr.rk = [0.5]
-idr.k = [0.0000001]
+idr.rk = [1.,2.,3.,4.,5.,6.,7.,8.,9.]
+#idr.k = [0.0000001]
 idr.params = 'had2.p'
 idr.trees = TreeCollection(filename='had2.t')
 idr.data_source = 'hadamard2.nex'

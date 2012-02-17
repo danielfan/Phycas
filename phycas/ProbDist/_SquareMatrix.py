@@ -162,3 +162,22 @@ class SquareMatrix(SquareMatrixBase):
         """
         return SquareMatrixBase.rightMultiplyVector(self, vectorOnRight)
     
+    def logAbsDet(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns natural logarithm of the absolute value of the determinant of
+        this square matrix.
+        
+        """
+        return SquareMatrixBase.logAbsDet(self)
+        
+    def CholeskyDecomposition(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns Cholesky decomposition of this square matrix as a lower
+        triangular matrix. Note: if this matrix is not symmetric and positive
+        definite, result will be None.
+        
+        """
+        return SquareMatrixBase.CholeskyDecomposition(self)
+    

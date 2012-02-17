@@ -1,6 +1,6 @@
 from phycas import *
 
-setMasterSeed(192847)
+setMasterSeed(284197)
 
 # specify GTR+G model
 model.type = 'gtr'
@@ -55,12 +55,12 @@ mcmc.edge_move_lambda   = 0.2
 mcmc.edge_move_lambda   = 0.2
 
 # mcmc details
-mcmc.ncycles = 2000            # 2000
-mcmc.sample_every = 10
+mcmc.ncycles = 5000            # 2000
+mcmc.sample_every = 50
 mcmc.report_every = 100
 
 # ss details
-ss.nbetavals = 101
+ss.nbetavals = 21
 ss.ti = False
 ss.xcycles = 1000                # 1000
 ss()

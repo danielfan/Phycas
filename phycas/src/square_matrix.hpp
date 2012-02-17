@@ -57,7 +57,11 @@ class SquareMatrix
         void                            SetElement(unsigned i, unsigned j, double v);
         std::vector<double>             GetMatrix() const;
         void                            SetMatrix(unsigned sz, std::vector<double>);
+        double                          LogProdMainDiag() const;
+        double                          LogDeterminant() const;
         SquareMatrix *                  Power(double p) const;
+        SquareMatrix *                  LUDecomposition() const;
+        SquareMatrix *                  CholeskyDecomposition() const;
         SquareMatrix *                  Inverse() const;
         SquareMatrix *                  LeftMultiplyMatrix(SquareMatrix & matrixOnLeft) const;
         SquareMatrix *                  RightMultiplyMatrix(SquareMatrix & matrixOnRight) const;

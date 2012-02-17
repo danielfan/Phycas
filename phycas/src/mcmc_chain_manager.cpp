@@ -145,9 +145,8 @@ void MCMCChainManager::releaseUpdaters()
     }
     
 /*----------------------------------------------------------------------------------------------------------------------
-|	Locates the mode of the posterior distribution. The supplied `starting_point' is informational only; the actual 
-|   starting point is represented by the current state of the model. It is thus the duty of the caller to ensure that the
-|   model is setup to match the value of `starting_point'.
+|	Locates the mode of the posterior distribution. The starting point is represented by the current state of the model,
+|   and the model will be left in the modal state.
 */
 void MCMCChainManager::praxisLocatePosteriorMode()
 	{	
@@ -163,8 +162,8 @@ void MCMCChainManager::praxisLocatePosteriorMode()
     double_vect_t tmp_param_values;
     //double TL = 0.0;
     
-    std::cerr << "\n@@@@@@@@@@ Building vector of parameter names in MCMCChainManager::praxisLocatePosteriorMode() @@@@@@@@@@" << std::endl;
-    std::cerr << "@@@@@@@@@@ ignored steward names:" << std::endl;
+    //std::cerr << "\n@@@@@@@@@@ Building vector of parameter names in MCMCChainManager::praxisLocatePosteriorMode() @@@@@@@@@@" << std::endl;
+    //std::cerr << "@@@@@@@@@@ ignored steward names:" << std::endl;
     
 	// Visit all updaters and let those who are prior stewards add their name to praxis_stewards.
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
@@ -242,20 +241,20 @@ void MCMCChainManager::praxisLocatePosteriorMode()
                 }
 			}
 		}
-    std::cerr << "\n@@@@@@@@@@ praxis_stewards names:" << std::endl;
-    for (MCMCUpdaterVect::iterator s = praxis_stewards.begin(); s != praxis_stewards.end(); ++s)
-        {
-        std::cerr << (*s)->getName() << " ";
-        }
-    std::cerr << "\n@@@@@@@@@@ praxis_param_values:" << std::endl;
-    std::copy(praxis_param_values.begin(), praxis_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
+    //std::cerr << "\n@@@@@@@@@@ praxis_stewards names:" << std::endl;
+    //for (MCMCUpdaterVect::iterator s = praxis_stewards.begin(); s != praxis_stewards.end(); ++s)
+    //    {
+    //    std::cerr << (*s)->getName() << " ";
+    //    }
+    //std::cerr << "\n@@@@@@@@@@ praxis_param_values:" << std::endl;
+    //std::copy(praxis_param_values.begin(), praxis_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
     
-    std::cerr << "\n@@@@@@@@@@ tmp_param_values:" << std::endl;
-    std::copy(tmp_param_values.begin(), tmp_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
+    //std::cerr << "\n@@@@@@@@@@ tmp_param_values:" << std::endl;
+    //std::copy(tmp_param_values.begin(), tmp_param_values.end(), std::ostream_iterator<double>(std::cerr, " "));
     
     int n = (int)praxis_param_values.size();
     double fx = praxisCalcLogPosterior(&praxis_param_values[0]);
-    std::cerr << boost::str(boost::format("\nPosterior at starting point = %g\n") % fx) << std::endl;    
+    std::cerr << boost::str(boost::format("\nPraxis:\n  starting log-posterior = %g\n") % fx) << std::endl;    
 
     // Note: praxisMCMCChainManager is a global (see top of this file)
     praxisMCMCChainManager = this;
@@ -309,15 +308,12 @@ void MCMCChainManager::praxisLocatePosteriorMode()
     //  void *		data,		/* pointer to data to be passed to 'f' */
     //  PraxisData *	praxd)		/* an object already allocated by newPraxisData */
 
-    if (true)
-        {
-        PraxisData * praxd = newPraxisData(&praxis_param_values[0], n, false);
-        double tol = 1e-5;
-        double h = 1.0;
-        double fx_opt = praxis(tol, h, n, praxisWrapper, NULL, praxd);
-        std::cerr << boost::str(boost::format("Minimum = %g\n") % fx_opt) << std::endl;    
-        deletePraxisData(praxd);
-        }
+    PraxisData * praxd = newPraxisData(&praxis_param_values[0], n, false);
+    double tol = 1e-5;
+    double h = 1.0;
+    double fx_opt = praxis(tol, h, n, praxisWrapper, NULL, praxd);
+    std::cerr << boost::str(boost::format("  ending log-posterior = %g\n") % fx_opt) << std::endl;    
+    deletePraxisData(praxd);
     }
     
 /*----------------------------------------------------------------------------------------------------------------------

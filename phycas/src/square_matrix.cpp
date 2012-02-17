@@ -336,6 +336,139 @@ void SquareMatrix::MatrixToString(
 	}
     
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the Cholesky decomposition of this SquareMatrix as a lower-triangular matrix. Assumes this SquareMatrix is
+|   symmetric and positive definite.
+*/
+SquareMatrix * SquareMatrix::CholeskyDecomposition() const
+    {
+	PHYCAS_ASSERT(dim > 0);
+    SquareMatrix * L = new SquareMatrix(*this);
+    double * p = new double[dim];
+    double ** a = L->GetMatrixAsRawPointer();
+    
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        for (unsigned j = i; j < dim; ++j)
+            {
+            double sum = a[i][j];
+            for (int k = i-1; k >= 0; --k)
+                {
+                sum -= a[i][k]*a[j][k];
+                }
+            if (i == j) 
+                {
+                if (sum <= 0.0)
+                    {
+                    // matrix is not positive definite
+                    return 0;
+                    }
+                p[i] = sqrt(sum);
+                }
+            else
+                {
+                a[j][i] = sum/p[i];
+                }
+            }
+        }
+        
+    // zero out upper diagonal and copy diagonal elements
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        a[i][i] = p[i];
+        for (unsigned j = i+1; j < dim; ++j)
+            {
+            a[i][j] = 0.0;
+            }
+        }
+        
+    return L;
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the LU decomposition of this SquareMatrix.
+*/
+SquareMatrix * SquareMatrix::LUDecomposition() const
+    {
+	PHYCAS_ASSERT(dim > 0);
+    SquareMatrix * L = new SquareMatrix(*this);
+    double * scaling = new double[dim];
+    int * permutation = new int[dim];
+    double ** a = L->GetMatrixAsRawPointer();
+	int err_code = LUDecompose(a, dim, scaling, permutation, NULL);
+    if (err_code == 0)
+        {
+        // LUDecompose worked
+        delete [] scaling;
+        delete [] permutation;
+        return L;
+        }
+    
+    // Should throw an exception here
+    delete L;
+    delete [] scaling;
+    delete [] permutation;
+    return 0;
+    }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural logarithm of the product of the eigenvalues of this SquareMatrix. 
+*/
+double SquareMatrix::LogDeterminant() const
+    {
+	PHYCAS_ASSERT(dim > 0);
+    double * fv = new double[dim];
+    double * w = new double[dim];
+    double ** a = this->GetMatrixAsRawPointer();
+    SquareMatrix * Z = new SquareMatrix(dim, 0.0);
+    double ** z = Z->GetMatrixAsRawPointer();
+
+	// Calculate eigenvalues (w) and eigenvectors (z)
+    // int n        input: the order of the matrix a
+    // double **a   input: the real symmetric matrix
+    // double *fv   input: temporary storage array of at least n elements
+    // double **z   output: the eigenvectors
+    // double *w    output: the eigenvalues in ascending order
+	int err_code = EigenRealSymmetric(dim, a, w, z, fv);
+    if (err_code != 0)
+        {
+        delete Z;
+        delete [] fv;
+        delete [] w;
+        return 0;
+        }
+    
+    double log_det = 0.0;
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        double v = w[i];
+        log_det += log(v);
+        }
+        
+    delete Z;
+    delete [] fv;
+    delete [] w;
+    
+    return log_det;
+    }
+        
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural logarithm of the product of the terms on the main diagonal of this SquareMatrix. If this matrix
+|   is triangular, this is equal to the log of the determinant.
+*/
+double SquareMatrix::LogProdMainDiag() const
+    {
+	PHYCAS_ASSERT(dim > 0);
+    double sumLog = 0.0;
+    for (unsigned i = 0; i < dim; ++i)
+        {
+        double tmp = GetElement(i, i);
+        PHYCAS_ASSERT(tmp > 0.0);
+        sumLog += log(tmp);
+        }
+    return sumLog;
+    }
+        
+/*----------------------------------------------------------------------------------------------------------------------
 |	Creates and returns a matrix that represents this matrix raised to the power `p'.
 */
 SquareMatrix * SquareMatrix::Power(
@@ -370,7 +503,7 @@ SquareMatrix * SquareMatrix::Power(
     // create diagonal matrix of scaled eigenvalues
     for (unsigned i = 0; i < dim; ++i)
         {
-        double v = p*w[i];
+        double v = pow(w[i],p);
         Lp->SetElement(i, i, v);
         }
     
