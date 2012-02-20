@@ -98,6 +98,8 @@ class TreeNode
 		const InternalData *	GetInternalData() const;
 		Split &					GetSplit();
 		const Split &			GetSplitConst() const;
+		
+		double					GetTmp() {return tmp;}
 
 		// Modifiers
 		void			SetObservable();
@@ -123,6 +125,8 @@ class TreeNode
 		void			SetObservable(bool is_observable);
 
 		void			Clear();
+		
+		void			SetTmp(double d) {tmp = d;}
 
 		// Utilities
 		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false) const;

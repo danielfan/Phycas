@@ -33,6 +33,10 @@ class BeagleLib
 	unsigned _nCat;
 	unsigned _nStates;
 	unsigned _nPatterns;
+
+	std::vector<int> _operations;
+	std::vector<int> _pMatrixIndex;
+	std::vector<double> _brLens;
 };
 
 typedef boost::shared_ptr<BeagleLib> BeagleLibShPtr;
