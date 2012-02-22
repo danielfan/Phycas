@@ -33,6 +33,8 @@
 
 #include "phycas/src/partition_model.hpp"
 
+#include "phycas/src/cond_likelihood_storage.hpp"
+
 struct CIPRES_Matrix;
 
 namespace CipresNative

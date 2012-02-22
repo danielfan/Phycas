@@ -2396,98 +2396,105 @@ int calcLnLLevel = 0;
 */
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
-	{
+{
 	if (no_data)
 		return 0.0;
-		
-	if (!beagleLib) {
-		beagleLib = BeagleLibShPtr(new BeagleLib);
-		beagleLib->Init(t->GetNTips(), 1, 4, (unsigned)pattern_counts.size());
-		
-		std::vector<double> freqs(4, 0.25);
-		beagleLib->SetStateFrequencies(freqs);
-		
-		beagleLib->SetTipStates();
-		
-		std::vector<double> rates(1, 1.0);
-		std::vector<double> weights(1, 1.0);
-		beagleLib->SetCategoryRatesAndWeights(rates, weights);
-		
-		beagleLib->SetPatternWeights(pattern_counts);
-		
-		std::vector<double> eigenValues(4, -4.0);
-		eigenValues[0] = 0.0;
-		
-		double tmp[16] = {1,1,1,1,-1,0,0,1,-1,0,1,0,-1,1,0,0};
-		std::vector<double> eigenVectors(tmp, tmp+16);
-		
-		double tmp2[16] = {0.25, -0.25, -0.25, -0.25, 0.25, -0.25, -0.25, 0.75, 0.25, -0.25, 0.75, -0.25, 0.25, 0.75, -0.25, -0.25};
-		std::vector<double> inverseEigenVectors(tmp2, tmp2+16);		
-		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
-		
-		std::cerr << "Setting up BeagleLib from TreeLikelihood::calcLnL.\n";
-	}
-		
-//@TEMP force crash to test entry into debugger
-//char*p=NULL;
-//*p='a';
 
-	// The variable nevals keeps track of the number of times the likelihood has been calculated
-	// You can reset this value to 0 using resetNumLikelihoodEvals()
-	incrementNumLikelihoodEvals();
-
-	// If likelihood_root has not been specified, set it to the subroot node and invalidate
-	// all CLAs. If likelihood_root does already point to a node, assume that the necessary 
-	// CLA invalidations have already been performed.
-	TreeNode * nd = likelihood_root;
-	if (nd == NULL)
-		{
-		// If no likelihood_root has been specified, invalidate the entire tree to be safe
-		nd = storeAllCLAs(t);
-
-		// The subroot node will be the new likelihood_root
-		likelihood_root = nd;
+	double lnL = 0.0;
+		
+	if (_useBeagleLib) {
+		if (!beagleLib) {
+			beagleLib = BeagleLibShPtr(new BeagleLib);
+			beagleLib->Init(t->GetNTips(), 1, 4, (unsigned)pattern_counts.size());
+			
+			std::vector<double> freqs(4, 0.25);
+			beagleLib->SetStateFrequencies(freqs);
+			
+			beagleLib->SetTipStates(t);
+			
+			std::vector<double> rates(1, 1.0);
+			std::vector<double> weights(1, 1.0);
+			beagleLib->SetCategoryRatesAndWeights(rates, weights);
+			
+			beagleLib->SetPatternWeights(pattern_counts);
+			
+			double tmp3[4] = {0.0, -1.3333333333333333, -1.3333333333333333, -1.3333333333333333};
+			std::vector<double> eigenValues(tmp3, tmp3+4);		
+			
+			double tmp[16] = {1.0,  2.0,  0.0,  0.5, 1.0,  -2.0,  0.5,  0.0, 1.0,  2.0, 0.0,  -0.5, 1.0,  -2.0,  -0.5,  0.0};
+			std::vector<double> eigenVectors(tmp, tmp+16);
+			
+			double tmp2[16] = {0.25,  0.25,  0.25,  0.25, 0.125,  -0.125,  0.125,  -0.125, 0.0,  1.0,  0.0,  -1.0, 1.0,  0.0,  -1.0,  0.0};
+			std::vector<double> inverseEigenVectors(tmp2, tmp2+16);		
+			beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
+			
+			//std::cerr << "Setting up BeagleLib from TreeLikelihood::calcLnL.\n";
 		}
-	
-	//if (0)
-	//	{
-	//	likelihood_root = nd->GetLeftChild()->GetRightSib();
-	//	nd = likelihood_root;
-	//	}
-	//nd->SelectNode();
-	//startTreeViewer(t, "in TreeLikelihood::calcLnL");
-	//nd->UnselectNode();
-	
-	PHYCAS_ASSERT(nd);
-	PHYCAS_ASSERT(nd->IsInternal());
-
-#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	if (using_unimap)
+		
+		beagleLib->DefineOperations(t);
+		lnL = beagleLib->CalcLogLikelihood(t);
+	}
+	else {
+		//@TEMP force crash to test entry into debugger
+		//char*p=NULL;
+		//*p='a';
+		
+		// The variable nevals keeps track of the number of times the likelihood has been calculated
+		// You can reset this value to 0 using resetNumLikelihoodEvals()
+		incrementNumLikelihoodEvals();
+		
+		// If likelihood_root has not been specified, set it to the subroot node and invalidate
+		// all CLAs. If likelihood_root does already point to a node, assume that the necessary 
+		// CLA invalidations have already been performed.
+		TreeNode * nd = likelihood_root;
+		if (nd == NULL)
 		{
-		double allSubsetsLnL = 0.0;
-		std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
-		for (; usvIt != univentStructVec.end(); ++usvIt)
-			allSubsetsLnL += (*usvIt)->calcUnimapLnL(t, *this);
-		return allSubsetsLnL;
+			// If no likelihood_root has been specified, invalidate the entire tree to be safe
+			nd = storeAllCLAs(t);
+			
+			// The subroot node will be the new likelihood_root
+			likelihood_root = nd;
+		}
+		
+		//if (0)
+		//	{
+		//	likelihood_root = nd->GetLeftChild()->GetRightSib();
+		//	nd = likelihood_root;
+		//	}
+		//nd->SelectNode();
+		//startTreeViewer(t, "in TreeLikelihood::calcLnL");
+		//nd->UnselectNode();
+		
+		PHYCAS_ASSERT(nd);
+		PHYCAS_ASSERT(nd->IsInternal());
+		
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+		if (using_unimap)
+		{
+			double allSubsetsLnL = 0.0;
+			std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
+			for (; usvIt != univentStructVec.end(); ++usvIt)
+				allSubsetsLnL += (*usvIt)->calcUnimapLnL(t, *this);
+			return allSubsetsLnL;
 		}
 #endif
-
-	// Calculate log-likelihood using nd as the likelihood root
-	double lnL = calcLnLFromNode(*nd, t);
-	
-	// 	if (calcLnLLevel == 0)
-	// 		{
-	// 		calcLnLLevel = 1;
-	// 		storeAllCLAs(t);
-	// 		double lnLRecalc = calcLnL(t);
-	// 		PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
-	// 		calcLnLLevel = 0;
-	// 		}
-
-    //startTreeViewer(t, "lnL = %.5f" % lnL);
-    
-	return lnL;
+		
+		// Calculate log-likelihood using nd as the likelihood root
+		lnL = calcLnLFromNode(*nd, t);
+		
+		// 	if (calcLnLLevel == 0)
+		// 		{
+		// 		calcLnLLevel = 1;
+		// 		storeAllCLAs(t);
+		// 		double lnLRecalc = calcLnL(t);
+		// 		PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
+		// 		calcLnLLevel = 0;
+		// 		}
+		
+		//startTreeViewer(t, "lnL = %.5f" % lnL);
 	}
+	return lnL;
+}
 
 void TreeLikelihood::debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite)
 	{

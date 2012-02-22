@@ -144,7 +144,3 @@ class MCMC(PhycasCommand):
             mcmc_impl.siteLikeFileClose()
             
         mcmc_impl.unsetSiteLikeFile()
-
-        raw_input("before")
-        mcmc_impl = None
-        raw_input("after")

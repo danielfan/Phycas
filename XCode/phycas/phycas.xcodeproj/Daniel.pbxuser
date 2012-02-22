@@ -13,7 +13,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					585,
+					841,
 					20,
 					48,
 					43,
@@ -30,30 +30,60 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 351453959;
-			PBXWorkspaceStateSaveDate = 351453959;
+			PBXPerProjectTemplateStateSaveDate = 351620247;
+			PBXWorkspaceStateSaveDate = 351620247;
 		};
 		perUserProjectItems = {
-			655E63DA14EED48700457B4F /* PBXTextBookmark */ = 655E63DA14EED48700457B4F /* PBXTextBookmark */;
-			65773D0B14EEFCB20043D24B /* PBXTextBookmark */ = 65773D0B14EEFCB20043D24B /* PBXTextBookmark */;
-			65773D0C14EEFCB20043D24B /* PBXTextBookmark */ = 65773D0C14EEFCB20043D24B /* PBXTextBookmark */;
-			65773D0D14EEFCB20043D24B /* PBXTextBookmark */ = 65773D0D14EEFCB20043D24B /* PBXTextBookmark */;
-			65773D0E14EEFCB20043D24B /* PBXTextBookmark */ = 65773D0E14EEFCB20043D24B /* PBXTextBookmark */;
-			65773D0F14EEFCB20043D24B /* PBXTextBookmark */ = 65773D0F14EEFCB20043D24B /* PBXTextBookmark */;
-			65773D1014EEFCB20043D24B /* PBXTextBookmark */ = 65773D1014EEFCB20043D24B /* PBXTextBookmark */;
-			65773D1114EEFCB20043D24B /* PBXTextBookmark */ = 65773D1114EEFCB20043D24B /* PBXTextBookmark */;
-			65773D1214EEFCB20043D24B /* PBXTextBookmark */ = 65773D1214EEFCB20043D24B /* PBXTextBookmark */;
-			65773D1314EEFCB20043D24B /* PBXTextBookmark */ = 65773D1314EEFCB20043D24B /* PBXTextBookmark */;
-			65773D1614EEFCB20043D24B /* PBXTextBookmark */ = 65773D1614EEFCB20043D24B /* PBXTextBookmark */;
-			657C303C14F2DA77004F44BB /* PBXTextBookmark */ = 657C303C14F2DA77004F44BB /* PBXTextBookmark */;
-			657C303D14F2DA77004F44BB /* PBXTextBookmark */ = 657C303D14F2DA77004F44BB /* PBXTextBookmark */;
-			657C303E14F2DA77004F44BB /* PBXTextBookmark */ = 657C303E14F2DA77004F44BB /* PBXTextBookmark */;
-			657C303F14F2DA77004F44BB /* PBXTextBookmark */ = 657C303F14F2DA77004F44BB /* PBXTextBookmark */;
-			657C304014F2DA77004F44BB /* PBXTextBookmark */ = 657C304014F2DA77004F44BB /* PBXTextBookmark */;
-			657C304114F2DA77004F44BB /* PBXTextBookmark */ = 657C304114F2DA77004F44BB /* PBXTextBookmark */;
-			657C304214F2DA77004F44BB /* PBXTextBookmark */ = 657C304214F2DA77004F44BB /* PBXTextBookmark */;
-			65B6DBE814EEE08F00E6E5FF /* PBXTextBookmark */ = 65B6DBE814EEE08F00E6E5FF /* PBXTextBookmark */;
-			65B6DBEA14EEE08F00E6E5FF /* PBXTextBookmark */ = 65B6DBEA14EEE08F00E6E5FF /* PBXTextBookmark */;
+			6504C82C14F3F89E00BF6E8C = 6504C82C14F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C82E14F3F89E00BF6E8C = 6504C82E14F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C83014F3F89E00BF6E8C = 6504C83014F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C83114F3F89E00BF6E8C = 6504C83114F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C83214F3F89E00BF6E8C = 6504C83214F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C83414F3F89E00BF6E8C = 6504C83414F3F89E00BF6E8C /* PBXTextBookmark */;
+			6504C83814F3F9A300BF6E8C = 6504C83814F3F9A300BF6E8C /* PBXTextBookmark */;
+			650E4E5314F53DAD00B3F47C = 650E4E5314F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E5414F53DAD00B3F47C = 650E4E5414F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E5514F53DAD00B3F47C = 650E4E5514F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E5614F53DAD00B3F47C = 650E4E5614F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E5714F53DAD00B3F47C = 650E4E5714F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E5814F53DAD00B3F47C = 650E4E5814F53DAD00B3F47C /* PBXTextBookmark */;
+			650E4E6A14F54A7000B3F47C = 650E4E6A14F54A7000B3F47C /* PBXTextBookmark */;
+			650E4E7114F54C2000B3F47C = 650E4E7114F54C2000B3F47C /* PBXTextBookmark */;
+			650E4E7414F54C5300B3F47C = 650E4E7414F54C5300B3F47C /* PBXTextBookmark */;
+			650E4E9414F54C8800B3F47C = 650E4E9414F54C8800B3F47C /* PBXTextBookmark */;
+			6534105F14F54CA400525A2E /* PBXTextBookmark */ = 6534105F14F54CA400525A2E /* PBXTextBookmark */;
+			6534106314F54D8800525A2E /* PBXTextBookmark */ = 6534106314F54D8800525A2E /* PBXTextBookmark */;
+			6534106414F54DCC00525A2E /* PBXTextBookmark */ = 6534106414F54DCC00525A2E /* PBXTextBookmark */;
+			6534106514F54EB200525A2E /* PBXTextBookmark */ = 6534106514F54EB200525A2E /* PBXTextBookmark */;
+			6534106614F54EB200525A2E /* PBXTextBookmark */ = 6534106614F54EB200525A2E /* PBXTextBookmark */;
+			6534106714F5507000525A2E /* PBXTextBookmark */ = 6534106714F5507000525A2E /* PBXTextBookmark */;
+			6534106814F5507000525A2E /* PBXTextBookmark */ = 6534106814F5507000525A2E /* PBXTextBookmark */;
+			6534106914F5507000525A2E /* PBXTextBookmark */ = 6534106914F5507000525A2E /* PBXTextBookmark */;
+			6534106A14F5513A00525A2E /* PBXTextBookmark */ = 6534106A14F5513A00525A2E /* PBXTextBookmark */;
+			6534106B14F5513A00525A2E /* PBXTextBookmark */ = 6534106B14F5513A00525A2E /* PBXTextBookmark */;
+			6534106C14F5513A00525A2E /* PBXTextBookmark */ = 6534106C14F5513A00525A2E /* PBXTextBookmark */;
+			6534106D14F5517A00525A2E /* PBXTextBookmark */ = 6534106D14F5517A00525A2E /* PBXTextBookmark */;
+			6534106E14F5517A00525A2E /* PBXTextBookmark */ = 6534106E14F5517A00525A2E /* PBXTextBookmark */;
+			6534106F14F5534100525A2E /* PBXTextBookmark */ = 6534106F14F5534100525A2E /* PBXTextBookmark */;
+			6534107014F5544700525A2E /* PBXTextBookmark */ = 6534107014F5544700525A2E /* PBXTextBookmark */;
+			6534107114F5548700525A2E /* PBXTextBookmark */ = 6534107114F5548700525A2E /* PBXTextBookmark */;
+			6534107C14F55AC500525A2E /* PBXTextBookmark */ = 6534107C14F55AC500525A2E /* PBXTextBookmark */;
+			6534107D14F55AFD00525A2E /* PBXTextBookmark */ = 6534107D14F55AFD00525A2E /* PBXTextBookmark */;
+			6534107E14F55BA300525A2E /* PBXTextBookmark */ = 6534107E14F55BA300525A2E /* PBXTextBookmark */;
+			6534107F14F55C1000525A2E /* PBXTextBookmark */ = 6534107F14F55C1000525A2E /* PBXTextBookmark */;
+			6534108014F55E9500525A2E /* PBXTextBookmark */ = 6534108014F55E9500525A2E /* PBXTextBookmark */;
+			6534108114F55E9500525A2E /* PBXTextBookmark */ = 6534108114F55E9500525A2E /* PBXTextBookmark */;
+			6534108214F55E9500525A2E /* PBXTextBookmark */ = 6534108214F55E9500525A2E /* PBXTextBookmark */;
+			6534108314F55F0E00525A2E /* PBXTextBookmark */ = 6534108314F55F0E00525A2E /* PBXTextBookmark */;
+			655E63DA14EED48700457B4F = 655E63DA14EED48700457B4F /* PBXTextBookmark */;
+			65773D0D14EEFCB20043D24B = 65773D0D14EEFCB20043D24B /* PBXTextBookmark */;
+			65773D0F14EEFCB20043D24B = 65773D0F14EEFCB20043D24B /* PBXTextBookmark */;
+			65773D1014EEFCB20043D24B = 65773D1014EEFCB20043D24B /* PBXTextBookmark */;
+			65773D1214EEFCB20043D24B = 65773D1214EEFCB20043D24B /* PBXTextBookmark */;
+			65773D1314EEFCB20043D24B = 65773D1314EEFCB20043D24B /* PBXTextBookmark */;
+			657C303C14F2DA77004F44BB = 657C303C14F2DA77004F44BB /* PBXTextBookmark */;
+			657C303D14F2DA77004F44BB = 657C303D14F2DA77004F44BB /* PBXTextBookmark */;
+			65B6DBEA14EEE08F00E6E5FF = 65B6DBEA14EEE08F00E6E5FF /* PBXTextBookmark */;
 		};
 		sourceControlManager = 655E63CF14EED22600457B4F /* Source Control */;
 		userBuildSettings = {
@@ -61,6 +91,416 @@
 	};
 	2DF05FEE11B969EC002120A6 /* BoostThread */ = {
 		activeExec = 0;
+	};
+	6504C82C14F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */;
+		name = "tip_data.hpp: 36";
+		rLen = 0;
+		rLoc = 1530;
+		rType = 0;
+		vrLen = 2087;
+		vrLoc = 0;
+	};
+	6504C82E14F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */;
+		name = "bush_move.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2767;
+		vrLoc = 0;
+	};
+	6504C83014F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */;
+		name = "tree_likelihood.hpp: 202";
+		rLen = 0;
+		rLoc = 8218;
+		rType = 0;
+		vrLen = 2360;
+		vrLoc = 7441;
+	};
+	6504C83114F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */;
+		name = "likelihood_pymod.cpp: 223";
+		rLen = 0;
+		rLoc = 12394;
+		rType = 0;
+		vrLen = 3580;
+		vrLoc = 9455;
+	};
+	6504C83214F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
+		name = "MCMCImpl.py: 1092";
+		rLen = 0;
+		rLoc = 59427;
+		rType = 0;
+		vrLen = 2482;
+		vrLoc = 58411;
+	};
+	6504C83414F3F89E00BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = "MarkovChain.py: 216";
+		rLen = 21;
+		rLoc = 9637;
+		rType = 0;
+		vrLen = 2984;
+		vrLoc = 15675;
+	};
+	6504C83814F3F9A300BF6E8C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
+		name = "MCMC.py: 147";
+		rLen = 0;
+		rLoc = 16900;
+		rType = 0;
+		vrLen = 2834;
+		vrLoc = 14066;
+	};
+	650E4E5314F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */;
+		name = "basic_tree_node.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1424;
+		vrLoc = 8451;
+	};
+	650E4E5414F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */;
+		name = "basic_tree_node.hpp: 102";
+		rLen = 0;
+		rLoc = 3728;
+		rType = 0;
+		vrLen = 2776;
+		vrLoc = 4976;
+	};
+	650E4E5514F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B710CAEFB900CEFDE0 /* basic_tree_node.inl */;
+		name = "basic_tree_node.inl: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1662;
+		vrLoc = 1747;
+	};
+	650E4E5614F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */;
+		name = "basic_tree.hpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2945;
+		vrLoc = 0;
+	};
+	650E4E5714F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */;
+		name = "basic_tree.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2459;
+		vrLoc = 0;
+	};
+	650E4E5814F53DAD00B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */;
+		name = "likelihood_models.hpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2280;
+		vrLoc = 12680;
+	};
+	650E4E6A14F54A7000B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D814EED3AE00457B4F /* beaglelib.hpp */;
+		name = "beaglelib.hpp: 26";
+		rLen = 65;
+		rLoc = 452;
+		rType = 0;
+		vrLen = 1215;
+		vrLoc = 0;
+	};
+	650E4E7114F54C2000B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 59";
+		rLen = 0;
+		rLoc = 1610;
+		rType = 0;
+		vrLen = 2832;
+		vrLoc = 853;
+	};
+	650E4E7414F54C5300B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
+		name = "tree_likelihood.cpp: 2431";
+		rLen = 20;
+		rLoc = 94080;
+		rType = 0;
+		vrLen = 1844;
+		vrLoc = 92931;
+	};
+	650E4E9414F54C8800B3F47C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 59";
+		rLen = 0;
+		rLoc = 1610;
+		rType = 0;
+		vrLen = 2431;
+		vrLoc = 11094;
+	};
+	6534105F14F54CA400525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 59";
+		rLen = 0;
+		rLoc = 1610;
+		rType = 0;
+		vrLen = 2467;
+		vrLoc = 11058;
+	};
+	6534106314F54D8800525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 353";
+		rLen = 0;
+		rLoc = 11376;
+		rType = 0;
+		vrLen = 2544;
+		vrLoc = 11094;
+	};
+	6534106414F54DCC00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 311";
+		rLen = 0;
+		rLoc = 10647;
+		rType = 0;
+		vrLen = 1971;
+		vrLoc = 10279;
+	};
+	6534106514F54EB200525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 324";
+		rLen = 0;
+		rLoc = 10647;
+		rType = 0;
+		vrLen = 1941;
+		vrLoc = 8956;
+	};
+	6534106614F54EB200525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 309";
+		rLen = 0;
+		rLoc = 10131;
+		rType = 0;
+		vrLen = 1998;
+		vrLoc = 9437;
+	};
+	6534106714F5507000525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
+		name = "tree_likelihood.cpp: 2421";
+		rLen = 0;
+		rLoc = 93477;
+		rType = 0;
+		vrLen = 2091;
+		vrLoc = 92685;
+	};
+	6534106814F5507000525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 309";
+		rLen = 0;
+		rLoc = 10131;
+		rType = 0;
+		vrLen = 2598;
+		vrLoc = 11227;
+	};
+	6534106914F5507000525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 297";
+		rLen = 0;
+		rLoc = 10129;
+		rType = 0;
+		vrLen = 1966;
+		vrLoc = 9102;
+	};
+	6534106A14F5513A00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
+		name = "tree_likelihood.cpp: 2421";
+		rLen = 18;
+		rLoc = 93490;
+		rType = 0;
+		vrLen = 2056;
+		vrLoc = 92685;
+	};
+	6534106B14F5513A00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 73";
+		rLen = 0;
+		rLoc = 2682;
+		rType = 0;
+		vrLen = 2792;
+		vrLoc = 1285;
+	};
+	6534106C14F5513A00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 81";
+		rLen = 0;
+		rLoc = 3072;
+		rType = 0;
+		vrLen = 2792;
+		vrLoc = 1285;
+	};
+	6534106D14F5517A00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 81";
+		rLen = 0;
+		rLoc = 3072;
+		rType = 0;
+		vrLen = 2792;
+		vrLoc = 1285;
+	};
+	6534106E14F5517A00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 297";
+		rLen = 0;
+		rLoc = 10129;
+		rType = 0;
+		vrLen = 1977;
+		vrLoc = 9539;
+	};
+	6534106F14F5534100525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 123";
+		rLen = 0;
+		rLoc = 4335;
+		rType = 0;
+		vrLen = 1549;
+		vrLoc = 4127;
+	};
+	6534107014F5544700525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 123";
+		rLen = 0;
+		rLoc = 4335;
+		rType = 0;
+		vrLen = 1556;
+		vrLoc = 4127;
+	};
+	6534107114F5548700525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 123";
+		rLen = 0;
+		rLoc = 4335;
+		rType = 0;
+		vrLen = 1556;
+		vrLoc = 4127;
+	};
+	6534107C14F55AC500525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 307";
+		rLen = 0;
+		rLoc = 10129;
+		rType = 0;
+		vrLen = 1879;
+		vrLoc = 9768;
+	};
+	6534107D14F55AFD00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 131";
+		rLen = 0;
+		rLoc = 4628;
+		rType = 0;
+		vrLen = 1451;
+		vrLoc = 4039;
+	};
+	6534107E14F55BA300525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 280";
+		rLen = 0;
+		rLoc = 9238;
+		rType = 0;
+		vrLen = 1820;
+		vrLoc = 8801;
+	};
+	6534107F14F55C1000525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 378";
+		rLen = 0;
+		rLoc = 11380;
+		rType = 0;
+		vrLen = 2477;
+		vrLoc = 11989;
+	};
+	6534108014F55E9500525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D814EED3AE00457B4F /* beaglelib.hpp */;
+		name = "beaglelib.hpp: 24";
+		rLen = 0;
+		rLoc = 350;
+		rType = 0;
+		vrLen = 1283;
+		vrLoc = 0;
+	};
+	6534108114F55E9500525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 10";
+		rLen = 0;
+		rLoc = 161;
+		rType = 0;
+		vrLen = 1821;
+		vrLoc = 0;
+	};
+	6534108214F55E9500525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 323";
+		rLen = 0;
+		rLoc = 12298;
+		rType = 0;
+		vrLen = 2181;
+		vrLoc = 5032;
+	};
+	6534108314F55F0E00525A2E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 74";
+		rLen = 0;
+		rLoc = 2864;
+		rType = 0;
+		vrLen = 2771;
+		vrLoc = 9700;
 	};
 	655E63CF14EED22600457B4F /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -85,16 +525,17 @@
 	};
 	655E63D814EED3AE00457B4F /* beaglelib.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {972, 659}}";
-			sepNavSelRange = "{1016, 0}";
-			sepNavVisRange = "{0, 1089}";
+			sepNavIntBoundsRect = "{{0, 0}, {1086, 637}}";
+			sepNavSelRange = "{350, 0}";
+			sepNavVisRange = "{0, 1283}";
 		};
 	};
 	655E63D914EED3AE00457B4F /* beaglelib.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1320, 3600}}";
-			sepNavSelRange = "{10596, 0}";
-			sepNavVisRange = "{5407, 2232}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1, 132}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 12471}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1296, 3900}}";
+			sepNavSelRange = "{2733, 0}";
+			sepNavVisRange = "{9569, 2771}";
 		};
 	};
 	655E63DA14EED48700457B4F /* PBXTextBookmark */ = {
@@ -107,26 +548,6 @@
 		vrLen = 1934;
 		vrLoc = 192;
 	};
-	65773D0B14EEFCB20043D24B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 216";
-		rLen = 21;
-		rLoc = 9637;
-		rType = 0;
-		vrLen = 3039;
-		vrLoc = 15675;
-	};
-	65773D0C14EEFCB20043D24B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = "MCMCImpl.py: 376";
-		rLen = 16;
-		rLoc = 19006;
-		rType = 0;
-		vrLen = 2659;
-		vrLoc = 22658;
-	};
 	65773D0D14EEFCB20043D24B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */;
@@ -135,16 +556,6 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 2516;
-		vrLoc = 0;
-	};
-	65773D0E14EEFCB20043D24B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */;
-		name = "tree_likelihood.hpp: 37";
-		rLen = 0;
-		rLoc = 1718;
-		rType = 0;
-		vrLen = 2194;
 		vrLoc = 0;
 	};
 	65773D0F14EEFCB20043D24B /* PBXTextBookmark */ = {
@@ -167,16 +578,6 @@
 		vrLen = 2924;
 		vrLoc = 0;
 	};
-	65773D1114EEFCB20043D24B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */;
-		name = "likelihood_pymod.cpp: 50";
-		rLen = 0;
-		rLoc = 2497;
-		rType = 0;
-		vrLen = 2050;
-		vrLoc = 1200;
-	};
 	65773D1214EEFCB20043D24B /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */;
@@ -197,16 +598,6 @@
 		vrLen = 2923;
 		vrLoc = 0;
 	};
-	65773D1614EEFCB20043D24B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		name = "tree_likelihood.cpp: 2428";
-		rLen = 0;
-		rLoc = 93930;
-		rType = 0;
-		vrLen = 2023;
-		vrLoc = 92576;
-	};
 	657C303C14F2DA77004F44BB /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464810CAEFB900CEFDE0 /* tree_manip.hpp */;
@@ -226,66 +617,6 @@
 		rType = 0;
 		vrLen = 2880;
 		vrLoc = 480;
-	};
-	657C303E14F2DA77004F44BB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */;
-		name = "tip_data.hpp: 155";
-		rLen = 29;
-		rLoc = 7055;
-		rType = 0;
-		vrLen = 3701;
-		vrLoc = 5310;
-	};
-	657C303F14F2DA77004F44BB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */;
-		name = "basic_tree_node.hpp: 102";
-		rLen = 0;
-		rLoc = 3728;
-		rType = 0;
-		vrLen = 1731;
-		vrLoc = 3145;
-	};
-	657C304014F2DA77004F44BB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 655E63D814EED3AE00457B4F /* beaglelib.hpp */;
-		name = "beaglelib.hpp: 39";
-		rLen = 0;
-		rLoc = 1016;
-		rType = 0;
-		vrLen = 1089;
-		vrLoc = 0;
-	};
-	657C304114F2DA77004F44BB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
-		name = "beaglelib.cpp: 262";
-		rLen = 0;
-		rLoc = 9464;
-		rType = 0;
-		vrLen = 2127;
-		vrLoc = 8334;
-	};
-	657C304214F2DA77004F44BB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
-		name = "beaglelib.cpp: 290";
-		rLen = 0;
-		rLoc = 10596;
-		rType = 0;
-		vrLen = 2232;
-		vrLoc = 5407;
-	};
-	65B6DBE814EEE08F00E6E5FF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
-		name = "MCMC.py: 149";
-		rLen = 0;
-		rLoc = 16937;
-		rType = 0;
-		vrLen = 2055;
-		vrLoc = 14926;
 	};
 	65B6DBEA14EEE08F00E6E5FF /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -311,11 +642,46 @@
 			sepNavVisRange = "{0, 2923}";
 		};
 	};
+	7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {894, 4200}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{8451, 1424}";
+		};
+	};
 	7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {763, 2592}}";
+			sepNavIntBoundsRect = "{{0, 0}, {870, 2388}}";
 			sepNavSelRange = "{3728, 0}";
-			sepNavVisRange = "{3145, 1731}";
+			sepNavVisRange = "{4976, 2776}";
+		};
+	};
+	7A0945B710CAEFB900CEFDE0 /* basic_tree_node.inl */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {763, 5940}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{1747, 1662}";
+		};
+	};
+	7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {763, 32556}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2459}";
+		};
+	};
+	7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {763, 2508}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2945}";
+		};
+	};
+	7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {763, 8652}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2767}";
 		};
 	};
 	7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */ = {
@@ -332,11 +698,18 @@
 			sepNavVisRange = "{0, 2924}";
 		};
 	};
+	7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1302, 4392}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{12680, 2280}";
+		};
+	};
 	7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {768, 3336}}";
-			sepNavSelRange = "{2497, 0}";
-			sepNavVisRange = "{1200, 2050}";
+			sepNavIntBoundsRect = "{{0, 0}, {822, 2868}}";
+			sepNavSelRange = "{12394, 0}";
+			sepNavVisRange = "{9455, 3580}";
 		};
 	};
 	7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */ = {
@@ -348,9 +721,9 @@
 	};
 	7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1554, 3264}}";
-			sepNavSelRange = "{7055, 29}";
-			sepNavVisRange = "{5310, 3701}";
+			sepNavIntBoundsRect = "{{0, 0}, {763, 3492}}";
+			sepNavSelRange = "{1530, 0}";
+			sepNavVisRange = "{0, 2087}";
 		};
 	};
 	7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */ = {
@@ -362,17 +735,17 @@
 	};
 	7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{4129, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4316, 113}\";\n            s = 0;\n        },\n                {\n            r = \"{4510, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4718, 133}\";\n            s = 0;\n        },\n                {\n            r = \"{5040, 2}\";\n            s = 0;\n        },\n                {\n            r = \"{5098, 63}\";\n            s = 0;\n        },\n                {\n            r = \"{5253, 769}\";\n            s = 0;\n        },\n                {\n            r = \"{6711, 1015}\";\n            s = 0;\n        },\n                {\n            r = \"{7919, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{8370, 31}\";\n            s = 0;\n        },\n                {\n            r = \"{8750, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{9139, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{9451, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{9764, 41}\";\n            s = 0;\n        },\n                {\n            r = \"{10056, 34}\";\n            s = 0;\n        },\n                {\n            r = \"{10461, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{11062, 376}\";\n            s = 0;\n        },\n                {\n            r = \"{11667, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{12116, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{12213, 1245}\";\n            s = 0;\n        },\n                {\n            r = \"{13726, 195}\";\n            s = 0;\n        },\n                {\n            r = \"{14700, 14917}\";\n            s = 0;\n        },\n                {\n            r = \"{29962, 125}\";\n            s = 0;\n        },\n                {\n            r = \"{30534, 52}\";\n            s = 0;\n        },\n                {\n            r = \"{31011, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{31511, 38}\";\n            s = 0;\n        },\n                {\n            r = \"{32038, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{32406, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{32917, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{33641, 64}\";\n            s = 0;\n        },\n                {\n            r = \"{34235, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{34952, 1401}\";\n            s = 0;\n        },\n                {\n            r = \"{37012, 2176}\";\n            s = 0;\n        },\n                {\n            r = \"{39428, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{39690, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{40036, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{40811, 733}\";\n            s = 0;\n        },\n                {\n            r = \"{41805, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{42493, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{42885, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{43157, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{43699, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{44172, 103}\";\n            s = 0;\n        },\n                {\n            r = \"{44557, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{44839, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{45127, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{45538, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{46054, 79}\";\n            s = 0;\n        },\n                {\n            r = \"{46581, 257}\";\n            s = 0;\n        },\n                {\n            r = \"{47418, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{48000, 108}\";\n            s = 0;\n        },\n                {\n            r = \"{48941, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{49393, 5536}\";\n            s = 0;\n        },\n                {\n            r = \"{55541, 973}\";\n            s = 0;\n        },\n                {\n            r = \"{57123, 1317}\";\n            s = 0;\n        },\n                {\n            r = \"{58677, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{59159, 947}\";\n            s = 0;\n        },\n                {\n            r = \"{61613, 1166}\";\n            s = 0;\n        },\n                {\n            r = \"{63715, 208}\";\n            s = 0;\n        },\n                {\n            r = \"{64479, 731}\";\n            s = 0;\n        },\n                {\n            r = \"{66037, 771}\";\n            s = 0;\n        },\n                {\n            r = \"{67621, 1205}\";\n            s = 0;\n        },\n                {\n            r = \"{70057, 1495}\";\n            s = 0;\n        },\n                {\n            r = \"{72246, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{73221, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{76170, 9931}\";\n            s = 0;\n        },\n                {\n            r = \"{86578, 697}\";\n            s = 0;\n        },\n                {\n            r = \"{87685, 605}\";\n            s = 0;\n        },\n                {\n            r = \"{88969, 629}\";\n            s = 0;\n        },\n                {\n            r = \"{89924, 407}\";\n            s = 0;\n        },\n                {\n            r = \"{90941, 1262}\";\n            s = 0;\n        },\n                {\n            r = \"{95736, 2278}\";\n            s = 0;\n        },\n                {\n            r = \"{98497, 1489}\";\n            s = 0;\n        },\n                {\n            r = \"{100427, 1512}\";\n            s = 0;\n        },\n                {\n            r = \"{102544, 6328}\";\n            s = 0;\n        },\n                {\n            r = \"{109339, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{110194, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{111024, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{111749, 616}\";\n            s = 0;\n        },\n                {\n            r = \"{112869, 4053}\";\n            s = 0;\n        },\n                {\n            r = \"{116975, 487}\";\n            s = 0;\n        },\n                {\n            r = \"{117920, 1261}\";\n            s = 0;\n        },\n                {\n            r = \"{120066, 10187}\";\n            s = 0;\n        },\n                {\n            r = \"{130808, 3149}\";\n            s = 0;\n        },\n                {\n            r = \"{134258, 895}\";\n            s = 0;\n        },\n                {\n            r = \"{135519, 551}\";\n            s = 0;\n        },\n                {\n            r = \"{136458, 290}\";\n            s = 0;\n        },\n                {\n            r = \"{137179, 239}\";\n            s = 0;\n        },\n                {\n            r = \"{137837, 237}\";\n            s = 0;\n        },\n                {\n            r = \"{138554, 1208}\";\n            s = 0;\n        },\n                {\n            r = \"{140179, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{140548, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{141907, 3995}\";\n            s = 0;\n        },\n                {\n            r = \"{147077, 1956}\";\n            s = 0;\n        },\n                {\n            r = \"{149759, 821}\";\n            s = 0;\n        },\n                {\n            r = \"{150800, 15}\";\n            s = 0;\n        },\n                {\n            r = \"{151085, 18}\";\n            s = 0;\n        },\n                {\n            r = \"{151369, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{151886, 1383}\";\n            s = 0;\n        },\n                {\n            r = \"{153943, 1635}\";\n            s = 0;\n        },\n                {\n            r = \"{156160, 1559}\";\n            s = 0;\n        },\n                {\n            r = \"{158006, 4678}\";\n            s = 0;\n        },\n                {\n            r = \"{163004, 4609}\";\n            s = 0;\n        },\n                {\n            r = \"{168047, 202}\";\n            s = 0;\n        },\n                {\n            r = \"{168345, 4691}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 173062}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {804, 17568}}";
-			sepNavSelRange = "{39953, 0}";
-			sepNavVisRange = "{38599, 2023}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{4129, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4316, 113}\";\n            s = 0;\n        },\n                {\n            r = \"{4510, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4718, 133}\";\n            s = 0;\n        },\n                {\n            r = \"{5040, 2}\";\n            s = 0;\n        },\n                {\n            r = \"{5098, 63}\";\n            s = 0;\n        },\n                {\n            r = \"{5253, 769}\";\n            s = 0;\n        },\n                {\n            r = \"{6711, 1015}\";\n            s = 0;\n        },\n                {\n            r = \"{7919, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{8370, 31}\";\n            s = 0;\n        },\n                {\n            r = \"{8750, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{9139, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{9451, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{9764, 41}\";\n            s = 0;\n        },\n                {\n            r = \"{10056, 34}\";\n            s = 0;\n        },\n                {\n            r = \"{10461, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{11062, 376}\";\n            s = 0;\n        },\n                {\n            r = \"{11667, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{12116, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{12213, 1245}\";\n            s = 0;\n        },\n                {\n            r = \"{13726, 195}\";\n            s = 0;\n        },\n                {\n            r = \"{14700, 14917}\";\n            s = 0;\n        },\n                {\n            r = \"{29962, 125}\";\n            s = 0;\n        },\n                {\n            r = \"{30534, 52}\";\n            s = 0;\n        },\n                {\n            r = \"{31011, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{31511, 38}\";\n            s = 0;\n        },\n                {\n            r = \"{32038, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{32406, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{32917, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{33641, 64}\";\n            s = 0;\n        },\n                {\n            r = \"{34235, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{34952, 1401}\";\n            s = 0;\n        },\n                {\n            r = \"{37012, 2176}\";\n            s = 0;\n        },\n                {\n            r = \"{39428, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{39690, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{40036, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{40811, 733}\";\n            s = 0;\n        },\n                {\n            r = \"{41805, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{42493, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{42885, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{43157, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{43699, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{44172, 103}\";\n            s = 0;\n        },\n                {\n            r = \"{44557, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{44839, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{45127, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{45538, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{46054, 79}\";\n            s = 0;\n        },\n                {\n            r = \"{46581, 257}\";\n            s = 0;\n        },\n                {\n            r = \"{47418, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{48000, 108}\";\n            s = 0;\n        },\n                {\n            r = \"{48941, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{49393, 5536}\";\n            s = 0;\n        },\n                {\n            r = \"{55541, 973}\";\n            s = 0;\n        },\n                {\n            r = \"{57123, 1317}\";\n            s = 0;\n        },\n                {\n            r = \"{58677, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{59159, 947}\";\n            s = 0;\n        },\n                {\n            r = \"{61613, 1166}\";\n            s = 0;\n        },\n                {\n            r = \"{63715, 208}\";\n            s = 0;\n        },\n                {\n            r = \"{64479, 731}\";\n            s = 0;\n        },\n                {\n            r = \"{66037, 771}\";\n            s = 0;\n        },\n                {\n            r = \"{67621, 1205}\";\n            s = 0;\n        },\n                {\n            r = \"{70057, 1495}\";\n            s = 0;\n        },\n                {\n            r = \"{72246, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{73221, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{76170, 9931}\";\n            s = 0;\n        },\n                {\n            r = \"{86578, 697}\";\n            s = 0;\n        },\n                {\n            r = \"{87685, 605}\";\n            s = 0;\n        },\n                {\n            r = \"{88969, 629}\";\n            s = 0;\n        },\n                {\n            r = \"{89924, 407}\";\n            s = 0;\n        },\n                {\n            r = \"{90941, 1262}\";\n            s = 0;\n        },\n                {\n            r = \"{96075, 2278}\";\n            s = 0;\n        },\n                {\n            r = \"{98836, 1489}\";\n            s = 0;\n        },\n                {\n            r = \"{100766, 1512}\";\n            s = 0;\n        },\n                {\n            r = \"{102883, 6328}\";\n            s = 0;\n        },\n                {\n            r = \"{109678, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{110533, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{111363, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{112088, 616}\";\n            s = 0;\n        },\n                {\n            r = \"{113208, 4053}\";\n            s = 0;\n        },\n                {\n            r = \"{117314, 487}\";\n            s = 0;\n        },\n                {\n            r = \"{118259, 1261}\";\n            s = 0;\n        },\n                {\n            r = \"{120405, 10187}\";\n            s = 0;\n        },\n                {\n            r = \"{131147, 3149}\";\n            s = 0;\n        },\n                {\n            r = \"{134597, 895}\";\n            s = 0;\n        },\n                {\n            r = \"{135858, 551}\";\n            s = 0;\n        },\n                {\n            r = \"{136797, 290}\";\n            s = 0;\n        },\n                {\n            r = \"{137518, 239}\";\n            s = 0;\n        },\n                {\n            r = \"{138176, 237}\";\n            s = 0;\n        },\n                {\n            r = \"{138893, 1208}\";\n            s = 0;\n        },\n                {\n            r = \"{140518, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{140887, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{142246, 3995}\";\n            s = 0;\n        },\n                {\n            r = \"{147416, 1956}\";\n            s = 0;\n        },\n                {\n            r = \"{150098, 821}\";\n            s = 0;\n        },\n                {\n            r = \"{151139, 15}\";\n            s = 0;\n        },\n                {\n            r = \"{151424, 18}\";\n            s = 0;\n        },\n                {\n            r = \"{151708, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{152225, 1383}\";\n            s = 0;\n        },\n                {\n            r = \"{154282, 1635}\";\n            s = 0;\n        },\n                {\n            r = \"{156499, 1559}\";\n            s = 0;\n        },\n                {\n            r = \"{158345, 4678}\";\n            s = 0;\n        },\n                {\n            r = \"{163343, 4609}\";\n            s = 0;\n        },\n                {\n            r = \"{168386, 202}\";\n            s = 0;\n        },\n                {\n            r = \"{168684, 4691}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 173401}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {846, 17904}}";
+			sepNavSelRange = "{39513, 18}";
+			sepNavVisRange = "{38708, 2056}";
 		};
 	};
 	7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {696, 4356}}";
-			sepNavSelRange = "{1718, 0}";
-			sepNavVisRange = "{0, 2194}";
+			sepNavIntBoundsRect = "{{0, 0}, {1338, 4344}}";
+			sepNavSelRange = "{8218, 0}";
+			sepNavVisRange = "{7441, 2360}";
 		};
 	};
 	7A09464810CAEFB900CEFDE0 /* tree_manip.hpp */ = {
@@ -414,16 +787,16 @@
 	};
 	D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2598, 1740}}";
-			sepNavSelRange = "{16937, 0}";
-			sepNavVisRange = "{14926, 2055}";
+			sepNavIntBoundsRect = "{{0, 0}, {2598, 2148}}";
+			sepNavSelRange = "{16900, 0}";
+			sepNavVisRange = "{16442, 458}";
 		};
 	};
 	D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1524, 16512}}";
-			sepNavSelRange = "{19006, 16}";
-			sepNavVisRange = "{22658, 2659}";
+			sepNavIntBoundsRect = "{{0, 0}, {1170, 16212}}";
+			sepNavSelRange = "{59427, 0}";
+			sepNavVisRange = "{58411, 2482}";
 		};
 	};
 	D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {
@@ -435,9 +808,9 @@
 	};
 	D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {906, 7776}}";
+			sepNavIntBoundsRect = "{{0, 0}, {906, 7788}}";
 			sepNavSelRange = "{9637, 21}";
-			sepNavVisRange = "{15675, 3039}";
+			sepNavVisRange = "{15675, 2984}";
 		};
 	};
 	D2AAC09C05546B4700DB518D /* Conversions */ = {

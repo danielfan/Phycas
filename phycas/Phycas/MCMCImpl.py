@@ -1076,7 +1076,7 @@ class MCMCImpl(CommonFunctions):
         
         """        
         self.setup()
-        self.checkForBeaglelib()
+        #self.checkForBeaglelib()
         
         # If user has set quiet to True, then phycas.output calls will have no effect
         self.quiet = self.opts.quiet
@@ -1089,6 +1089,7 @@ class MCMCImpl(CommonFunctions):
         nchains = len(self.mcmc_manager.chains)
         
         cold_chain = self.mcmc_manager.getColdChain()
+        cold_chain.likelihood.useBeagleLib(self.opts.use_beaglelib)
         
         if self.opts.verbose:
             if self.data_matrix == None:

@@ -197,6 +197,9 @@ class TreeLikelihood
 		void							refreshCLA(TreeNode & nd, const TreeNode * avoid);
 		double							calcLnLFromNode(TreeNode & focal_node, TreeShPtr t);
 		double							calcLnL(TreeShPtr);
+		
+		bool							isUsingBeagleLib() {return _useBeagleLib;}
+		void							useBeagleLib(bool yes_or_no = true) {_useBeagleLib = yes_or_no;}
 
 		std::string						listPatterns(bool translate);
 		std::string						getStateStr(unsigned i, state_code_t state) const;
@@ -326,6 +329,7 @@ class TreeLikelihood
 		uint_vect_t						all_missing;				/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
 		double_vect_t					site_uf;					/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
 		BeagleLibShPtr					beagleLib;					/**< BeagleLib wrapper */
+		bool							_useBeagleLib;
 	};
 
 /// used to get access to a CLA to write it
