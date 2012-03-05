@@ -482,3 +482,27 @@ VecDbl QMatrix::getPMatrix(double edgelen)
 #endif
 #endif
 
+/*----------------------------------------------------------------------------------------------------------------------
+ */
+void QMatrix::beagleGetStateFreqs(std::vector<double> & freqs)
+{
+	std::copy(pi.begin(), pi.end(), freqs.begin());
+}
+
+void QMatrix::beagleGetEigenValues(std::vector<double> & eigenValues)
+{
+	std::copy(w_begin, w_end, eigenValues.begin());
+}
+
+void QMatrix::beagleGetEigenVectors(std::vector<double> & eigenVectors)
+{
+	std::copy(z_begin, z_end, eigenVectors.begin());
+}
+
+void QMatrix::beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors)
+{
+	std::copy(z_begin, z_end, inverseEigenVectors.begin());
+	for (unsigned i = 0; i < dimension; ++i)
+		for (unsigned j = i + 1; j < dimension; ++j)
+			std::swap(inverseEigenVectors[i*dimension + j], inverseEigenVectors[j*dimension + i]);
+}

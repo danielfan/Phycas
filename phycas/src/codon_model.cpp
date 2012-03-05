@@ -813,3 +813,25 @@ void Codon::updateQMatrix() const
 			
 	q_matrix.setRelativeRates(rel_rate_vect);
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+ */
+void Codon::beagleGetStateFreqs(std::vector<double> & freqs)
+{
+	q_matrix.beagleGetStateFreqs(freqs);
+}
+
+void Codon::beagleGetEigenValues(std::vector<double> & eigenValues)
+{
+	q_matrix.beagleGetEigenValues(eigenValues);
+}
+
+void Codon::beagleGetEigenVectors(std::vector<double> & eigenVectors)
+{
+	q_matrix.beagleGetEigenVectors(eigenVectors);
+}
+
+void Codon::beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors)
+{
+	q_matrix.beagleGetInverseEigenVectors(inverseEigenVectors);
+}

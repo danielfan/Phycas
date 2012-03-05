@@ -34,6 +34,7 @@
 #include "phycas/src/univents.hpp"
 #include "phycas/src/partition_model.hpp"
 #include "phycas/src/char_super_matrix.hpp"
+#include "phycas/src/codon_model.hpp"
 //#include <CoreServices/CoreServices.h>
 //#undef check	
 
@@ -2403,6 +2404,7 @@ double TreeLikelihood::calcLnL(
 	double lnL = 0.0;
 		
 	if (_useBeagleLib) {
+#if 0
 		if (!beagleLib) {
 			beagleLib = BeagleLibShPtr(new BeagleLib);
 			beagleLib->Init(t->GetNTips(), 1, 4, (unsigned)pattern_counts.size());
@@ -2433,6 +2435,39 @@ double TreeLikelihood::calcLnL(
 		
 		beagleLib->DefineOperations(t);
 		lnL = beagleLib->CalcLogLikelihood(t);
+#else
+		if (!beagleLib) {
+			beagleLib = BeagleLibShPtr(new BeagleLib);
+			beagleLib->Init(t->GetNTips(), 1, 61, (unsigned)pattern_counts.size());
+			
+			beagleLib->SetTipStates(t);
+			
+			std::vector<double> rates(1, 1.0);
+			std::vector<double> weights(1, 1.0);
+			beagleLib->SetCategoryRatesAndWeights(rates, weights);
+			
+			beagleLib->SetPatternWeights(pattern_counts);
+		}
+		
+		ModelShPtr subsetModel = partition_model->getModel(0);
+
+		std::vector<double> freqs(61, 0.0);
+		subsetModel->beagleGetStateFreqs(freqs);
+		
+		std::vector<double> eigenValues(61, 0.0);		
+		subsetModel->beagleGetEigenValues(eigenValues);
+		
+		std::vector<double> eigenVectors(61*61, 0.0);
+		subsetModel->beagleGetEigenVectors(eigenVectors);
+		
+		std::vector<double> inverseEigenVectors(61*61, 0.0);		
+		subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
+
+		beagleLib->SetStateFrequencies(freqs);
+		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
+		beagleLib->DefineOperations(t);
+		lnL = beagleLib->CalcLogLikelihood(t);
+#endif
 	}
 	else {
 		//@TEMP force crash to test entry into debugger

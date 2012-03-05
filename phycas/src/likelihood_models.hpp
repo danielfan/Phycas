@@ -153,7 +153,14 @@ class Model	{
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
 
-		// Python-specific utilities
+
+		virtual void					beagleGetStateFreqs(std::vector<double> & freqs);
+		virtual void					beagleGetEigenValues(std::vector<double> & eigenValues);
+		virtual void					beagleGetEigenVectors(std::vector<double> & eigenVectors);
+		virtual void					beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors);
+	
+	
+	// Python-specific utilities
 #if defined(PYTHON_ONLY)
 #	if defined(USING_NUMARRAY)
 		boost::python::numeric::array	getPMatrix(double edgeLength) const;

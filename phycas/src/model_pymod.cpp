@@ -40,8 +40,8 @@ void model_pymod()
 		.def("setStateFreqs", &QMatrix::setStateFreqs)
 		.def("getPMatrix", &QMatrix::getPMatrix)
 		.def("getQMatrix", &QMatrix::getQMatrix)
-		.def("getEigenVectors", &QMatrix::getEigenVectors)
 		.def("getEigenValues", &QMatrix::getEigenValues)
+		.def("getEigenVectors", &QMatrix::getEigenVectors)
 		;
 #endif
 	class_<phycas::Model, boost::noncopyable, boost::shared_ptr<phycas::Model> >("Model", no_init)

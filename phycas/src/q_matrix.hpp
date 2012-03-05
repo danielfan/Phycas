@@ -83,6 +83,11 @@ class QMatrix
 #endif
 		std::vector<double>				getEigenValues();
 
+		void							beagleGetStateFreqs(std::vector<double> & freqs);
+		void							beagleGetEigenValues(std::vector<double> & eigenValues);
+		void							beagleGetEigenVectors(std::vector<double> & eigenVectors);
+		void							beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors);
+		
 	private:
 
 		void							recalcPMat(double * * pmat, double edgelen);	// used by GTR
@@ -128,7 +133,7 @@ class QMatrix
 		double *						fv;				/**< workspace needed by EigenRealSymmetric */
 
 		bool							q_dirty;		/**< If true, then the Q-matrix has been changed and eigenvalues and eigenvectors need to be recalculated */
-	};
+	};	
 }	// namespace phycas
 
 #include "phycas/src/q_matrix.inl"

@@ -89,7 +89,12 @@ class Codon: public Model
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
 		void						calcPMat(double * * pMat, double edgeLength) const;
-
+		
+		void						beagleGetStateFreqs(std::vector<double> & freqs);
+		void						beagleGetEigenValues(std::vector<double> & eigenValues);
+		void						beagleGetEigenVectors(std::vector<double> & eigenVectors);
+		void						beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors);
+		
 protected:
 	
 	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
