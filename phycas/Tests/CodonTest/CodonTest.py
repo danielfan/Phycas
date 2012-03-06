@@ -21,7 +21,7 @@ model.state_freq_param_prior    = Exponential(1.0)
 model.update_freqs_separately   = False
 
 mcmc.nchains                    = 1
-mcmc.ncycles                    = 20
+mcmc.ncycles                    = 1
 mcmc.sample_every               = 10
 mcmc.report_every               = 1
 mcmc.adapt_first                = 2
@@ -43,7 +43,7 @@ mcmc.data_source                = blob.characters
 mcmc.state_freq_psi             = 3000.0     # max_psi
 mcmc.state_freq_psi0            = 2.0        # min_psi
 
-mcmc.out.log                    = None
+#mcmc.out.log                    = None
 
 mcmc.out.log                    = 'codontest.txt'
 mcmc.out.log.mode               = REPLACE

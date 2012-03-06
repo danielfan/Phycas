@@ -123,10 +123,14 @@ void BeagleLib::SetTipStates(TreeShPtr t) {
 		if (node->IsTip()) {
 			TipData*            td = node->GetTipData();
 			const state_code_t* sc = td->getConstStateCodes(0); // TODO 0 means first subset
-			std::vector<int> v(_nPatterns, 4);
+			//std::vector<int> v(_nPatterns, 4);
+			std::vector<int> v(_nPatterns, 61);
 			for (int i = 0; i < _nPatterns; ++i) {
-				if (sc[i] > 3) {
-					v[i] = 4;
+//				if (sc[i] > 3) {
+//					v[i] = 4;
+//				}
+				if (sc[i] > 60) {
+					v[i] = 61;
 				}
 				else {
 					v[i] = sc[i];
@@ -285,6 +289,20 @@ double BeagleLib::CalcLogLikelihood(TreeShPtr t) {
 		exit(1);
 	}
 
+
+//	//debug
+//	for(int i = 0; i < (2*_nTaxa-3); ++i) {
+//		std::vector<double> outMatrix(61*61, 0.0);
+//		beagleGetTransitionMatrix(_instance, i, &outMatrix[0]);
+//		std::cerr << "transition matrix " << i << ":\n";
+//		for(unsigned i = 0; i < 61; ++i) {
+//			for(unsigned j = 0; j < 61; ++j)
+//				std::cerr << outMatrix[i*61+j] << '\t';
+//			std::cerr << '\n';
+//		}	
+//	}	
+	
+	
 	// Calculate or queue for calculation partials using a list of operations
 	//
 	int totalOperations = (int)(_operations.size()/7);

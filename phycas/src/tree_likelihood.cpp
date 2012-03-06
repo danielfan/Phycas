@@ -2463,6 +2463,33 @@ double TreeLikelihood::calcLnL(
 		std::vector<double> inverseEigenVectors(61*61, 0.0);		
 		subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
 
+//		//debug
+//		std::cerr << "StateFrequencies:\n";
+//		for(unsigned i = 0; i < 61; ++i)
+//			std::cerr << freqs[i] << " ";
+//		std::cerr << std::endl;
+//		
+//		std::cerr << "EigenValues:\n";
+//		for(unsigned i = 0; i < 61; ++i)
+//			std::cerr << eigenValues[i] << " ";
+//		std::cerr << std::endl;
+//
+//		std::cerr << "EigenVectors:\n";
+//		for(unsigned i = 0; i < 61; ++i) {
+//			for(unsigned j = 0; j < 61; ++j)
+//				std::cerr << eigenVectors[i*61+j] << " ";
+//			std::cerr << '\n';
+//		}
+//		std::cerr << std::endl;
+//		
+//		std::cerr << "InverseEigenVectors:\n";
+//		for(unsigned i = 0; i < 61; ++i) {
+//			for(unsigned j = 0; j < 61; ++j)
+//				std::cerr << inverseEigenVectors[i*61+j] << " ";
+//			std::cerr << '\n';
+//		}
+//		std::cerr << std::endl;
+		
 		beagleLib->SetStateFrequencies(freqs);
 		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
 		beagleLib->DefineOperations(t);
