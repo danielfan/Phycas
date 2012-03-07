@@ -17,6 +17,8 @@ model.edgelen_prior             = Exponential(1.0)
 model.state_freqs               = [1.0/61.0]*61
 model.state_freq_prior          = Dirichlet([1.0]*61)
 model.state_freq_param_prior    = Exponential(1.0)
+model.kappa                     = 1.0
+model.omega                     = 1.0
 
 model.update_freqs_separately   = False
 

@@ -19,6 +19,7 @@
 
 #include "phycas/src/q_matrix.hpp"
 #include "phycas/src/xlikelihood.hpp"
+#include <fstream>
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -280,7 +281,29 @@ void QMatrix::recalcQMatrixImpl()
 	PHYCAS_ASSERT(sum_for_scaling > 0.0);
 	edgelen_scaler = 1.0/sum_for_scaling;
 
-	// Calculate eigenvalues (w) and eigenvectors (z)
+		
+	//debug
+		std::cout << "dimension = " << dimension << std::endl;
+		if (dimension==61) {
+			//debug
+			std::ofstream f("doof.txt");//, std::ios::out | std::ios::app);
+			f << "Qmat\n";
+			for (unsigned i = 0; i < 61; ++i) {
+				for (unsigned j = 0; j < 61; ++j) {
+					f << qmat[i][j] << '\t';
+					//f << "qMat[" << i << "][" << j << "]=\t" << qmat[i][j] << '\n'; 
+				}
+				f << '\n';
+				//std::cerr << std::endl;
+			}
+			f << '\n';
+			f.close();
+			char ch;
+			std::cin >> ch;
+		}
+		
+		
+		// Calculate eigenvalues (w) and eigenvectors (z)
 	int err_code = EigenRealSymmetric(dimension, qmat, w, z, fv);
 	
 	if (err_code != 0)
