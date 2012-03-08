@@ -23,7 +23,7 @@ model.omega                     = 1.0
 model.update_freqs_separately   = False
 
 mcmc.nchains                    = 1
-mcmc.ncycles                    = 1
+mcmc.ncycles                    = 20
 mcmc.sample_every               = 10
 mcmc.report_every               = 1
 mcmc.adapt_first                = 2

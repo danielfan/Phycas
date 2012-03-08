@@ -835,3 +835,9 @@ void Codon::beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVecto
 {
 	q_matrix.beagleGetInverseEigenVectors(inverseEigenVectors);
 }
+
+double Codon::beagleGetEdgelenScaler()
+{
+	return q_matrix.beagleGetEdgelenScaler();
+}
+

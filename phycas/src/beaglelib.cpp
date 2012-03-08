@@ -205,7 +205,7 @@ void BeagleLib::SetEigenDecomposition(const std::vector<double> &eigenValues, co
 	}
 }
 
-void BeagleLib::DefineOperations(TreeShPtr t) {
+void BeagleLib::DefineOperations(TreeShPtr t, double edgelenScaler) {
 	// define operation, scale index
 	//  * Operations list is a list of 7-tuple integer indices, with one 7-tuple per operation.
 	//  * Format of 7-tuple operation: {destinationPartials,
@@ -226,7 +226,7 @@ void BeagleLib::DefineOperations(TreeShPtr t) {
 	for (; !nd->IsTipRoot(); nd = nd->GetNextPostorder()) {
 		if (nd->IsTip()) {
 			_pMatrixIndex.push_back((int)nd->GetTmp());
-			_brLens.push_back(nd->GetEdgeLen());
+			_brLens.push_back((nd->GetEdgeLen())*edgelenScaler);
 		}
 		else {
 			PHYCAS_ASSERT(nd->IsInternal());
@@ -235,7 +235,7 @@ void BeagleLib::DefineOperations(TreeShPtr t) {
 			//			
 			_operations.push_back(internalIndex);
 			_pMatrixIndex.push_back(internalIndex);
-			_brLens.push_back(nd->GetEdgeLen());
+			_brLens.push_back((nd->GetEdgeLen())*edgelenScaler);
 			nd->SetTmp(internalIndex++);
 			
 			// destination scaling buffer index to write to

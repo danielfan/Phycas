@@ -94,6 +94,7 @@ class Codon: public Model
 		void						beagleGetEigenValues(std::vector<double> & eigenValues);
 		void						beagleGetEigenVectors(std::vector<double> & eigenVectors);
 		void						beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors);
+		double						beagleGetEdgelenScaler();
 		
 protected:
 	

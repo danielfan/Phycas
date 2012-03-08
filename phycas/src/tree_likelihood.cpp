@@ -2456,7 +2456,7 @@ double TreeLikelihood::calcLnL(
 		//std::cerr << "subset model params\n" << subsetModel->paramHeader() << std::endl;
 		//std::cerr << subsetModel->paramReport(5, false) << std::endl;		
 
-		std::cerr << "in function TreeLikelihood::calcLnL.\n";
+		//std::cerr << "in function TreeLikelihood::calcLnL.\n";
 		
 		std::vector<double> freqs(61, 0.0);
 		subsetModel->beagleGetStateFreqs(freqs);
@@ -2469,36 +2469,38 @@ double TreeLikelihood::calcLnL(
 		
 		std::vector<double> inverseEigenVectors(61*61, 0.0);		
 		subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
+		
+		double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
 
 		
-		//debug
-		
-		std::cout << "EigenValues\n";
-		for (unsigned i = 0; i < 61; ++i) {
-			std::cout << eigenValues[i] << " ";
-		}
-		std::cout << '\n';
-		
-		std::cout << "EigenVector\n";
-		for (unsigned i = 0; i < 61; ++i) {
-			for (unsigned j = 0; j < 61; ++j) {
-				std::cout << eigenVectors[i*61+j] << " ";
-			}
-			std::cout << '\n';
-		}
-		std::cout << '\n';
-		
-		std::cout << "InverseEigenVector\n";
-		for (unsigned i = 0; i < 61; ++i) {
-			for (unsigned j = 0; j < 61; ++j) {
-				std::cout << inverseEigenVectors[i*61+j] << " ";
-			}
-			std::cout << '\n';
-		}
-		std::cout << '\n';
-		
-		char chl;
-		std::cin >> chl;
+//		//debug
+//		
+//		std::cout << "EigenValues\n";
+//		for (unsigned i = 0; i < 61; ++i) {
+//			std::cout << eigenValues[i] << " ";
+//		}
+//		std::cout << '\n';
+//		
+//		std::cout << "EigenVector\n";
+//		for (unsigned i = 0; i < 61; ++i) {
+//			for (unsigned j = 0; j < 61; ++j) {
+//				std::cout << eigenVectors[i*61+j] << " ";
+//			}
+//			std::cout << '\n';
+//		}
+//		std::cout << '\n';
+//		
+//		std::cout << "InverseEigenVector\n";
+//		for (unsigned i = 0; i < 61; ++i) {
+//			for (unsigned j = 0; j < 61; ++j) {
+//				std::cout << inverseEigenVectors[i*61+j] << " ";
+//			}
+//			std::cout << '\n';
+//		}
+//		std::cout << '\n';
+//		
+//		char chl;
+//		std::cin >> chl;
 		
 		//		//debug
 		//		std::cerr << "StateFrequencies:\n";
@@ -2529,7 +2531,7 @@ double TreeLikelihood::calcLnL(
 		
 		beagleLib->SetStateFrequencies(freqs);
 		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
-		beagleLib->DefineOperations(t);
+		beagleLib->DefineOperations(t,edgelenScaler);
 		lnL = beagleLib->CalcLogLikelihood(t);
 #endif
 	}

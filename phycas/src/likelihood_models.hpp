@@ -154,10 +154,11 @@ class Model	{
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
 
 
-	virtual void					beagleGetStateFreqs(std::vector<double> & freqs) {}
-	virtual void					beagleGetEigenValues(std::vector<double> & eigenValues){}
-	virtual void					beagleGetEigenVectors(std::vector<double> & eigenVectors){}
+		virtual void					beagleGetStateFreqs(std::vector<double> & freqs) {}
+		virtual void					beagleGetEigenValues(std::vector<double> & eigenValues){}
+		virtual void					beagleGetEigenVectors(std::vector<double> & eigenVectors){}
 		virtual void					beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors) {}
+		virtual double					beagleGetEdgelenScaler() {return 0;}
 	
 	
 	// Python-specific utilities

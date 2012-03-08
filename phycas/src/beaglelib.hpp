@@ -28,7 +28,7 @@ class BeagleLib
 	void					SetCategoryRatesAndWeights(const std::vector<double> &rates, const std::vector<double> &weights);
 	void					SetPatternWeights(const std::vector<double> &patternWeights);
 	void					SetEigenDecomposition(const std::vector<double> &eigenValues, const std::vector<double> &eigenVectors, const std::vector<double> &inverseEigenVectors);
-	void					DefineOperations(TreeShPtr t);
+	void					DefineOperations(TreeShPtr t, double edgelenScaler);
 	void					IndexNodes(TreeShPtr t);
 	double					CalcLogLikelihood(TreeShPtr t);
 	

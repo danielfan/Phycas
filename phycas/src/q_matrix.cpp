@@ -282,25 +282,25 @@ void QMatrix::recalcQMatrixImpl()
 	edgelen_scaler = 1.0/sum_for_scaling;
 
 		
-	//debug
-		std::cout << "dimension = " << dimension << std::endl;
-		if (dimension==61) {
-			//debug
-			std::ofstream f("doof.txt");//, std::ios::out | std::ios::app);
-			f << "Qmat\n";
-			for (unsigned i = 0; i < 61; ++i) {
-				for (unsigned j = 0; j < 61; ++j) {
-					f << qmat[i][j] << '\t';
-					//f << "qMat[" << i << "][" << j << "]=\t" << qmat[i][j] << '\n'; 
-				}
-				f << '\n';
-				//std::cerr << std::endl;
-			}
-			f << '\n';
-			f.close();
-			char ch;
-			std::cin >> ch;
-		}
+//	//debug
+//		std::cout << "dimension = " << dimension << std::endl;
+//		if (dimension==61) {
+//			//debug
+//			std::ofstream f("doof.txt");//, std::ios::out | std::ios::app);
+//			f << "Qmat\n";
+//			for (unsigned i = 0; i < 61; ++i) {
+//				for (unsigned j = 0; j < 61; ++j) {
+//					f << qmat[i][j] << '\t';
+//					//f << "qMat[" << i << "][" << j << "]=\t" << qmat[i][j] << '\n'; 
+//				}
+//				f << '\n';
+//				//std::cerr << std::endl;
+//			}
+//			f << '\n';
+//			f.close();
+//			char ch;
+//			std::cin >> ch;
+//		}
 		
 		
 		// Calculate eigenvalues (w) and eigenvectors (z)
@@ -532,4 +532,10 @@ void QMatrix::beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVec
 	for (unsigned i = 0; i < dimension; ++i)
 		for (unsigned j = i + 1; j < dimension; ++j)
 			std::swap(inverseEigenVectors[i*dimension + j], inverseEigenVectors[j*dimension + i]);
+}
+
+double QMatrix::beagleGetEdgelenScaler()
+{
+	recalcQMatrix();
+	return edgelen_scaler;
 }
