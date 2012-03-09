@@ -83,6 +83,12 @@ class GTR: public Model
 		virtual std::string			paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
 		double						calcTRatio();
 
+		void						beagleGetStateFreqs(std::vector<double> & freqs);
+		void						beagleGetEigenValues(std::vector<double> & eigenValues);
+		void						beagleGetEigenVectors(std::vector<double> & eigenVectors);
+		void						beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors);
+		double						beagleGetEdgelenScaler();
+
 	protected:
 
 		MultivarProbDistShPtr		rel_rate_prior;		    /**< The prior distribution governing each relative rate (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */

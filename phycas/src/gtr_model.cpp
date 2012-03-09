@@ -577,3 +577,31 @@ double GTR::getRelRateUnnorm(
 	{
 	return rel_rates[param_index];
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+ */
+void GTR::beagleGetStateFreqs(std::vector<double> & freqs)
+{
+	q_matrix.beagleGetStateFreqs(freqs);
+}
+
+void GTR::beagleGetEigenValues(std::vector<double> & eigenValues)
+{
+	q_matrix.beagleGetEigenValues(eigenValues);
+}
+
+void GTR::beagleGetEigenVectors(std::vector<double> & eigenVectors)
+{
+	q_matrix.beagleGetEigenVectors(eigenVectors);
+}
+
+void GTR::beagleGetInverseEigenVectors(std::vector<double> & inverseEigenVectors)
+{
+	q_matrix.beagleGetInverseEigenVectors(inverseEigenVectors);
+}
+
+double GTR::beagleGetEdgelenScaler()
+{
+	return q_matrix.beagleGetEdgelenScaler();
+}
+

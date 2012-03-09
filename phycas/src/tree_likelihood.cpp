@@ -2404,7 +2404,7 @@ double TreeLikelihood::calcLnL(
 	double lnL = 0.0;
 		
 	if (_useBeagleLib) {
-#if 0
+#if 0 // JC model test
 		if (!beagleLib) {
 			beagleLib = BeagleLibShPtr(new BeagleLib);
 			beagleLib->Init(t->GetNTips(), 1, 4, (unsigned)pattern_counts.size());
@@ -2428,14 +2428,13 @@ double TreeLikelihood::calcLnL(
 			
 			double tmp2[16] = {0.25,  0.25,  0.25,  0.25, 0.125,  -0.125,  0.125,  -0.125, 0.0,  1.0,  0.0,  -1.0, 1.0,  0.0,  -1.0,  0.0};
 			std::vector<double> inverseEigenVectors(tmp2, tmp2+16);		
-			beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
-			
-			//std::cerr << "Setting up BeagleLib from TreeLikelihood::calcLnL.\n";
+			beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);			
 		}
 		
 		beagleLib->DefineOperations(t);
 		lnL = beagleLib->CalcLogLikelihood(t);
-#else
+#endif
+#if 0 // Codon model test
 		if (!beagleLib) {
 			beagleLib = BeagleLibShPtr(new BeagleLib);
 			beagleLib->Init(t->GetNTips(), 1, 61, (unsigned)pattern_counts.size());
@@ -2451,13 +2450,6 @@ double TreeLikelihood::calcLnL(
 		
 		ModelShPtr subsetModel = partition_model->getModel(0);
 		
-		
-		//debug
-		//std::cerr << "subset model params\n" << subsetModel->paramHeader() << std::endl;
-		//std::cerr << subsetModel->paramReport(5, false) << std::endl;		
-
-		//std::cerr << "in function TreeLikelihood::calcLnL.\n";
-		
 		std::vector<double> freqs(61, 0.0);
 		subsetModel->beagleGetStateFreqs(freqs);
 		
@@ -2471,67 +2463,75 @@ double TreeLikelihood::calcLnL(
 		subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
 		
 		double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
-
-		
-//		//debug
-//		
-//		std::cout << "EigenValues\n";
-//		for (unsigned i = 0; i < 61; ++i) {
-//			std::cout << eigenValues[i] << " ";
-//		}
-//		std::cout << '\n';
-//		
-//		std::cout << "EigenVector\n";
-//		for (unsigned i = 0; i < 61; ++i) {
-//			for (unsigned j = 0; j < 61; ++j) {
-//				std::cout << eigenVectors[i*61+j] << " ";
-//			}
-//			std::cout << '\n';
-//		}
-//		std::cout << '\n';
-//		
-//		std::cout << "InverseEigenVector\n";
-//		for (unsigned i = 0; i < 61; ++i) {
-//			for (unsigned j = 0; j < 61; ++j) {
-//				std::cout << inverseEigenVectors[i*61+j] << " ";
-//			}
-//			std::cout << '\n';
-//		}
-//		std::cout << '\n';
-//		
-//		char chl;
-//		std::cin >> chl;
-		
-		//		//debug
-		//		std::cerr << "StateFrequencies:\n";
-//		for(unsigned i = 0; i < 61; ++i)
-//			std::cerr << freqs[i] << " ";
-//		std::cerr << std::endl;
-//		
-//		std::cerr << "EigenValues:\n";
-//		for(unsigned i = 0; i < 61; ++i)
-//			std::cerr << eigenValues[i] << " ";
-//		std::cerr << std::endl;
-//
-//		std::cerr << "EigenVectors:\n";
-//		for(unsigned i = 0; i < 61; ++i) {
-//			for(unsigned j = 0; j < 61; ++j)
-//				std::cerr << eigenVectors[i*61+j] << " ";
-//			std::cerr << '\n';
-//		}
-//		std::cerr << std::endl;
-//		
-//		std::cerr << "InverseEigenVectors:\n";
-//		for(unsigned i = 0; i < 61; ++i) {
-//			for(unsigned j = 0; j < 61; ++j)
-//				std::cerr << inverseEigenVectors[i*61+j] << " ";
-//			std::cerr << '\n';
-//		}
-//		std::cerr << std::endl;
 		
 		beagleLib->SetStateFrequencies(freqs);
 		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
 		beagleLib->DefineOperations(t,edgelenScaler);
+		lnL = beagleLib->CalcLogLikelihood(t);
+#endif
+#if 1 // GTR Gamma Pinvar model test
+		ModelShPtr subsetModel = partition_model->getModel(0);
+		unsigned nCat = (unsigned)(subsetModel->getNRatesTotal());
+		if (subsetModel->isPinvarModel())
+			nCat += 1;
+		
+		if (!beagleLib) {
+			beagleLib = BeagleLibShPtr(new BeagleLib);
+			beagleLib->Init(t->GetNTips(), nCat, (unsigned)(subsetModel->getNumStates()), (unsigned)pattern_counts.size());
+			beagleLib->SetTipStates(t);
+			beagleLib->SetPatternWeights(pattern_counts);
+		}
+		
+		std::vector<double> freqs(4, 0.0);
+		subsetModel->beagleGetStateFreqs(freqs);
+		
+		std::vector<double> eigenValues(4, 0.0);		
+		subsetModel->beagleGetEigenValues(eigenValues);
+		
+		std::vector<double> eigenVectors(4*4, 0.0);
+		subsetModel->beagleGetEigenVectors(eigenVectors);
+		
+		std::vector<double> inverseEigenVectors(4*4, 0.0);		
+		subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
+		
+		double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
+
+		std::vector<double> rates(nCat, 0.0);
+		std::vector<double> weights(nCat, 0.0);
+		if (subsetModel->isPinvarModel()) {
+			std::copy(rate_means[0].begin(), rate_means[0].end(), rates.begin()+1);
+			weights[0] = subsetModel->getPinvar();
+			std::copy(rate_probs[0].begin(), rate_probs[0].end(), weights.begin()+1);
+			for (std::vector<double>::iterator it = weights.begin()+1; it != weights.end(); ++it) {
+				*it *= (1.0 - weights[0]);
+			}
+		}
+		else {
+			std::copy(rate_means[0].begin(), rate_means[0].end(), rates.begin());
+			std::copy(rate_probs[0].begin(), rate_probs[0].end(), weights.begin());
+		}
+		
+//		//debug
+//		std::cerr << "nCat " << (unsigned)(subsetModel->getNRatesTotal()) << '\n';
+//		std::cerr << "freq\n";
+//		std::cerr << freqs[0] << " " << freqs[1] << " " << freqs[2] << " " << freqs[3] << '\n';
+//		
+//		std::cerr << "rates and weights\n";
+//		for (std::vector<double>::iterator it = rates.begin(); it != rates.end(); ++it) {
+//			std::cerr << *it << " ";
+//		}
+//		std::cerr << '\n';
+//		for (std::vector<double>::iterator it = weights.begin(); it != weights.end(); ++it) {
+//			std::cerr << *it << " ";
+//		}
+//		std::cerr << '\n';
+//		char ch;
+//		std::cin >> ch;
+		
+		beagleLib->SetStateFrequencies(freqs);
+		beagleLib->SetCategoryRatesAndWeights(rates, weights);
+		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
+		beagleLib->DefineOperations(t, edgelenScaler);
 		lnL = beagleLib->CalcLogLikelihood(t);
 #endif
 	}

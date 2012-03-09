@@ -153,7 +153,6 @@ class Model	{
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
 
-
 		virtual void					beagleGetStateFreqs(std::vector<double> & freqs) {}
 		virtual void					beagleGetEigenValues(std::vector<double> & eigenValues){}
 		virtual void					beagleGetEigenVectors(std::vector<double> & eigenVectors){}

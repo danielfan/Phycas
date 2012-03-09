@@ -288,20 +288,6 @@ double BeagleLib::CalcLogLikelihood(TreeShPtr t) {
 		std::cout << "Failed to update transition matrices.\n";
 		exit(1);
 	}
-
-
-//	//debug
-//	for(int i = 0; i < (2*_nTaxa-3); ++i) {
-//		std::vector<double> outMatrix(61*61, 0.0);
-//		beagleGetTransitionMatrix(_instance, i, &outMatrix[0]);
-//		std::cerr << "transition matrix " << i << ":\n";
-//		for(unsigned i = 0; i < 61; ++i) {
-//			for(unsigned j = 0; j < 61; ++j)
-//				std::cerr << outMatrix[i*61+j] << '\t';
-//			std::cerr << '\n';
-//		}	
-//	}	
-	
 	
 	// Calculate or queue for calculation partials using a list of operations
 	//
