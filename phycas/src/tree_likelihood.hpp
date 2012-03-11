@@ -328,7 +328,8 @@ class TreeLikelihood
 		uint_vect_t						constant_states;			/**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
 		uint_vect_t						all_missing;				/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
 		double_vect_t					site_uf;					/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
-		BeagleLibShPtr					beagleLib;					/**< BeagleLib wrapper */
+		//BeagleLibShPtr					beagleLib;					/**< BeagleLib wrapper */
+		std::vector<BeagleLibShPtr>		beagleLib;					/**< BeagleLib wrapper */
 		bool							_useBeagleLib;
 	};
 

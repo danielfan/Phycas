@@ -21,10 +21,11 @@ class BeagleLib
 	BeagleLib();
 	~BeagleLib();
 	
+	//void					Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns, unsigned debug);
 	void					Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns);
 	void					ListResources();
 	void					SetStateFrequencies(const std::vector<double> &freqs);
-	void					SetTipStates(TreeShPtr t);
+	void					SetTipStates(TreeShPtr t, unsigned whichSubset);
 	void					SetCategoryRatesAndWeights(const std::vector<double> &rates, const std::vector<double> &weights);
 	void					SetPatternWeights(const std::vector<double> &patternWeights);
 	void					SetEigenDecomposition(const std::vector<double> &eigenValues, const std::vector<double> &eigenVectors, const std::vector<double> &inverseEigenVectors);
@@ -37,6 +38,8 @@ class BeagleLib
 	int						_nCat;
 	int						_nStates;
 	int						_nPatterns;
+	double					_logLikelihood;
+	bool					_reCalLogLikelihoodNeeded;
 	
 	std::vector<int>		_operations;
 	std::vector<int>		_pMatrixIndex;

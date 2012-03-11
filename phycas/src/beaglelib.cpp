@@ -14,7 +14,7 @@
 
 using namespace phycas;
 
-BeagleLib::BeagleLib():_instance(0), _nTaxa(0), _nCat(0), _nStates(0), _nPatterns(0) {
+BeagleLib::BeagleLib():_instance(0), _nTaxa(0), _nCat(0), _nStates(0), _nPatterns(0), _logLikelihood(0.0), _reCalLogLikelihoodNeeded(true) {
 }
 
 BeagleLib::~BeagleLib() {
@@ -38,6 +38,7 @@ void BeagleLib::ListResources() {
     }    
 }
 
+//void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns, unsigned debug) {
 void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns) {
 	_nTaxa     = nTaxa;
 	_nCat      = nCat;
@@ -55,24 +56,48 @@ void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned n
 	// multiple times to create multiple data partition instances each returning a unique
 	// identifier.
 	//
-	_instance = beagleCreateInstance(
-									_nTaxa,						// Number of tip data elements
-									(2*_nTaxa-2 - _nTaxa),		// Number of partials buffers to create
-									_nTaxa,						// Number of compact state representation buffers to create
-									_nStates,					// Number of states in the continuous-time Markov chain
-									_nPatterns,					// Number of site patterns to be handled by the instance;
-									1,							// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
-									(2*_nTaxa-3),				// Number of transition probability matrix buffers
-									_nCat,						// Number of rate categories; nCat=1 for the codon model
-									0,							// Number of scale buffers to create, ignored for auto scale or always scale                
-									NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
-									0,							// Length of resourceList list
-									0,							// Bit-flags indicating preferred implementation charactertistics
-									BEAGLE_FLAG_PROCESSOR_GPU | 
-									BEAGLE_FLAG_PRECISION_SINGLE | 
-									BEAGLE_FLAG_EIGEN_REAL | 
-									BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
-									&instDetails);				// Pointer to return implementation and resource details
+//	if (debug==0) {
+		_instance = beagleCreateInstance(
+										 _nTaxa,						// Number of tip data elements
+										 (2*_nTaxa-2 - _nTaxa),		// Number of partials buffers to create
+										 _nTaxa,						// Number of compact state representation buffers to create
+										 _nStates,					// Number of states in the continuous-time Markov chain
+										 _nPatterns,					// Number of site patterns to be handled by the instance;
+										 1,							// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
+										 (2*_nTaxa-3),				// Number of transition probability matrix buffers
+										 _nCat,						// Number of rate categories; nCat=1 for the codon model
+										 0,							// Number of scale buffers to create, ignored for auto scale or always scale                
+										 NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
+										 0,							// Length of resourceList list
+										 0,							// Bit-flags indicating preferred implementation charactertistics
+										 BEAGLE_FLAG_PROCESSOR_GPU | 
+										 BEAGLE_FLAG_PRECISION_SINGLE | 
+										 BEAGLE_FLAG_EIGEN_REAL | 
+										 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
+										 &instDetails);				// Pointer to return implementation and resource details
+//	}
+
+//	if (debug==1) {
+//		_instance = beagleCreateInstance(
+//										 _nTaxa,						// Number of tip data elements
+//										 (2*_nTaxa-2 - _nTaxa),		// Number of partials buffers to create
+//										 _nTaxa,						// Number of compact state representation buffers to create
+//										 _nStates,					// Number of states in the continuous-time Markov chain
+//										 _nPatterns,					// Number of site patterns to be handled by the instance;
+//										 1,							// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
+//										 (2*_nTaxa-3),				// Number of transition probability matrix buffers
+//										 _nCat,						// Number of rate categories; nCat=1 for the codon model
+//										 0,							// Number of scale buffers to create, ignored for auto scale or always scale                
+//										 NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
+//										 0,							// Length of resourceList list
+//										 0,							// Bit-flags indicating preferred implementation charactertistics
+//										 BEAGLE_FLAG_PROCESSOR_CPU | 
+//										 BEAGLE_FLAG_PRECISION_SINGLE | 
+//										 BEAGLE_FLAG_EIGEN_REAL | 
+//										 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
+//										 &instDetails);				// Pointer to return implementation and resource details
+//	}
+	
 	if(_instance < 0) {
 		std::cout << "Failed to obtain beagle instance.\n";
 		exit(1);
@@ -117,20 +142,16 @@ void BeagleLib::IndexNodes(TreeShPtr t) {
 	t->GetRoot()->SetTmp((double)tipIndex);
 }
 
-void BeagleLib::SetTipStates(TreeShPtr t) {	
+void BeagleLib::SetTipStates(TreeShPtr t, unsigned whichSubset) {	
 	IndexNodes(t);
 	for (preorder_iterator node = t->begin(); node != t->end(); ++node) {
 		if (node->IsTip()) {
 			TipData*            td = node->GetTipData();
-			const state_code_t* sc = td->getConstStateCodes(0); // TODO 0 means first subset
-			//std::vector<int> v(_nPatterns, 4);
-			std::vector<int> v(_nPatterns, 61);
+			const state_code_t* sc = td->getConstStateCodes(whichSubset);
+			std::vector<int> v(_nPatterns, _nStates);
 			for (int i = 0; i < _nPatterns; ++i) {
-//				if (sc[i] > 3) {
-//					v[i] = 4;
-//				}
-				if (sc[i] > 60) {
-					v[i] = 61;
+				if (sc[i] > _nStates-1) {
+					v[i] = _nStates;
 				}
 				else {
 					v[i] = sc[i];
@@ -195,7 +216,7 @@ void BeagleLib::SetEigenDecomposition(const std::vector<double> &eigenValues, co
 	//
 	int code = beagleSetEigenDecomposition(
 										   _instance,				// Instance number
-										   0,						// Index of eigen-decomposition buffer // TODO need add the support to the partition model
+										   0,						// Index of eigen-decomposition buffer
 										   &eigenVectors[0],		// Flattened matrix (stateCount x stateCount) of eigen-vectors
 										   &inverseEigenVectors[0],	// Flattened matrix (stateCount x stateCount) of inverse-eigen- vectors
 										   &eigenValues[0]);		// Vector of eigenvalues
@@ -270,66 +291,71 @@ void BeagleLib::DefineOperations(TreeShPtr t, double edgelenScaler) {
 }
 
 double BeagleLib::CalcLogLikelihood(TreeShPtr t) {
-	int list_len = (int)(2*_nTaxa-3);
-	int code;
-	  
-	// update transition probability matrix
-	// Calculate a list of transition probability matrices
-	// 
-	code = beagleUpdateTransitionMatrices(
-										_instance,			// Instance number
-										0,					// Index of eigen-decomposition buffer
-										&_pMatrixIndex[0],	// List of indices of transition probability matrices to update
-										NULL,				// List of indices of first derivative matrices to update (NULL implies no calculation)
-										NULL,				// List of indices of second derivative matrices to update (NULL implies no calculation)
-										&_brLens[0],		// List of edge lengths with which to perform calculations
-										list_len);			// Length of lists
-	if(code != 0) {
-		std::cout << "Failed to update transition matrices.\n";
-		exit(1);
+	if (!_reCalLogLikelihoodNeeded) {
+		return _logLikelihood;
 	}
-	
-	// Calculate or queue for calculation partials using a list of operations
-	//
-	int totalOperations = (int)(_operations.size()/7);
-	code = beagleUpdatePartials(
-							  _instance,							// Instance number
-							  (BeagleOperation*)&_operations[0],	// List of 7-tuples specifying operations
-							  totalOperations,						// Number of operations
-							  BEAGLE_OP_NONE);						// Index number of scaleBuffer to store accumulated factors
-	if(code != 0) {
-		std::cout << "Failed to update partials.\n";
-		exit(1);
-	}
+	else {
+		int list_len = (int)(2*_nTaxa-3);
+		int code;
 		
-	// This function integrates a list of partials at a parent and child node with respect
-	// to a set of partials-weights and state frequencies to return the log likelihood
-	// and first and second derivative sums
-	//
-	int stateFrequencyIndex  = 0;
-	int categoryWeightsIndex = 0;	
-	int cumulativeScalingIndex = BEAGLE_OP_NONE;
-	int childIndex = (int)t->GetRoot()->GetTmp();
-	int parentIndex = (int)t->GetRoot()->GetLeftChild()->GetTmp();
-	double logLikelihood = 0.0;
-	code = beagleCalculateEdgeLogLikelihoods(
-										   _instance,				// Instance number
-										   &parentIndex,			// List of indices of parent partialsBuffers
-										   &childIndex,				// List of indices of child partialsBuffers
-										   &childIndex,				// List indices of transition probability matrices for this edge
-										   NULL,					// List indices of first derivative matrices
-										   NULL,					// List indices of second derivative matrices
-										   &categoryWeightsIndex,	// List of weights to apply to each partialsBuffer
-										   &stateFrequencyIndex,	// List of state frequencies for each partialsBuffer. There should be one set for each of parentBufferIndices.
-										   &cumulativeScalingIndex,	// List of scaleBuffers containing accumulated factors to apply to each partialsBuffer. There should be one index for each of parentBufferIndices.
-										   1,						// Number of partialsBuffers
-										   &logLikelihood,			// Pointer to destination for resulting log likelihood
-										   NULL,					// Pointer to destination for resulting first derivative
-										   NULL);					// Pointer to destination for resulting second derivative
-	if(code != 0) {
-		std::cout << "Failed to calculate edge logLikelihoods in CalcLogLikelihood. The error code is " << code << ".\n";
-		exit(1);
+		// update transition probability matrix
+		// Calculate a list of transition probability matrices
+		// 
+		code = beagleUpdateTransitionMatrices(
+											  _instance,			// Instance number
+											  0,					// Index of eigen-decomposition buffer
+											  &_pMatrixIndex[0],	// List of indices of transition probability matrices to update
+											  NULL,					// List of indices of first derivative matrices to update (NULL implies no calculation)
+											  NULL,					// List of indices of second derivative matrices to update (NULL implies no calculation)
+											  &_brLens[0],			// List of edge lengths with which to perform calculations
+											  list_len);			// Length of lists
+		if(code != 0) {
+			std::cout << "Failed to update transition matrices.\n";
+			exit(1);
+		}
+		
+		// Calculate or queue for calculation partials using a list of operations
+		//
+		int totalOperations = (int)(_operations.size()/7);
+		code = beagleUpdatePartials(
+									_instance,							// Instance number
+									(BeagleOperation*)&_operations[0],	// List of 7-tuples specifying operations
+									totalOperations,					// Number of operations
+									BEAGLE_OP_NONE);					// Index number of scaleBuffer to store accumulated factors
+		if(code != 0) {
+			std::cout << "Failed to update partials.\n";
+			exit(1);
+		}
+		
+		// This function integrates a list of partials at a parent and child node with respect
+		// to a set of partials-weights and state frequencies to return the log likelihood
+		// and first and second derivative sums
+		//
+		int stateFrequencyIndex  = 0;
+		int categoryWeightsIndex = 0;	
+		int cumulativeScalingIndex = BEAGLE_OP_NONE;
+		int childIndex = (int)t->GetRoot()->GetTmp();
+		int parentIndex = (int)t->GetRoot()->GetLeftChild()->GetTmp();
+		_logLikelihood = 0.0;
+		code = beagleCalculateEdgeLogLikelihoods(
+												 _instance,					// Instance number
+												 &parentIndex,				// List of indices of parent partialsBuffers
+												 &childIndex,				// List of indices of child partialsBuffers
+												 &childIndex,				// List indices of transition probability matrices for this edge
+												 NULL,						// List indices of first derivative matrices
+												 NULL,						// List indices of second derivative matrices
+												 &categoryWeightsIndex,		// List of weights to apply to each partialsBuffer
+												 &stateFrequencyIndex,		// List of state frequencies for each partialsBuffer. There should be one set for each of parentBufferIndices.
+												 &cumulativeScalingIndex,	// List of scaleBuffers containing accumulated factors to apply to each partialsBuffer. There should be one index for each of parentBufferIndices.
+												 1,							// Number of partialsBuffers
+												 &_logLikelihood,			// Pointer to destination for resulting log likelihood
+												 NULL,						// Pointer to destination for resulting first derivative
+												 NULL);						// Pointer to destination for resulting second derivative
+		if(code != 0) {
+			std::cout << "Failed to calculate edge logLikelihoods in CalcLogLikelihood. The error code is " << code << ".\n";
+			exit(1);
+		}
+		
+		return _logLikelihood;
 	}
-
-	return logLikelihood;
 }
