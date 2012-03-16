@@ -32,40 +32,40 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 353037710;
-			PBXWorkspaceStateSaveDate = 353037710;
+			PBXPerProjectTemplateStateSaveDate = 353601439;
+			PBXWorkspaceStateSaveDate = 353601439;
 		};
 		perUserProjectItems = {
-			651A8E50150A4E98005B0A61 /* PBXTextBookmark */ = 651A8E50150A4E98005B0A61 /* PBXTextBookmark */;
-			651A8E66150A5A49005B0A61 /* PBXTextBookmark */ = 651A8E66150A5A49005B0A61 /* PBXTextBookmark */;
-			651A8E6B150A7475005B0A61 /* PBXTextBookmark */ = 651A8E6B150A7475005B0A61 /* PBXTextBookmark */;
-			651A8E6D150A7475005B0A61 /* PBXTextBookmark */ = 651A8E6D150A7475005B0A61 /* PBXTextBookmark */;
-			651A8E7D150A8495005B0A61 /* PBXTextBookmark */ = 651A8E7D150A8495005B0A61 /* PBXTextBookmark */;
-			651A8E84150A8728005B0A61 /* PBXTextBookmark */ = 651A8E84150A8728005B0A61 /* PBXTextBookmark */;
-			651FC5E015051AD600E97712 /* PBXTextBookmark */ = 651FC5E015051AD600E97712 /* PBXTextBookmark */;
-			651FC601150524E400E97712 /* PBXTextBookmark */ = 651FC601150524E400E97712 /* PBXTextBookmark */;
-			6538554E1508562B00B22A27 /* PBXTextBookmark */ = 6538554E1508562B00B22A27 /* PBXTextBookmark */;
-			6580797B150BFB5D00B155EC /* PBXTextBookmark */ = 6580797B150BFB5D00B155EC /* PBXTextBookmark */;
-			6580797C150BFB5D00B155EC /* PBXTextBookmark */ = 6580797C150BFB5D00B155EC /* PBXTextBookmark */;
-			6580797D150BFB5D00B155EC /* PBXTextBookmark */ = 6580797D150BFB5D00B155EC /* PBXTextBookmark */;
-			6580797E150BFB5D00B155EC /* PBXTextBookmark */ = 6580797E150BFB5D00B155EC /* PBXTextBookmark */;
-			6580797F150BFB5D00B155EC /* PBXTextBookmark */ = 6580797F150BFB5D00B155EC /* PBXTextBookmark */;
-			65807980150BFB5D00B155EC /* PBXTextBookmark */ = 65807980150BFB5D00B155EC /* PBXTextBookmark */;
-			65807989150C349C00B155EC /* PBXTextBookmark */ = 65807989150C349C00B155EC /* PBXTextBookmark */;
-			6580798A150C349C00B155EC /* PBXTextBookmark */ = 6580798A150C349C00B155EC /* PBXTextBookmark */;
-			6580798B150C349C00B155EC /* PBXTextBookmark */ = 6580798B150C349C00B155EC /* PBXTextBookmark */;
-			6580799C150C3EFF00B155EC /* PBXTextBookmark */ = 6580799C150C3EFF00B155EC /* PBXTextBookmark */;
-			6580799D150C3EFF00B155EC /* PBXTextBookmark */ = 6580799D150C3EFF00B155EC /* PBXTextBookmark */;
-			658079A8150C4D7800B155EC /* PBXTextBookmark */ = 658079A8150C4D7800B155EC /* PBXTextBookmark */;
-			658079A9150C4D7800B155EC /* PBXTextBookmark */ = 658079A9150C4D7800B155EC /* PBXTextBookmark */;
-			658079AA150C4D7800B155EC /* PBXTextBookmark */ = 658079AA150C4D7800B155EC /* PBXTextBookmark */;
-			658079B1150C522800B155EC /* PBXTextBookmark */ = 658079B1150C522800B155EC /* PBXTextBookmark */;
-			658079B2150C522800B155EC /* PBXTextBookmark */ = 658079B2150C522800B155EC /* PBXTextBookmark */;
-			658079B3150C522800B155EC /* PBXTextBookmark */ = 658079B3150C522800B155EC /* PBXTextBookmark */;
-			658079B5150C527200B155EC /* PBXTextBookmark */ = 658079B5150C527200B155EC /* PBXTextBookmark */;
-			65AB89EF1507B26F007666FD /* PBXTextBookmark */ = 65AB89EF1507B26F007666FD /* PBXTextBookmark */;
-			65AB8A091507C478007666FD /* PBXTextBookmark */ = 65AB8A091507C478007666FD /* PBXTextBookmark */;
-			65D970F51506F49D0095B459 /* PBXTextBookmark */ = 65D970F51506F49D0095B459 /* PBXTextBookmark */;
+			651A8E50150A4E98005B0A61 = 651A8E50150A4E98005B0A61 /* PBXTextBookmark */;
+			651A8E66150A5A49005B0A61 = 651A8E66150A5A49005B0A61 /* PBXTextBookmark */;
+			651A8E6B150A7475005B0A61 = 651A8E6B150A7475005B0A61 /* PBXTextBookmark */;
+			651A8E84150A8728005B0A61 = 651A8E84150A8728005B0A61 /* PBXTextBookmark */;
+			651FC5E015051AD600E97712 = 651FC5E015051AD600E97712 /* PBXTextBookmark */;
+			651FC601150524E400E97712 = 651FC601150524E400E97712 /* PBXTextBookmark */;
+			6538554E1508562B00B22A27 = 6538554E1508562B00B22A27 /* PBXTextBookmark */;
+			6580797C150BFB5D00B155EC = 6580797C150BFB5D00B155EC /* PBXTextBookmark */;
+			6580797D150BFB5D00B155EC = 6580797D150BFB5D00B155EC /* PBXTextBookmark */;
+			6580797F150BFB5D00B155EC = 6580797F150BFB5D00B155EC /* PBXTextBookmark */;
+			65807980150BFB5D00B155EC = 65807980150BFB5D00B155EC /* PBXTextBookmark */;
+			6580798A150C349C00B155EC = 6580798A150C349C00B155EC /* PBXTextBookmark */;
+			6580798B150C349C00B155EC = 6580798B150C349C00B155EC /* PBXTextBookmark */;
+			6580799C150C3EFF00B155EC = 6580799C150C3EFF00B155EC /* PBXTextBookmark */;
+			6580799D150C3EFF00B155EC = 6580799D150C3EFF00B155EC /* PBXTextBookmark */;
+			658079A8150C4D7800B155EC = 658079A8150C4D7800B155EC /* PBXTextBookmark */;
+			658079AA150C4D7800B155EC = 658079AA150C4D7800B155EC /* PBXTextBookmark */;
+			6582E2CE15102A9700E25DE2 = 6582E2CE15102A9700E25DE2 /* PBXTextBookmark */;
+			6582E2CF15102A9700E25DE2 = 6582E2CF15102A9700E25DE2 /* PBXTextBookmark */;
+			6582E2D015102A9700E25DE2 = 6582E2D015102A9700E25DE2 /* PBXTextBookmark */;
+			6582E2DF15103B4D00E25DE2 = 6582E2DF15103B4D00E25DE2 /* PBXTextBookmark */;
+			6582E2E11510BB0800E25DE2 = 6582E2E11510BB0800E25DE2 /* PBXTextBookmark */;
+			65AB89EF1507B26F007666FD = 65AB89EF1507B26F007666FD /* PBXTextBookmark */;
+			65AB8A091507C478007666FD = 65AB8A091507C478007666FD /* PBXTextBookmark */;
+			65D970F51506F49D0095B459 = 65D970F51506F49D0095B459 /* PBXTextBookmark */;
+			65E34A13150EDC85000AE098 = 65E34A13150EDC85000AE098 /* PBXTextBookmark */;
+			65ED34A4150EEC0C00449AC5 = 65ED34A4150EEC0C00449AC5 /* PBXTextBookmark */;
+			65ED34A5150EEC0C00449AC5 = 65ED34A5150EEC0C00449AC5 /* PBXTextBookmark */;
+			65ED34A6150EEC0C00449AC5 = 65ED34A6150EEC0C00449AC5 /* PBXTextBookmark */;
+			65ED34A7150EEC0C00449AC5 = 65ED34A7150EEC0C00449AC5 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 655E63CF14EED22600457B4F /* Source Control */;
 		userBuildSettings = {
@@ -103,26 +103,6 @@
 		rType = 0;
 		vrLen = 2698;
 		vrLoc = 3097;
-	};
-	651A8E6D150A7475005B0A61 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */;
-		name = "codon_model.cpp: 817";
-		rLen = 706;
-		rLoc = 29310;
-		rType = 0;
-		vrLen = 7663;
-		vrLoc = 22353;
-	};
-	651A8E7D150A8495005B0A61 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */;
-		name = "q_matrix.hpp: 136";
-		rLen = 7;
-		rLoc = 6061;
-		rType = 0;
-		vrLen = 2393;
-		vrLoc = 3859;
 	};
 	651A8E84150A8728005B0A61 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -195,22 +175,12 @@
 	};
 	655E63D914EED3AE00457B4F /* beaglelib.cpp */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1, 132}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 14296}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1032, 4224}}";
-			sepNavSelRange = "{3060, 0}";
-			sepNavVisRange = "{3614, 2162}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1, 132}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 14715}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1344, 4740}}";
+			sepNavSelRange = "{12286, 0}";
+			sepNavVisRange = "{10499, 1793}";
 			sepNavWindowFrame = "{{15, 31}, {971, 747}}";
 		};
-	};
-	6580797B150BFB5D00B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */;
-		name = "likelihood_models.cpp: 327";
-		rLen = 14;
-		rLoc = 14397;
-		rType = 0;
-		vrLen = 4314;
-		vrLoc = 11366;
 	};
 	6580797C150BFB5D00B155EC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -232,16 +202,6 @@
 		vrLen = 2420;
 		vrLoc = 0;
 	};
-	6580797E150BFB5D00B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09460410CAEFB900CEFDE0 /* partition_model.cpp */;
-		name = "partition_model.cpp: 218";
-		rLen = 18;
-		rLoc = 9658;
-		rType = 0;
-		vrLen = 4505;
-		vrLoc = 7677;
-	};
 	6580797F150BFB5D00B155EC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */;
@@ -261,16 +221,6 @@
 		rType = 0;
 		vrLen = 1878;
 		vrLoc = 1505;
-	};
-	65807989150C349C00B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */;
-		name = "q_matrix.cpp: 91";
-		rLen = 0;
-		rLoc = 2837;
-		rType = 0;
-		vrLen = 6382;
-		vrLoc = 6579;
 	};
 	6580798A150C349C00B155EC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -322,16 +272,6 @@
 		vrLen = 5194;
 		vrLoc = 8022;
 	};
-	658079A9150C4D7800B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */;
-		name = "gtr_model.cpp: 603";
-		rLen = 0;
-		rLoc = 26936;
-		rType = 0;
-		vrLen = 6531;
-		vrLoc = 20480;
-	};
 	658079AA150C4D7800B155EC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */;
@@ -342,45 +282,55 @@
 		vrLen = 3005;
 		vrLoc = 2994;
 	};
-	658079B1150C522800B155EC /* PBXTextBookmark */ = {
+	6582E2CE15102A9700E25DE2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */;
+		name = "q_matrix.hpp: 136";
+		rLen = 7;
+		rLoc = 6061;
+		rType = 0;
+		vrLen = 2406;
+		vrLoc = 3846;
+	};
+	6582E2CF15102A9700E25DE2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */;
+		name = "q_matrix.cpp: 91";
+		rLen = 0;
+		rLoc = 2837;
+		rType = 0;
+		vrLen = 2063;
+		vrLoc = 15784;
+	};
+	6582E2D015102A9700E25DE2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
+		name = "beaglelib.cpp: 333";
+		rLen = 0;
+		rLoc = 12417;
+		rType = 0;
+		vrLen = 1793;
+		vrLoc = 10630;
+	};
+	6582E2DF15103B4D00E25DE2 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		name = "tree_likelihood.cpp: 2573";
+		name = "tree_likelihood.cpp: 2654";
 		rLen = 0;
-		rLoc = 99270;
+		rLoc = 103174;
 		rType = 0;
-		vrLen = 2745;
-		vrLoc = 98082;
+		vrLen = 2446;
+		vrLoc = 100729;
 	};
-	658079B2150C522800B155EC /* PBXTextBookmark */ = {
+	6582E2E11510BB0800E25DE2 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 655E63D814EED3AE00457B4F /* beaglelib.hpp */;
-		name = "beaglelib.hpp: 25";
+		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
+		name = "tree_likelihood.cpp: 2631";
 		rLen = 0;
-		rLoc = 525;
+		rLoc = 102313;
 		rType = 0;
-		vrLen = 1495;
-		vrLoc = 0;
-	};
-	658079B3150C522800B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
-		name = "beaglelib.cpp: 93";
-		rLen = 0;
-		rLoc = 3173;
-		rType = 0;
-		vrLen = 2514;
-		vrLoc = 561;
-	};
-	658079B5150C527200B155EC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 655E63D914EED3AE00457B4F /* beaglelib.cpp */;
-		name = "beaglelib.cpp: 80";
-		rLen = 0;
-		rLoc = 3191;
-		rType = 0;
-		vrLen = 2162;
-		vrLoc = 3745;
+		vrLen = 2413;
+		vrLoc = 100721;
 	};
 	65AB89EF1507B26F007666FD /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -411,6 +361,56 @@
 		rType = 0;
 		vrLen = 2426;
 		vrLoc = 0;
+	};
+	65E34A13150EDC85000AE098 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 655E63D814EED3AE00457B4F /* beaglelib.hpp */;
+		name = "beaglelib.hpp: 25";
+		rLen = 0;
+		rLoc = 525;
+		rType = 0;
+		vrLen = 1495;
+		vrLoc = 0;
+	};
+	65ED34A4150EEC0C00449AC5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */;
+		name = "gtr_model.cpp: 603";
+		rLen = 0;
+		rLoc = 26936;
+		rType = 0;
+		vrLen = 13212;
+		vrLoc = 0;
+	};
+	65ED34A5150EEC0C00449AC5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */;
+		name = "codon_model.cpp: 817";
+		rLen = 706;
+		rLoc = 29310;
+		rType = 0;
+		vrLen = 7785;
+		vrLoc = 22231;
+	};
+	65ED34A6150EEC0C00449AC5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */;
+		name = "likelihood_models.cpp: 327";
+		rLen = 14;
+		rLoc = 14397;
+		rType = 0;
+		vrLen = 4314;
+		vrLoc = 11366;
+	};
+	65ED34A7150EEC0C00449AC5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09460410CAEFB900CEFDE0 /* partition_model.cpp */;
+		name = "partition_model.cpp: 218";
+		rLen = 18;
+		rLoc = 9658;
+		rType = 0;
+		vrLen = 4205;
+		vrLoc = 6432;
 	};
 	7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */ = {
 		uiCtxt = {
@@ -478,9 +478,9 @@
 	7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{5850, 681}\";\n            s = 0;\n        },\n                {\n            r = \"{6807, 113}\";\n            s = 0;\n        },\n                {\n            r = \"{8091, 2708}\";\n            s = 0;\n        },\n                {\n            r = \"{11620, 337}\";\n            s = 0;\n        },\n                {\n            r = \"{12506, 483}\";\n            s = 0;\n        },\n                {\n            r = \"{13391, 72}\";\n            s = 0;\n        },\n                {\n            r = \"{13784, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{14260, 72}\";\n            s = 0;\n        },\n                {\n            r = \"{14653, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{14930, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{15212, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{15500, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{15782, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{16088, 23}\";\n            s = 0;\n        },\n                {\n            r = \"{16377, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{16618, 23}\";\n            s = 0;\n        },\n                {\n            r = \"{16907, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{17162, 28}\";\n            s = 0;\n        },\n                {\n            r = \"{17422, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{17733, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{18032, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{18687, 40}\";\n            s = 0;\n        },\n                {\n            r = \"{19119, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{19732, 221}\";\n            s = 0;\n        },\n                {\n            r = \"{20915, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{21644, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{22161, 68}\";\n            s = 0;\n        },\n                {\n            r = \"{23681, 3559}\";\n            s = 0;\n        },\n                {\n            r = \"{27652, 1655}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 30016}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {984, 5736}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1386, 6108}}";
 			sepNavSelRange = "{18412, 706}";
-			sepNavVisRange = "{16667, 2451}";
+			sepNavVisRange = "{16545, 2573}";
 		};
 	};
 	7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */ = {
@@ -509,7 +509,7 @@
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1, 1437}\";\n            s = 0;\n        },\n                {\n            r = \"{1721, 268}\";\n            s = 0;\n        },\n                {\n            r = \"{2041, 244}\";\n            s = 0;\n        },\n                {\n            r = \"{2289, 220}\";\n            s = 0;\n        },\n                {\n            r = \"{2551, 111}\";\n            s = 0;\n        },\n                {\n            r = \"{2666, 448}\";\n            s = 0;\n        },\n                {\n            r = \"{3167, 85}\";\n            s = 0;\n        },\n                {\n            r = \"{3288, 53}\";\n            s = 0;\n        },\n                {\n            r = \"{3385, 39}\";\n            s = 0;\n        },\n                {\n            r = \"{3462, 56}\";\n            s = 0;\n        },\n                {\n            r = \"{3546, 183}\";\n            s = 0;\n        },\n                {\n            r = \"{3733, 6050}\";\n            s = 0;\n        },\n                {\n            r = \"{9787, 324}\";\n            s = 0;\n        },\n                {\n            r = \"{10176, 42}\";\n            s = 0;\n        },\n                {\n            r = \"{10222, 137}\";\n            s = 0;\n        },\n                {\n            r = \"{10408, 40}\";\n            s = 0;\n        },\n                {\n            r = \"{10452, 338}\";\n            s = 0;\n        },\n                {\n            r = \"{10838, 199}\";\n            s = 0;\n        },\n                {\n            r = \"{11041, 338}\";\n            s = 0;\n        },\n                {\n            r = \"{11427, 199}\";\n            s = 0;\n        },\n                {\n            r = \"{11630, 382}\";\n            s = 0;\n        },\n                {\n            r = \"{12040, 414}\";\n            s = 0;\n        },\n                {\n            r = \"{12458, 305}\";\n            s = 0;\n        },\n                {\n            r = \"{12792, 417}\";\n            s = 0;\n        },\n                {\n            r = \"{13423, 21}\";\n            s = 0;\n        },\n                {\n            r = \"{13448, 382}\";\n            s = 0;\n        },\n                {\n            r = \"{13892, 685}\";\n            s = 0;\n        },\n                {\n            r = \"{14581, 329}\";\n            s = 0;\n        },\n                {\n            r = \"{14966, 76}\";\n            s = 0;\n        },\n                {\n            r = \"{15064, 49}\";\n            s = 0;\n        },\n                {\n            r = \"{15117, 806}\";\n            s = 0;\n        },\n                {\n            r = \"{15927, 178}\";\n            s = 0;\n        },\n                {\n            r = \"{16155, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{16185, 184}\";\n            s = 0;\n        },\n                {\n            r = \"{16416, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{16452, 217}\";\n            s = 0;\n        },\n                {\n            r = \"{16725, 23}\";\n            s = 0;\n        },\n                {\n            r = \"{16752, 223}\";\n            s = 0;\n        },\n                {\n            r = \"{17028, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{17061, 401}\";\n            s = 0;\n        },\n                {\n            r = \"{17514, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{17569, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{17624, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{17679, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{17718, 96}\";\n            s = 0;\n        },\n                {\n            r = \"{17818, 411}\";\n            s = 0;\n        },\n                {\n            r = \"{18262, 68}\";\n            s = 0;\n        },\n                {\n            r = \"{18334, 543}\";\n            s = 0;\n        },\n                {\n            r = \"{18935, 84}\";\n            s = 0;\n        },\n                {\n            r = \"{19041, 57}\";\n            s = 0;\n        },\n                {\n            r = \"{19102, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{19194, 522}\";\n            s = 0;\n        },\n                {\n            r = \"{19788, 44}\";\n            s = 0;\n        },\n                {\n            r = \"{19836, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{19917, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{20146, 28}\";\n            s = 0;\n        },\n                {\n            r = \"{20178, 219}\";\n            s = 0;\n        },\n                {\n            r = \"{20452, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{20481, 174}\";\n            s = 0;\n        },\n                {\n            r = \"{20707, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{20733, 225}\";\n            s = 0;\n        },\n                {\n            r = \"{21016, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{21039, 623}\";\n            s = 0;\n        },\n                {\n            r = \"{21702, 155}\";\n            s = 0;\n        },\n                {\n            r = \"{21861, 334}\";\n            s = 0;\n        },\n                {\n            r = \"{22199, 431}\";\n            s = 0;\n        },\n                {\n            r = \"{22691, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{22773, 60}\";\n            s = 0;\n        },\n                {\n            r = \"{22837, 1009}\";\n            s = 0;\n        },\n                {\n            r = \"{23850, 1673}\";\n            s = 0;\n        },\n                {\n            r = \"{25552, 407}\";\n            s = 0;\n        },\n                {\n            r = \"{25963, 170}\";\n            s = 0;\n        },\n                {\n            r = \"{26191, 83}\";\n            s = 0;\n        },\n                {\n            r = \"{26278, 34}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 27011}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {984, 2064}}";
 			sepNavSelRange = "{2988, 0}";
-			sepNavVisRange = "{1972, 1091}";
+			sepNavVisRange = "{0, 907}";
 		};
 	};
 	7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */ = {
@@ -536,7 +536,7 @@
 	7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */ = {
 		uiCtxt = {
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{2849, 55}\";\n            s = 0;\n        },\n                {\n            r = \"{3076, 67}\";\n            s = 0;\n        },\n                {\n            r = \"{3329, 136}\";\n            s = 0;\n        },\n                {\n            r = \"{3898, 280}\";\n            s = 0;\n        },\n                {\n            r = \"{4389, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{4711, 59}\";\n            s = 0;\n        },\n                {\n            r = \"{5062, 53}\";\n            s = 0;\n        },\n                {\n            r = \"{5373, 49}\";\n            s = 0;\n        },\n                {\n            r = \"{5778, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{6068, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{6459, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{6752, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{7143, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{7430, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{7794, 64}\";\n            s = 0;\n        },\n                {\n            r = \"{8484, 79}\";\n            s = 0;\n        },\n                {\n            r = \"{8797, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{9210, 23}\";\n            s = 0;\n        },\n                {\n            r = \"{10112, 313}\";\n            s = 0;\n        },\n                {\n            r = \"{10953, 170}\";\n            s = 0;\n        },\n                {\n            r = \"{11903, 149}\";\n            s = 0;\n        },\n                {\n            r = \"{12451, 192}\";\n            s = 0;\n        },\n                {\n            r = \"{12986, 327}\";\n            s = 0;\n        },\n                {\n            r = \"{13927, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{14422, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{15004, 345}\";\n            s = 0;\n        },\n                {\n            r = \"{15682, 28}\";\n            s = 0;\n        },\n                {\n            r = \"{16038, 145}\";\n            s = 0;\n        },\n                {\n            r = \"{16422, 23}\";\n            s = 0;\n        },\n                {\n            r = \"{16803, 68}\";\n            s = 0;\n        },\n                {\n            r = \"{17339, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{17791, 90}\";\n            s = 0;\n        },\n                {\n            r = \"{18222, 92}\";\n            s = 0;\n        },\n                {\n            r = \"{18549, 18}\";\n            s = 0;\n        },\n                {\n            r = \"{18952, 90}\";\n            s = 0;\n        },\n                {\n            r = \"{19242, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{19467, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{19695, 28}\";\n            s = 0;\n        },\n                {\n            r = \"{19942, 36}\";\n            s = 0;\n        },\n                {\n            r = \"{20185, 30}\";\n            s = 0;\n        },\n                {\n            r = \"{20426, 261}\";\n            s = 0;\n        },\n                {\n            r = \"{20900, 331}\";\n            s = 0;\n        },\n                {\n            r = \"{21520, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{22026, 216}\";\n            s = 0;\n        },\n                {\n            r = \"{22655, 250}\";\n            s = 0;\n        },\n                {\n            r = \"{23246, 252}\";\n            s = 0;\n        },\n                {\n            r = \"{23721, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{24097, 42}\";\n            s = 0;\n        },\n                {\n            r = \"{24445, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{24895, 75}\";\n            s = 0;\n        },\n                {\n            r = \"{25295, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{25612, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{25876, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{26125, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{26378, 21}\";\n            s = 0;\n        },\n                {\n            r = \"{26937, 997}\";\n            s = 0;\n        },\n                {\n            r = \"{28344, 120}\";\n            s = 0;\n        },\n                {\n            r = \"{29455, 1098}\";\n            s = 0;\n        },\n                {\n            r = \"{32685, 1314}\";\n            s = 0;\n        },\n                {\n            r = \"{34331, 42}\";\n            s = 0;\n        },\n                {\n            r = \"{35420, 8251}\";\n            s = 0;\n        },\n                {\n            r = \"{44204, 412}\";\n            s = 0;\n        },\n                {\n            r = \"{45364, 625}\";\n            s = 0;\n        },\n                {\n            r = \"{46425, 193}\";\n            s = 0;\n        },\n                {\n            r = \"{46877, 575}\";\n            s = 0;\n        },\n                {\n            r = \"{48156, 337}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 48510}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {984, 7692}}";
+			sepNavIntBoundsRect = "{{0, 0}, {984, 7704}}";
 			sepNavSelRange = "{12153, 14}";
 			sepNavVisRange = "{9813, 3253}";
 		};
@@ -632,7 +632,7 @@
 			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1696, 2}\";\n            s = 0;\n        },\n                {\n            r = \"{1890, 66}\";\n            s = 0;\n        },\n                {\n            r = \"{2227, 341}\";\n            s = 0;\n        },\n                {\n            r = \"{2830, 191}\";\n            s = 0;\n        },\n                {\n            r = \"{3259, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{3525, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{3858, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{4138, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{4982, 1446}\";\n            s = 0;\n        },\n                {\n            r = \"{6788, 39}\";\n            s = 0;\n        },\n                {\n            r = \"{7088, 31}\";\n            s = 0;\n        },\n                {\n            r = \"{7413, 80}\";\n            s = 0;\n        },\n                {\n            r = \"{7750, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{8034, 28}\";\n            s = 0;\n        },\n                {\n            r = \"{8282, 245}\";\n            s = 0;\n        },\n                {\n            r = \"{8782, 653}\";\n            s = 0;\n        },\n                {\n            r = \"{9720, 197}\";\n            s = 0;\n        },\n                {\n            r = \"{10190, 445}\";\n            s = 0;\n        },\n                {\n            r = \"{10912, 187}\";\n            s = 0;\n        },\n                {\n            r = \"{11372, 182}\";\n            s = 0;\n        },\n                {\n            r = \"{11824, 167}\";\n            s = 0;\n        },\n                {\n            r = \"{12257, 31}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 12321}\";\n    s = 0;\n}";
 			sepNavIntBoundsRect = "{{0, 0}, {984, 2004}}";
 			sepNavSelRange = "{6366, 18}";
-			sepNavVisRange = "{5336, 2381}";
+			sepNavVisRange = "{4238, 2467}";
 		};
 	};
 	7A09460510CAEFB900CEFDE0 /* partition_model.hpp */ = {
@@ -665,17 +665,17 @@
 	};
 	7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1871, 144}\";\n            s = 0;\n        },\n                {\n            r = \"{2166, 12}\";\n            s = 0;\n        },\n                {\n            r = \"{2479, 358}\";\n            s = 0;\n        },\n                {\n            r = \"{3137, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{3520, 21}\";\n            s = 0;\n        },\n                {\n            r = \"{3839, 97}\";\n            s = 0;\n        },\n                {\n            r = \"{4231, 267}\";\n            s = 0;\n        },\n                {\n            r = \"{4989, 889}\";\n            s = 0;\n        },\n                {\n            r = \"{6281, 49}\";\n            s = 0;\n        },\n                {\n            r = \"{6630, 110}\";\n            s = 0;\n        },\n                {\n            r = \"{6906, 56}\";\n            s = 0;\n        },\n                {\n            r = \"{7400, 192}\";\n            s = 0;\n        },\n                {\n            r = \"{8172, 2419}\";\n            s = 0;\n        },\n                {\n            r = \"{11147, 1189}\";\n            s = 0;\n        },\n                {\n            r = \"{13669, 497}\";\n            s = 0;\n        },\n                {\n            r = \"{14528, 69}\";\n            s = 0;\n        },\n                {\n            r = \"{14910, 66}\";\n            s = 0;\n        },\n                {\n            r = \"{15391, 136}\";\n            s = 0;\n        },\n                {\n            r = \"{15818, 83}\";\n            s = 0;\n        },\n                {\n            r = \"{16191, 80}\";\n            s = 0;\n        },\n                {\n            r = \"{16663, 188}\";\n            s = 0;\n        },\n                {\n            r = \"{17057, 68}\";\n            s = 0;\n        },\n                {\n            r = \"{17199, 68}\";\n            s = 0;\n        },\n                {\n            r = \"{17343, 69}\";\n            s = 0;\n        },\n                {\n            r = \"{17502, 255}\";\n            s = 0;\n        },\n                {\n            r = \"{17802, 43}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 17847}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {984, 3012}}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{1871, 144}\";\n            s = 0;\n        },\n                {\n            r = \"{2166, 12}\";\n            s = 0;\n        },\n                {\n            r = \"{2479, 358}\";\n            s = 0;\n        },\n                {\n            r = \"{3137, 77}\";\n            s = 0;\n        },\n                {\n            r = \"{3520, 21}\";\n            s = 0;\n        },\n                {\n            r = \"{3839, 97}\";\n            s = 0;\n        },\n                {\n            r = \"{4231, 267}\";\n            s = 0;\n        },\n                {\n            r = \"{4989, 889}\";\n            s = 0;\n        },\n                {\n            r = \"{6281, 49}\";\n            s = 0;\n        },\n                {\n            r = \"{6630, 110}\";\n            s = 0;\n        },\n                {\n            r = \"{6906, 56}\";\n            s = 0;\n        },\n                {\n            r = \"{7400, 192}\";\n            s = 0;\n        },\n                {\n            r = \"{8172, 2419}\";\n            s = 0;\n        },\n                {\n            r = \"{11147, 1189}\";\n            s = 0;\n        },\n                {\n            r = \"{13669, 497}\";\n            s = 0;\n        },\n                {\n            r = \"{14528, 69}\";\n            s = 0;\n        },\n                {\n            r = \"{14910, 66}\";\n            s = 0;\n        },\n                {\n            r = \"{15391, 136}\";\n            s = 0;\n        },\n                {\n            r = \"{15818, 83}\";\n            s = 0;\n        },\n                {\n            r = \"{16191, 80}\";\n            s = 0;\n        },\n                {\n            r = \"{16663, 188}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 17847}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {984, 3552}}";
 			sepNavSelRange = "{2326, 0}";
-			sepNavVisRange = "{4674, 2421}";
+			sepNavVisRange = "{9154, 1715}";
 		};
 	};
 	7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2076, 1728}}";
 			sepNavSelRange = "{6061, 7}";
-			sepNavVisRange = "{3859, 2393}";
+			sepNavVisRange = "{3846, 2406}";
 		};
 	};
 	7A09461710CAEFB900CEFDE0 /* q_matrix.inl */ = {
@@ -737,10 +737,10 @@
 	};
 	7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {
 		uiCtxt = {
-			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{4167, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4354, 113}\";\n            s = 0;\n        },\n                {\n            r = \"{4548, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4756, 133}\";\n            s = 0;\n        },\n                {\n            r = \"{5078, 2}\";\n            s = 0;\n        },\n                {\n            r = \"{5136, 63}\";\n            s = 0;\n        },\n                {\n            r = \"{5291, 769}\";\n            s = 0;\n        },\n                {\n            r = \"{7957, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{8408, 31}\";\n            s = 0;\n        },\n                {\n            r = \"{8788, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{9177, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{9489, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{9802, 41}\";\n            s = 0;\n        },\n                {\n            r = \"{10094, 34}\";\n            s = 0;\n        },\n                {\n            r = \"{10499, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{11100, 376}\";\n            s = 0;\n        },\n                {\n            r = \"{11705, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{12154, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{12251, 1245}\";\n            s = 0;\n        },\n                {\n            r = \"{13764, 195}\";\n            s = 0;\n        },\n                {\n            r = \"{14738, 14917}\";\n            s = 0;\n        },\n                {\n            r = \"{30000, 125}\";\n            s = 0;\n        },\n                {\n            r = \"{30572, 52}\";\n            s = 0;\n        },\n                {\n            r = \"{31049, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{31549, 38}\";\n            s = 0;\n        },\n                {\n            r = \"{32076, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{32444, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{32955, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{33679, 64}\";\n            s = 0;\n        },\n                {\n            r = \"{34273, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{34990, 1401}\";\n            s = 0;\n        },\n                {\n            r = \"{37050, 2176}\";\n            s = 0;\n        },\n                {\n            r = \"{39466, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{39728, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{40074, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{41843, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{42531, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{42923, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{43195, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{43737, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{44210, 103}\";\n            s = 0;\n        },\n                {\n            r = \"{44595, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{44877, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{45165, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{46092, 79}\";\n            s = 0;\n        },\n                {\n            r = \"{46619, 257}\";\n            s = 0;\n        },\n                {\n            r = \"{47456, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{48038, 108}\";\n            s = 0;\n        },\n                {\n            r = \"{48979, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{55579, 973}\";\n            s = 0;\n        },\n                {\n            r = \"{57161, 1317}\";\n            s = 0;\n        },\n                {\n            r = \"{58715, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{59197, 947}\";\n            s = 0;\n        },\n                {\n            r = \"{61651, 1166}\";\n            s = 0;\n        },\n                {\n            r = \"{63753, 208}\";\n            s = 0;\n        },\n                {\n            r = \"{64517, 731}\";\n            s = 0;\n        },\n                {\n            r = \"{66075, 771}\";\n            s = 0;\n        },\n                {\n            r = \"{67659, 1205}\";\n            s = 0;\n        },\n                {\n            r = \"{70095, 1495}\";\n            s = 0;\n        },\n                {\n            r = \"{72284, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{73259, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{76208, 9931}\";\n            s = 0;\n        },\n                {\n            r = \"{86616, 697}\";\n            s = 0;\n        },\n                {\n            r = \"{87723, 605}\";\n            s = 0;\n        },\n                {\n            r = \"{89007, 629}\";\n            s = 0;\n        },\n                {\n            r = \"{89962, 407}\";\n            s = 0;\n        },\n                {\n            r = \"{90979, 1262}\";\n            s = 0;\n        },\n                {\n            r = \"{105439, 2278}\";\n            s = 0;\n        },\n                {\n            r = \"{110130, 1512}\";\n            s = 0;\n        },\n                {\n            r = \"{112247, 6328}\";\n            s = 0;\n        },\n                {\n            r = \"{119042, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{119897, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{120727, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{121452, 616}\";\n            s = 0;\n        },\n                {\n            r = \"{122572, 4053}\";\n            s = 0;\n        },\n                {\n            r = \"{127623, 1261}\";\n            s = 0;\n        },\n                {\n            r = \"{143961, 895}\";\n            s = 0;\n        },\n                {\n            r = \"{145222, 551}\";\n            s = 0;\n        },\n                {\n            r = \"{146161, 290}\";\n            s = 0;\n        },\n                {\n            r = \"{146882, 239}\";\n            s = 0;\n        },\n                {\n            r = \"{147540, 237}\";\n            s = 0;\n        },\n                {\n            r = \"{148257, 1208}\";\n            s = 0;\n        },\n                {\n            r = \"{149882, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{150251, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{151610, 3995}\";\n            s = 0;\n        },\n                {\n            r = \"{156780, 1956}\";\n            s = 0;\n        },\n                {\n            r = \"{159462, 821}\";\n            s = 0;\n        },\n                {\n            r = \"{160503, 15}\";\n            s = 0;\n        },\n                {\n            r = \"{160788, 18}\";\n            s = 0;\n        },\n                {\n            r = \"{161072, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{161589, 1383}\";\n            s = 0;\n        },\n                {\n            r = \"{165863, 1559}\";\n            s = 0;\n        },\n                {\n            r = \"{167709, 4678}\";\n            s = 0;\n        },\n                {\n            r = \"{172707, 4609}\";\n            s = 0;\n        },\n                {\n            r = \"{177750, 202}\";\n            s = 0;\n        },\n                {\n            r = \"{178048, 4691}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 182765}\";\n    s = 0;\n}";
-			sepNavIntBoundsRect = "{{0, 0}, {1219, 27972}}";
-			sepNavSelRange = "{90053, 18}";
-			sepNavVisRange = "{84279, 1248}";
+			sepNavFolds = "{\n    c =     (\n                {\n            r = \"{4167, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4354, 113}\";\n            s = 0;\n        },\n                {\n            r = \"{4548, 123}\";\n            s = 0;\n        },\n                {\n            r = \"{4756, 133}\";\n            s = 0;\n        },\n                {\n            r = \"{5078, 2}\";\n            s = 0;\n        },\n                {\n            r = \"{5136, 63}\";\n            s = 0;\n        },\n                {\n            r = \"{5291, 769}\";\n            s = 0;\n        },\n                {\n            r = \"{7957, 224}\";\n            s = 0;\n        },\n                {\n            r = \"{8408, 31}\";\n            s = 0;\n        },\n                {\n            r = \"{8788, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{9177, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{9489, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{9802, 41}\";\n            s = 0;\n        },\n                {\n            r = \"{10094, 34}\";\n            s = 0;\n        },\n                {\n            r = \"{10499, 33}\";\n            s = 0;\n        },\n                {\n            r = \"{11100, 376}\";\n            s = 0;\n        },\n                {\n            r = \"{11705, 24}\";\n            s = 0;\n        },\n                {\n            r = \"{12154, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{12251, 1245}\";\n            s = 0;\n        },\n                {\n            r = \"{13764, 195}\";\n            s = 0;\n        },\n                {\n            r = \"{14738, 14917}\";\n            s = 0;\n        },\n                {\n            r = \"{30000, 125}\";\n            s = 0;\n        },\n                {\n            r = \"{30572, 52}\";\n            s = 0;\n        },\n                {\n            r = \"{31049, 35}\";\n            s = 0;\n        },\n                {\n            r = \"{31549, 38}\";\n            s = 0;\n        },\n                {\n            r = \"{32076, 37}\";\n            s = 0;\n        },\n                {\n            r = \"{32444, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{32955, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{33679, 64}\";\n            s = 0;\n        },\n                {\n            r = \"{34273, 74}\";\n            s = 0;\n        },\n                {\n            r = \"{34990, 1401}\";\n            s = 0;\n        },\n                {\n            r = \"{37050, 2176}\";\n            s = 0;\n        },\n                {\n            r = \"{39466, 19}\";\n            s = 0;\n        },\n                {\n            r = \"{39728, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{40074, 48}\";\n            s = 0;\n        },\n                {\n            r = \"{41843, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{42531, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{42923, 43}\";\n            s = 0;\n        },\n                {\n            r = \"{43195, 17}\";\n            s = 0;\n        },\n                {\n            r = \"{43737, 180}\";\n            s = 0;\n        },\n                {\n            r = \"{44210, 103}\";\n            s = 0;\n        },\n                {\n            r = \"{44595, 27}\";\n            s = 0;\n        },\n                {\n            r = \"{44877, 22}\";\n            s = 0;\n        },\n                {\n            r = \"{45165, 26}\";\n            s = 0;\n        },\n                {\n            r = \"{46092, 79}\";\n            s = 0;\n        },\n                {\n            r = \"{46619, 257}\";\n            s = 0;\n        },\n                {\n            r = \"{47456, 99}\";\n            s = 0;\n        },\n                {\n            r = \"{48038, 108}\";\n            s = 0;\n        },\n                {\n            r = \"{48979, 25}\";\n            s = 0;\n        },\n                {\n            r = \"{55579, 973}\";\n            s = 0;\n        },\n                {\n            r = \"{57161, 1317}\";\n            s = 0;\n        },\n                {\n            r = \"{58715, 20}\";\n            s = 0;\n        },\n                {\n            r = \"{59197, 947}\";\n            s = 0;\n        },\n                {\n            r = \"{61651, 1166}\";\n            s = 0;\n        },\n                {\n            r = \"{63753, 208}\";\n            s = 0;\n        },\n                {\n            r = \"{64517, 731}\";\n            s = 0;\n        },\n                {\n            r = \"{66075, 771}\";\n            s = 0;\n        },\n                {\n            r = \"{67659, 1205}\";\n            s = 0;\n        },\n                {\n            r = \"{70095, 1495}\";\n            s = 0;\n        },\n                {\n            r = \"{72284, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{73259, 214}\";\n            s = 0;\n        },\n                {\n            r = \"{76208, 9931}\";\n            s = 0;\n        },\n                {\n            r = \"{86616, 697}\";\n            s = 0;\n        },\n                {\n            r = \"{87723, 605}\";\n            s = 0;\n        },\n                {\n            r = \"{89007, 629}\";\n            s = 0;\n        },\n                {\n            r = \"{89962, 407}\";\n            s = 0;\n        },\n                {\n            r = \"{90979, 1262}\";\n            s = 0;\n        },\n                {\n            r = \"{106114, 2278}\";\n            s = 0;\n        },\n                {\n            r = \"{110805, 1512}\";\n            s = 0;\n        },\n                {\n            r = \"{112922, 6328}\";\n            s = 0;\n        },\n                {\n            r = \"{119717, 88}\";\n            s = 0;\n        },\n                {\n            r = \"{120572, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{121402, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{122127, 616}\";\n            s = 0;\n        },\n                {\n            r = \"{123247, 4053}\";\n            s = 0;\n        },\n                {\n            r = \"{128298, 1261}\";\n            s = 0;\n        },\n                {\n            r = \"{144636, 895}\";\n            s = 0;\n        },\n                {\n            r = \"{145897, 551}\";\n            s = 0;\n        },\n                {\n            r = \"{146836, 290}\";\n            s = 0;\n        },\n                {\n            r = \"{147557, 239}\";\n            s = 0;\n        },\n                {\n            r = \"{148215, 237}\";\n            s = 0;\n        },\n                {\n            r = \"{148932, 1208}\";\n            s = 0;\n        },\n                {\n            r = \"{150557, 29}\";\n            s = 0;\n        },\n                {\n            r = \"{150926, 32}\";\n            s = 0;\n        },\n                {\n            r = \"{152285, 3995}\";\n            s = 0;\n        },\n                {\n            r = \"{157455, 1956}\";\n            s = 0;\n        },\n                {\n            r = \"{160137, 821}\";\n            s = 0;\n        },\n                {\n            r = \"{161178, 15}\";\n            s = 0;\n        },\n                {\n            r = \"{161463, 18}\";\n            s = 0;\n        },\n                {\n            r = \"{161747, 13}\";\n            s = 0;\n        },\n                {\n            r = \"{162264, 1383}\";\n            s = 0;\n        },\n                {\n            r = \"{166538, 1559}\";\n            s = 0;\n        },\n                {\n            r = \"{168384, 4678}\";\n            s = 0;\n        },\n                {\n            r = \"{173382, 4609}\";\n            s = 0;\n        },\n                {\n            r = \"{178425, 202}\";\n            s = 0;\n        },\n                {\n            r = \"{178723, 4691}\";\n            s = 0;\n        }\n    );\n    r = \"{0, 183440}\";\n    s = 0;\n}";
+			sepNavIntBoundsRect = "{{0, 0}, {1242, 28488}}";
+			sepNavSelRange = "{55739, 0}";
+			sepNavVisRange = "{54147, 2413}";
 		};
 	};
 	7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */ = {

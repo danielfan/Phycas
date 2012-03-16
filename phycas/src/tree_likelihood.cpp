@@ -37,6 +37,7 @@
 #include "phycas/src/codon_model.hpp"
 //#include <CoreServices/CoreServices.h>
 //#undef check	
+#include "libhmsbeagle/beagle.h"
 
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
@@ -2611,16 +2612,23 @@ double TreeLikelihood::calcLnL(
 			std::vector<double> freqs(nStates, 0.0);
 			subsetModel->beagleGetStateFreqs(freqs);
 			
+			//double tmp[4] = {-0.248887, -0.190674, -0.0582495, 0};
+			//std::vector<double> eigenValues(tmp, tmp+4);		
 			std::vector<double> eigenValues(nStates, 0.0);		
 			subsetModel->beagleGetEigenValues(eigenValues);
 			
+			//double tmp2[16] = {0.010561, 0.498268, -0.641013, -0.583711, -0.904067, 0.00258203, 0.280634, -0.322337, 0.00582811, -0.867005, -0.364029, -0.340223, 0.427221, 0.00497428, 0.614678, -0.663044};
 			std::vector<double> eigenVectors(nStates*nStates, 0.0);
+			//std::vector<double> eigenVectors(tmp2, tmp2+16);
 			subsetModel->beagleGetEigenVectors(eigenVectors);
 			
+			//double tmp3[16] = {0.010561, -0.904067, 0.00582811, 0.427221, 0.498268, 0.00258203, -0.867005, 0.00497428, -0.641013, 0.280634, -0.364029, 0.614678, -0.583711, -0.322337, -0.340223, -0.663044};
 			std::vector<double> inverseEigenVectors(nStates*nStates, 0.0);		
+			//std::vector<double> inverseEigenVectors(tmp3, tmp3+16);		
 			subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
 			
 			double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
+			//double edgelenScaler = 10.748076900340607;
 			
 			std::vector<double> rates(nCat, 0.0);
 			std::vector<double> weights(nCat, 0.0);
@@ -2674,6 +2682,15 @@ double TreeLikelihood::calcLnL(
 			//lnL += tmpLnL;
 			
 			lnL += beagleLib[whichSubset]->CalcLogLikelihood(t);
+
+			std::vector<double> outMatrix(16, 0.0);
+			beagleGetTransitionMatrix(0, 0, &outMatrix[0]);
+			for (std::vector<double>::iterator it = outMatrix.begin(); it != outMatrix.end(); ++it) {
+				std::cerr << *it << " ";
+			}
+			std::cerr << '\n';
+			char ch;
+			std::cin >> ch;
 		}
 #endif
 	}

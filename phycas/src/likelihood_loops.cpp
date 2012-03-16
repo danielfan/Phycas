@@ -80,6 +80,17 @@ void transpose(T * * mat, unsigned dim)
 
 namespace phycas
 {
+#if 1
+	void DebugShowNuclTransMatrix(double * * m, const char * title)
+	{
+		std::cerr << title << std::endl;
+		std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[0][0] % m[0][1] % m[0][2] % m[0][3]) << std::endl;
+		std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[1][0] % m[1][1] % m[1][2] % m[1][3]) << std::endl;
+		std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[2][0] % m[2][1] % m[2][2] % m[2][3]) << std::endl;
+		std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[3][0] % m[3][1] % m[3][2] % m[3][3]) << std::endl;
+		std::cerr << std::endl;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates a transition matrix for every rate category given the supplied `edgeLength' and the subset indexed by `i'.
@@ -103,7 +114,14 @@ void TreeLikelihood::calcPMatCommon(
 		scaled_edges[r] = subset_relrate*edgeLength*rate_means[i][r];
 		}
     //std::cerr << boost::str(boost::format("calcPMatCommon: i = %d, subset rate = %g, edgelen = %g, scaled_edges = %g") % i % subset_relrate % edgeLength % scaled_edges[0]) << std::endl;
+		std::cerr << "i = " << i << '\n';
+		std::cerr << "nr = " << nr << '\n';
+		std::cerr << "scaled_edges = " << scaled_edges[0] << '\n';		
+		std::cerr << "edgeLength = " << edgeLength << '\n';	
 	partition_model->subset_model[i]->calcPMatrices(pMatrices, &scaled_edges[0], nr); //PELIGROSO
+		DebugShowNuclTransMatrix(pMatrices[0], "pMatrices[0]");
+		char ch;
+		std::cin >> ch;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -116,18 +134,6 @@ void TreeLikelihood::calcPMat(
 	{
 	calcPMatCommon(i, p, edgeLength);
 	}
-
-#if 0
-void DebugShowNuclTransMatrix(double * * m, const char * title)
-	{
-	std::cerr << title << std::endl;
-	std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[0][0] % m[0][1] % m[0][2] % m[0][3]) << std::endl;
-	std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[1][0] % m[1][1] % m[1][2] % m[1][3]) << std::endl;
-	std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[2][0] % m[2][1] % m[2][2] % m[2][3]) << std::endl;
-	std::cerr << str(boost::format(" %12.5f %12.5f %12.5f %12.5f") % m[3][0] % m[3][1] % m[3][2] % m[3][3]) << std::endl;
-	std::cerr << std::endl;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates tip-specific transition matrices for purposes of simulation. These are transposed but not augmented

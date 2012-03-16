@@ -281,7 +281,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 602}, {213, 657}}</string>
+							<string>{{0, 770}, {213, 657}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -318,7 +318,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>beaglelib.cpp</string>
+								<string>tree_likelihood.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,11 +326,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>beaglelib.cpp</string>
+										<string>tree_likelihood.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>658079B5150C527200B155EC</string>
+										<string>6582E2E11510BB0800E25DE2</string>
 										<key>history</key>
 										<array>
 											<string>651FC5E015051AD600E97712</string>
@@ -342,26 +342,26 @@
 											<string>651A8E50150A4E98005B0A61</string>
 											<string>651A8E66150A5A49005B0A61</string>
 											<string>651A8E6B150A7475005B0A61</string>
-											<string>651A8E6D150A7475005B0A61</string>
-											<string>651A8E7D150A8495005B0A61</string>
 											<string>651A8E84150A8728005B0A61</string>
-											<string>6580797B150BFB5D00B155EC</string>
 											<string>6580797C150BFB5D00B155EC</string>
 											<string>6580797D150BFB5D00B155EC</string>
-											<string>6580797E150BFB5D00B155EC</string>
 											<string>6580797F150BFB5D00B155EC</string>
 											<string>65807980150BFB5D00B155EC</string>
-											<string>65807989150C349C00B155EC</string>
 											<string>6580798A150C349C00B155EC</string>
 											<string>6580798B150C349C00B155EC</string>
 											<string>6580799C150C3EFF00B155EC</string>
 											<string>6580799D150C3EFF00B155EC</string>
 											<string>658079A8150C4D7800B155EC</string>
-											<string>658079A9150C4D7800B155EC</string>
 											<string>658079AA150C4D7800B155EC</string>
-											<string>658079B1150C522800B155EC</string>
-											<string>658079B2150C522800B155EC</string>
-											<string>658079B3150C522800B155EC</string>
+											<string>65E34A13150EDC85000AE098</string>
+											<string>65ED34A4150EEC0C00449AC5</string>
+											<string>65ED34A5150EEC0C00449AC5</string>
+											<string>65ED34A6150EEC0C00449AC5</string>
+											<string>65ED34A7150EEC0C00449AC5</string>
+											<string>6582E2CE15102A9700E25DE2</string>
+											<string>6582E2CF15102A9700E25DE2</string>
+											<string>6582E2D015102A9700E25DE2</string>
+											<string>6582E2DF15103B4D00E25DE2</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -419,9 +419,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>65807964150AED9100B155EC</string>
+				<string>6582E2C6150FF11E00E25DE2</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>65807965150AED9100B155EC</string>
+				<string>6582E2C7150FF11E00E25DE2</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -559,8 +559,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>655E63CD14EED22600457B4F</string>
 		<string>/Users/Daniel/Desktop/Phycas/Phycas/XCode/phycas/phycas.xcodeproj</string>
 	</array>
@@ -642,7 +640,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>655E63CD14EED22600457B4F</string>
-				<string>65807966150AED9100B155EC</string>
+				<string>6582E2C8150FF11E00E25DE2</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
