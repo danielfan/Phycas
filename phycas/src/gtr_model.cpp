@@ -446,7 +446,7 @@ void GTR::setStateFreqsUnnorm(
   const std::vector<double> & values)	/**< the new unnormalized state frequencies */
 	{
 	Model::setStateFreqsUnnorm(values);
-		std::copy(state_freqs.begin(), state_freqs.end(), std::ostream_iterator<double>(std::cerr, "|"));
+		//std::copy(state_freqs.begin(), state_freqs.end(), std::ostream_iterator<double>(std::cerr, "|"));
 	q_matrix.setStateFreqs(state_freqs);
 	}
 
@@ -583,9 +583,9 @@ double GTR::getRelRateUnnorm(
  */
 void GTR::beagleGetStateFreqs(std::vector<double> & freqs)
 {
-	std::cerr << "in GTR::beagleGetStateFreqs\n";
+	//std::cerr << "in GTR::beagleGetStateFreqs\n";
 	q_matrix.beagleGetStateFreqs(freqs);
-	std::copy(freqs.begin(), freqs.end(), std::ostream_iterator<double>(std::cerr, "|"));
+	//std::copy(freqs.begin(), freqs.end(), std::ostream_iterator<double>(std::cerr, "|"));
 }
 
 void GTR::beagleGetEigenValues(std::vector<double> & eigenValues)

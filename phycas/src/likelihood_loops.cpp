@@ -114,14 +114,14 @@ void TreeLikelihood::calcPMatCommon(
 		scaled_edges[r] = subset_relrate*edgeLength*rate_means[i][r];
 		}
     //std::cerr << boost::str(boost::format("calcPMatCommon: i = %d, subset rate = %g, edgelen = %g, scaled_edges = %g") % i % subset_relrate % edgeLength % scaled_edges[0]) << std::endl;
-		std::cerr << "i = " << i << '\n';
-		std::cerr << "nr = " << nr << '\n';
-		std::cerr << "scaled_edges = " << scaled_edges[0] << '\n';		
-		std::cerr << "edgeLength = " << edgeLength << '\n';	
+		//std::cerr << "i = " << i << '\n';
+		//std::cerr << "nr = " << nr << '\n';
+		//std::cerr << "scaled_edges = " << scaled_edges[0] << '\n';		
+		//std::cerr << "edgeLength = " << edgeLength << '\n';	
 	partition_model->subset_model[i]->calcPMatrices(pMatrices, &scaled_edges[0], nr); //PELIGROSO
-		DebugShowNuclTransMatrix(pMatrices[0], "pMatrices[0]");
-		char ch;
-		std::cin >> ch;
+		//DebugShowNuclTransMatrix(pMatrices[0], "pMatrices[0]");
+		//char ch;
+		//std::cin >> ch;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

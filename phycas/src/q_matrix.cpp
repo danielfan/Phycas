@@ -302,9 +302,32 @@ void QMatrix::recalcQMatrixImpl()
 //			std::cin >> ch;
 //		}
 		
-		
 		// Calculate eigenvalues (w) and eigenvectors (z)
 	int err_code = EigenRealSymmetric(dimension, qmat, w, z, fv);
+	
+    // note: this debug code assume nucleotide data
+    //std::cerr << "relative rates:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f %15.5f %15.5f\n") % rr[0] % rr[1] % rr[2] % rr[3] % rr[4] % rr[5]) << std::endl;
+    //std::cerr << "state frequencies:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % pi[0] % pi[1] % pi[2] % pi[3]) << std::endl;
+    //std::cerr << "q matrix:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % qmat[0][0] % qmat[0][1] % qmat[0][2] % qmat[0][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % qmat[1][0] % qmat[1][1] % qmat[1][2] % qmat[1][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % qmat[2][0] % qmat[2][1] % qmat[2][2] % qmat[2][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % qmat[3][0] % qmat[3][1] % qmat[3][2] % qmat[3][3]) << std::endl;
+    //std::cerr << "eigenvalues:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % w[0] % w[1] % w[2] % w[3]) << std::endl;
+    //std::cerr << "eigenvectors:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % z[0][0] % z[0][1] % z[0][2] % z[0][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % z[1][0] % z[1][1] % z[1][2] % z[1][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % z[2][0] % z[2][1] % z[2][2] % z[2][3]) << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % z[3][0] % z[3][1] % z[3][2] % z[3][3]) << std::endl;
+    //std::cerr << "edgelen_scaler:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f\n") % edgelen_scaler) << std::endl;
+    //std::cerr << "sum_for_scaling:" << std::endl;
+    //std::cerr << boost::str(boost::format("%15.5f\n") % sum_for_scaling) << std::endl;
+    //char ch;
+    //std::cin >> ch;
 	
 	if (err_code != 0)
 		{

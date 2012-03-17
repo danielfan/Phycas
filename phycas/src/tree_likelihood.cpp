@@ -2403,7 +2403,7 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 
 	double lnL = 0.0;
-		
+    
 	if (_useBeagleLib) {
 #if 0 // JC model test
 		if (!beagleLib) {
@@ -2621,11 +2621,23 @@ double TreeLikelihood::calcLnL(
 			std::vector<double> eigenVectors(nStates*nStates, 0.0);
 			//std::vector<double> eigenVectors(tmp2, tmp2+16);
 			subsetModel->beagleGetEigenVectors(eigenVectors);
+            
+            //POL
+            for (unsigned i = 0; i < nStates*nStates; ++i)
+                {
+                eigenVectors[i] /= sqrt(freqs[i % nStates]);
+                }
 			
 			//double tmp3[16] = {0.010561, -0.904067, 0.00582811, 0.427221, 0.498268, 0.00258203, -0.867005, 0.00497428, -0.641013, 0.280634, -0.364029, 0.614678, -0.583711, -0.322337, -0.340223, -0.663044};
 			std::vector<double> inverseEigenVectors(nStates*nStates, 0.0);		
 			//std::vector<double> inverseEigenVectors(tmp3, tmp3+16);		
 			subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
+			
+            //POL
+            for (unsigned i = 0; i < nStates*nStates; ++i)
+                {
+                inverseEigenVectors[i] *= sqrt(freqs[i % nStates]);
+                }
 			
 			double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
 			//double edgelenScaler = 10.748076900340607;
@@ -2668,8 +2680,9 @@ double TreeLikelihood::calcLnL(
 //				std::cerr << *it << " ";
 //			}
 //			std::cerr << '\n';
-//			char ch;
-//			std::cin >> ch;
+            //std::cerr << "In TreeLikelihood::calcLnL (Partition model test)" << std::endl;
+			//char ch;
+			//std::cin >> ch;
 
 			beagleLib[whichSubset]->SetStateFrequencies(freqs);
 			beagleLib[whichSubset]->SetCategoryRatesAndWeights(rates, weights);
@@ -2685,12 +2698,12 @@ double TreeLikelihood::calcLnL(
 
 			std::vector<double> outMatrix(16, 0.0);
 			beagleGetTransitionMatrix(0, 0, &outMatrix[0]);
-			for (std::vector<double>::iterator it = outMatrix.begin(); it != outMatrix.end(); ++it) {
-				std::cerr << *it << " ";
-			}
-			std::cerr << '\n';
-			char ch;
-			std::cin >> ch;
+			//for (std::vector<double>::iterator it = outMatrix.begin(); it != outMatrix.end(); ++it) {
+			//	std::cerr << *it << " ";
+			//}
+			//std::cerr << '\n';
+			//char ch;
+			//std::cin >> ch;
 		}
 #endif
 	}

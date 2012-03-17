@@ -70,7 +70,11 @@ void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned n
 										 NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
 										 0,							// Length of resourceList list
 										 0,							// Bit-flags indicating preferred implementation charactertistics
+#if 0
 										 BEAGLE_FLAG_PROCESSOR_GPU | 
+#else
+										 BEAGLE_FLAG_PROCESSOR_CPU | 
+#endif
 										 BEAGLE_FLAG_PRECISION_SINGLE | 
 										 BEAGLE_FLAG_EIGEN_REAL | 
 										 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics

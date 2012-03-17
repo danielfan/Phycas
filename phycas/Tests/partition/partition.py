@@ -71,6 +71,8 @@ mcmc.starting_tree_source = TreeCollection(newick='((((((9:0.1,(7:0.1,10:0.1):0.
 mcmc.use_beaglelib = True
 mcmc()
 
+#CPU Starting log-likelihood = -7842.645062
+#GPU 
 
 # i = 0
 # nr = 1
