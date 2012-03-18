@@ -2623,10 +2623,30 @@ double TreeLikelihood::calcLnL(
 			subsetModel->beagleGetEigenVectors(eigenVectors);
             
             //POL
+            std::cerr << "\neigenValues in TreeLikelihood::calcLnL:\n";
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenValues[0] % eigenValues[1] % eigenValues[2] % eigenValues[3]);
+            std::cerr << "\nModifying eigenVectors in TreeLikelihood::calcLnL:\n";
+            std::cerr << "Before:\n";
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[0] % eigenVectors[1] % eigenVectors[2] % eigenVectors[3]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[4] % eigenVectors[5] % eigenVectors[6] % eigenVectors[7]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[8] % eigenVectors[9] % eigenVectors[10] % eigenVectors[11]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[12] % eigenVectors[13] % eigenVectors[14] % eigenVectors[15]);
             for (unsigned i = 0; i < nStates*nStates; ++i)
                 {
-                eigenVectors[i] /= sqrt(freqs[i % nStates]);
+                unsigned which_freq = (unsigned)(i / nStates);
+                double frq = freqs[which_freq];
+                double sqrtFreq = sqrt(frq);
+                double vbefore = eigenVectors[i];
+                double vafter = vbefore/sqrtFreq;
+                eigenVectors[i] = vafter;
+                //std::cerr << boost::str(boost::format("i=%g which_freq=%g frq=%g sqrtFreq=%g vbefore=%g vafter=%g\n") % i % which_freq % frq % sqrtFreq % vbefore % vafter);
                 }
+            std::cerr << "After:\n";
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[0] % eigenVectors[1] % eigenVectors[2] % eigenVectors[3]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[4] % eigenVectors[5] % eigenVectors[6] % eigenVectors[7]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[8] % eigenVectors[9] % eigenVectors[10] % eigenVectors[11]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % eigenVectors[12] % eigenVectors[13] % eigenVectors[14] % eigenVectors[15]);
+            std::cerr << std::endl;
 			
 			//double tmp3[16] = {0.010561, -0.904067, 0.00582811, 0.427221, 0.498268, 0.00258203, -0.867005, 0.00497428, -0.641013, 0.280634, -0.364029, 0.614678, -0.583711, -0.322337, -0.340223, -0.663044};
 			std::vector<double> inverseEigenVectors(nStates*nStates, 0.0);		
@@ -2634,10 +2654,28 @@ double TreeLikelihood::calcLnL(
 			subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
 			
             //POL
+            std::cerr << "\nModifying inverseEigenVectors in TreeLikelihood::calcLnL:\n";
+            std::cerr << "Before:\n";
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[0] % inverseEigenVectors[1] % inverseEigenVectors[2] % inverseEigenVectors[3]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[4] % inverseEigenVectors[5] % inverseEigenVectors[6] % inverseEigenVectors[7]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[8] % inverseEigenVectors[9] % inverseEigenVectors[10] % inverseEigenVectors[11]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[12] % inverseEigenVectors[13] % inverseEigenVectors[14] % inverseEigenVectors[15]);
             for (unsigned i = 0; i < nStates*nStates; ++i)
                 {
-                inverseEigenVectors[i] *= sqrt(freqs[i % nStates]);
+                unsigned which_freq = (unsigned)(i % nStates);
+                double frq = freqs[which_freq];
+                double sqrtFreq = sqrt(frq);
+                double vbefore = inverseEigenVectors[i];
+                double vafter = vbefore*sqrtFreq;
+                inverseEigenVectors[i] = vafter;
+                //std::cerr << boost::str(boost::format("i=%g which_freq=%g frq=%g sqrtFreq=%g vbefore=%g vafter=%g\n") % i % which_freq % frq % sqrtFreq % vbefore % vafter);
                 }
+            std::cerr << "After:\n";
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[0] % inverseEigenVectors[1] % inverseEigenVectors[2] % inverseEigenVectors[3]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[4] % inverseEigenVectors[5] % inverseEigenVectors[6] % inverseEigenVectors[7]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[8] % inverseEigenVectors[9] % inverseEigenVectors[10] % inverseEigenVectors[11]);
+            std::cerr << boost::str(boost::format("%15.5f %15.5f %15.5f %15.5f\n") % inverseEigenVectors[12] % inverseEigenVectors[13] % inverseEigenVectors[14] % inverseEigenVectors[15]);
+            std::cerr << std::endl;
 			
 			double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
 			//double edgelenScaler = 10.748076900340607;
@@ -2687,6 +2725,7 @@ double TreeLikelihood::calcLnL(
 			beagleLib[whichSubset]->SetStateFrequencies(freqs);
 			beagleLib[whichSubset]->SetCategoryRatesAndWeights(rates, weights);
 			beagleLib[whichSubset]->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
+			//beagleLib[whichSubset]->SetEigenDecomposition(eigenValues, inverseEigenVectors, eigenVectors);
 			beagleLib[whichSubset]->DefineOperations(t, edgelenScaler);
 			
 			// debug

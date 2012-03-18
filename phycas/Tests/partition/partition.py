@@ -72,7 +72,7 @@ mcmc.use_beaglelib = True
 mcmc()
 
 #CPU Starting log-likelihood = -7842.645062
-#GPU 
+#GPU Starting log-likelihood = -7842.64550781
 
 # i = 0
 # nr = 1
