@@ -2512,23 +2512,6 @@ double TreeLikelihood::calcLnL(
 			std::copy(rate_probs[0].begin(), rate_probs[0].end(), weights.begin());
 		}
 		
-//		//debug
-//		std::cerr << "nCat " << (unsigned)(subsetModel->getNRatesTotal()) << '\n';
-//		std::cerr << "freq\n";
-//		std::cerr << freqs[0] << " " << freqs[1] << " " << freqs[2] << " " << freqs[3] << '\n';
-//		
-//		std::cerr << "rates and weights\n";
-//		for (std::vector<double>::iterator it = rates.begin(); it != rates.end(); ++it) {
-//			std::cerr << *it << " ";
-//		}
-//		std::cerr << '\n';
-//		for (std::vector<double>::iterator it = weights.begin(); it != weights.end(); ++it) {
-//			std::cerr << *it << " ";
-//		}
-//		std::cerr << '\n';
-//		char ch;
-//		std::cin >> ch;
-		
 		beagleLib->SetStateFrequencies(freqs);
 		beagleLib->SetCategoryRatesAndWeights(rates, weights);
 		beagleLib->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
@@ -2570,19 +2553,9 @@ double TreeLikelihood::calcLnL(
 				// set beagleLib object
 				//
 				beagleLib[whichSubset] = BeagleLibShPtr(new BeagleLib);
-				//beagleLib[whichSubset]->Init(t->GetNTips(), nCat, subsetModel->getNumStates(), partition_model->getNumPatterns(whichSubset), whichSubset);
 				beagleLib[whichSubset]->Init(t->GetNTips(), nCat, subsetModel->getNumStates(), partition_model->getNumPatterns(whichSubset));
 				beagleLib[whichSubset]->SetTipStates(t, whichSubset);
 				beagleLib[whichSubset]->SetPatternWeights(subsetPatternCounts);
-				
-//				//debug
-//				std::cerr << "number of patters = " << partition_model->getNumPatterns(whichSubset) << '\n';
-//				for (std::vector<double>::iterator it = subsetPatternCounts.begin(); it != subsetPatternCounts.end(); ++it) {
-//					std::cerr << *it << " ";
-//				}
-//				std::cerr << '\n';
-//				char ch;
-//				std::cin >> ch;
 			}
 		}
 		
@@ -2600,51 +2573,19 @@ double TreeLikelihood::calcLnL(
 		//
 		
 		for (unsigned whichSubset = 0; whichSubset < partition_model->getNumSubsets(); ++whichSubset) {
+			// get subset substitution model pointer
+			//
 			ModelShPtr subsetModel = partition_model->getModel(whichSubset);
+			
+			// decide substitution model dimension
+			//
 			unsigned nStates = subsetModel->getNumStates();
-			unsigned nCat    = subsetModel->getNGammaRates();
+			
+			// +G or +I or both
+			//
+			unsigned nCat = subsetModel->getNGammaRates();
 			if (subsetModel->isPinvarModel())
 				nCat += 1;
-			
-			//debug
-			//std::cerr << "nCat = " << nCat << '\n'; 
-			
-			std::vector<double> freqs(nStates, 0.0);
-			subsetModel->beagleGetStateFreqs(freqs);
-			
-			std::vector<double> sqrtFreqs(nStates, 0.0);
-			for (unsigned ithFreqs = 0; ithFreqs < nStates; ++ithFreqs) {
-				sqrtFreqs[ithFreqs] = sqrt(freqs[ithFreqs]);
-			}
-			
-			//double tmp[4] = {-0.248887, -0.190674, -0.0582495, 0};
-			//std::vector<double> eigenValues(tmp, tmp+4);		
-			std::vector<double> eigenValues(nStates, 0.0);		
-			subsetModel->beagleGetEigenValues(eigenValues);
-			
-			//double tmp2[16] = {0.010561, 0.498268, -0.641013, -0.583711, -0.904067, 0.00258203, 0.280634, -0.322337, 0.00582811, -0.867005, -0.364029, -0.340223, 0.427221, 0.00497428, 0.614678, -0.663044};
-			std::vector<double> eigenVectors(nStates*nStates, 0.0);
-			//std::vector<double> eigenVectors(tmp2, tmp2+16);
-			subsetModel->beagleGetEigenVectors(eigenVectors);
-			for (unsigned i = 0; i < nStates; ++i) {
-				for (unsigned j = 0; j < nStates; ++j) {
-					eigenVectors[i*nStates + j] /= sqrtFreqs[i];
-				}
-			}
-			
-			//double tmp3[16] = {0.010561, -0.904067, 0.00582811, 0.427221, 0.498268, 0.00258203, -0.867005, 0.00497428, -0.641013, 0.280634, -0.364029, 0.614678, -0.583711, -0.322337, -0.340223, -0.663044};
-			std::vector<double> inverseEigenVectors(nStates*nStates, 0.0);		
-			//std::vector<double> inverseEigenVectors(tmp3, tmp3+16);		
-			subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
-			for (unsigned i = 0; i < nStates; ++i) {
-				for (unsigned j = 0; j < nStates; ++j) {
-					inverseEigenVectors[i*nStates + j] *= sqrtFreqs[j];
-				}
-			}
-			
-			double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
-			//double edgelenScaler = 10.748076900340607;
-			
 			std::vector<double> rates(nCat, 0.0);
 			std::vector<double> weights(nCat, 0.0);
 			if (subsetModel->isPinvarModel()) {
@@ -2660,52 +2601,51 @@ double TreeLikelihood::calcLnL(
 				std::copy(rate_probs[0].begin(), rate_probs[0].end(), weights.begin());
 			}
 			
-//			//debug
-//			std::cerr << "freq\n";
-//			for (std::vector<double>::iterator it = freqs.begin(); it != freqs.end(); ++it) {
-//				std::cerr << *it << " ";
-//			}
-//			std::cerr << '\n';
-//			
-//			std::cerr << "rates and weights\n";
-//			for (std::vector<double>::iterator it = rates.begin(); it != rates.end(); ++it) {
-//				std::cerr << *it << " ";
-//			}
-//			std::cerr << '\n';
-//			for (std::vector<double>::iterator it = weights.begin(); it != weights.end(); ++it) {
-//				std::cerr << *it << " ";
-//			}
-//			std::cerr << '\n';
-//			
-//			std::cerr << "edgelenScaler = " << edgelenScaler << '\n';
-//
-//			for (std::vector<double>::iterator it = eigenValues.begin(); it != eigenValues.end(); ++it) {
-//				std::cerr << *it << " ";
-//			}
-//			std::cerr << '\n';
-//			char ch;
-//			std::cin >> ch;
-
+			// substitution model frequencies
+			//
+			std::vector<double> freqs(nStates, 0.0);
+			subsetModel->beagleGetStateFreqs(freqs);
+			
+			std::vector<double> sqrtFreqs(nStates, 0.0);
+			for (unsigned ithFreqs = 0; ithFreqs < nStates; ++ithFreqs) {
+				sqrtFreqs[ithFreqs] = sqrt(freqs[ithFreqs]);
+			}
+			
+			// substitution model eigenvalues, eigenvectors and inverse eigenvectors
+			//
+			std::vector<double> eigenValues(nStates, 0.0);		
+			subsetModel->beagleGetEigenValues(eigenValues);
+			
+			std::vector<double> eigenVectors(nStates*nStates, 0.0);
+			subsetModel->beagleGetEigenVectors(eigenVectors);
+			for (unsigned i = 0; i < nStates; ++i) {
+				for (unsigned j = 0; j < nStates; ++j) {
+					eigenVectors[i*nStates + j] /= sqrtFreqs[i];
+				}
+			}
+			
+			std::vector<double> inverseEigenVectors(nStates*nStates, 0.0);		
+			subsetModel->beagleGetInverseEigenVectors(inverseEigenVectors);
+			for (unsigned i = 0; i < nStates; ++i) {
+				for (unsigned j = 0; j < nStates; ++j) {
+					inverseEigenVectors[i*nStates + j] *= sqrtFreqs[j];
+				}
+			}
+			
+			// substitution model edge length scaler
+			//
+			double edgelenScaler = subsetModel->beagleGetEdgelenScaler();
+			
+			// set up beaglelib
+			//
 			beagleLib[whichSubset]->SetStateFrequencies(freqs);
 			beagleLib[whichSubset]->SetCategoryRatesAndWeights(rates, weights);
 			beagleLib[whichSubset]->SetEigenDecomposition(eigenValues, eigenVectors, inverseEigenVectors);
 			beagleLib[whichSubset]->DefineOperations(t, edgelenScaler);
 			
-			// debug
-			//double tmpLnL = beagleLib[whichSubset]->CalcLogLikelihood(t);
-			//std::cerr << "tmpLnL = " << tmpLnL << '\n';
-			//lnL += tmpLnL;
-			
+			// calculate loglikelihood
+			//
 			lnL += beagleLib[whichSubset]->CalcLogLikelihood(t);
-
-//			std::vector<double> outMatrix(16, 0.0);
-//			beagleGetTransitionMatrix(0, 0, &outMatrix[0]);
-//			for (std::vector<double>::iterator it = outMatrix.begin(); it != outMatrix.end(); ++it) {
-//				std::cerr << *it << " ";
-//			}
-//			std::cerr << '\n';
-//			char ch;
-//			std::cin >> ch;
 		}
 #endif
 	}

@@ -38,7 +38,6 @@ void BeagleLib::ListResources() {
     }    
 }
 
-//void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns, unsigned debug) {
 void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns) {
 	_nTaxa     = nTaxa;
 	_nCat      = nCat;
@@ -56,47 +55,24 @@ void BeagleLib::Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned n
 	// multiple times to create multiple data partition instances each returning a unique
 	// identifier.
 	//
-//	if (debug==0) {
-		_instance = beagleCreateInstance(
-										 _nTaxa,						// Number of tip data elements
-										 (2*_nTaxa-2 - _nTaxa),		// Number of partials buffers to create
-										 _nTaxa,						// Number of compact state representation buffers to create
-										 _nStates,					// Number of states in the continuous-time Markov chain
-										 _nPatterns,					// Number of site patterns to be handled by the instance;
-										 1,							// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
-										 (2*_nTaxa-3),				// Number of transition probability matrix buffers
-										 _nCat,						// Number of rate categories; nCat=1 for the codon model
-										 0,							// Number of scale buffers to create, ignored for auto scale or always scale                
-										 NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
-										 0,							// Length of resourceList list
-										 0,							// Bit-flags indicating preferred implementation charactertistics
-										 BEAGLE_FLAG_PROCESSOR_GPU | 
-										 BEAGLE_FLAG_PRECISION_SINGLE | 
-										 BEAGLE_FLAG_EIGEN_REAL | 
-										 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
-										 &instDetails);				// Pointer to return implementation and resource details
-//	}
-
-//	if (debug==1) {
-//		_instance = beagleCreateInstance(
-//										 _nTaxa,						// Number of tip data elements
-//										 (2*_nTaxa-2 - _nTaxa),		// Number of partials buffers to create
-//										 _nTaxa,						// Number of compact state representation buffers to create
-//										 _nStates,					// Number of states in the continuous-time Markov chain
-//										 _nPatterns,					// Number of site patterns to be handled by the instance;
-//										 1,							// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
-//										 (2*_nTaxa-3),				// Number of transition probability matrix buffers
-//										 _nCat,						// Number of rate categories; nCat=1 for the codon model
-//										 0,							// Number of scale buffers to create, ignored for auto scale or always scale                
-//										 NULL,						// List of potential resources on which this instance is allowed; NULL implies no restriction
-//										 0,							// Length of resourceList list
-//										 0,							// Bit-flags indicating preferred implementation charactertistics
-//										 BEAGLE_FLAG_PROCESSOR_CPU | 
-//										 BEAGLE_FLAG_PRECISION_SINGLE | 
-//										 BEAGLE_FLAG_EIGEN_REAL | 
-//										 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
-//										 &instDetails);				// Pointer to return implementation and resource details
-//	}
+	_instance = beagleCreateInstance(
+									 _nTaxa,						// Number of tip data elements
+									 (2*_nTaxa-2 - _nTaxa),			// Number of partials buffers to create
+									 _nTaxa,						// Number of compact state representation buffers to create
+									 _nStates,						// Number of states in the continuous-time Markov chain
+									 _nPatterns,					// Number of site patterns to be handled by the instance;
+									 1,								// Number of rate matrix eigen-decomposition, category weight, and state frequency buffers to allocate
+									 (2*_nTaxa-3),					// Number of transition probability matrix buffers
+									 _nCat,							// Number of rate categories; nCat=1 for the codon model
+									 0,								// Number of scale buffers to create, ignored for auto scale or always scale                
+									 NULL,							// List of potential resources on which this instance is allowed; NULL implies no restriction
+									 0,								// Length of resourceList list
+									 0,								// Bit-flags indicating preferred implementation charactertistics
+									 BEAGLE_FLAG_PROCESSOR_GPU | 
+									 BEAGLE_FLAG_PRECISION_SINGLE | 
+									 BEAGLE_FLAG_EIGEN_REAL | 
+									 BEAGLE_FLAG_SCALING_ALWAYS,	// Bit-flags indicating required implementation characteristics
+									 &instDetails);					// Pointer to return implementation and resource details
 	
 	if(_instance < 0) {
 		std::cout << "Failed to obtain beagle instance.\n";
@@ -313,23 +289,7 @@ double BeagleLib::CalcLogLikelihood(TreeShPtr t) {
 			std::cout << "Failed to update transition matrices.\n";
 			exit(1);
 		}
-		
-
-//		//debug
-//		for(int i = 0; i < (2*_nTaxa-3); ++i) {
-//			std::vector<double> outMatrix(4*4, 0.0);
-//			beagleGetTransitionMatrix(_instance, i, &outMatrix[0]);
-//			std::cerr << "transition matrix " << i << ":\n";
-//			for(unsigned i = 0; i < 4; ++i) {
-//				for(unsigned j = 0; j < 4; ++j)
-//					std::cerr << outMatrix[i*4+j] << '\t';
-//				std::cerr << '\n';
-//			}	
-//		}
-//		char ch;
-//		std::cin >> ch;
-		
-		
+				
 		// Calculate or queue for calculation partials using a list of operations
 		//
 		int totalOperations = (int)(_operations.size()/7);

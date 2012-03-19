@@ -21,7 +21,6 @@ class BeagleLib
 	BeagleLib();
 	~BeagleLib();
 	
-	//void					Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns, unsigned debug);
 	void					Init(unsigned nTaxa, unsigned nCat, unsigned nStates, unsigned nPatterns);
 	void					ListResources();
 	void					SetStateFrequencies(const std::vector<double> &freqs);
