@@ -1,6 +1,6 @@
 from phycas import *
 
-if False:
+if True:
     print '==> Setting up partition model...'
     
     model.type = 'gtr'
