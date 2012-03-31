@@ -2403,6 +2403,10 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 
 	double lnL = 0.0;
+
+    // The variable nevals keeps track of the number of times the likelihood has been calculated
+    // You can reset this value to 0 using resetNumLikelihoodEvals()
+    incrementNumLikelihoodEvals();
     
 	if (_useBeagleLib) {
 #if 0 // JC model test
@@ -2435,7 +2439,7 @@ double TreeLikelihood::calcLnL(
 		beagleLib->DefineOperations(t);
 		lnL = beagleLib->CalcLogLikelihood(t);
 #endif
-#if 0 // Codon model test
+#if 1 // Codon model test
 		if (!beagleLib) {
 			beagleLib = BeagleLibShPtr(new BeagleLib);
 			beagleLib->Init(t->GetNTips(), 1, 61, (unsigned)pattern_counts.size());
@@ -2535,7 +2539,7 @@ double TreeLikelihood::calcLnL(
 		beagleLib->DefineOperations(t, edgelenScaler);
 		lnL = beagleLib->CalcLogLikelihood(t);
 #endif
-#if 1	// Partition model test
+#if 0	// Partition model test
 		//
 		// if no beagleLib, initialize it
 		//
@@ -2750,10 +2754,6 @@ double TreeLikelihood::calcLnL(
 		//@TEMP force crash to test entry into debugger
 		//char*p=NULL;
 		//*p='a';
-		
-		// The variable nevals keeps track of the number of times the likelihood has been calculated
-		// You can reset this value to 0 using resetNumLikelihoodEvals()
-		incrementNumLikelihoodEvals();
 		
 		// If likelihood_root has not been specified, set it to the subroot node and invalidate
 		// all CLAs. If likelihood_root does already point to a node, assume that the necessary 

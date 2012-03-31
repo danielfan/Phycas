@@ -1,3 +1,9 @@
+phycas/Tests/CodonTest/cpu-codontest.txt
+phycas/Tests/CodonTest/cpu-params.p
+phycas/Tests/CodonTest/cpu-trees.t
+phycas/Tests/CodonTest/gpu-codontest.txt
+phycas/Tests/CodonTest/gpu-params.p
+phycas/Tests/CodonTest/gpu-trees.t
 .DS_Store
 XCode/phycas/.DS_Store
 go.sh
