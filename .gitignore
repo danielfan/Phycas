@@ -1,4 +1,16 @@
-inprep/Praxis/
+.DS_Store
+XCode/phycas/.DS_Store
+go.sh
+phycas/Tests/.DS_Store
+phycas/Tests/CodonTest/CodonTest4taxon.py
+phycas/Tests/CodonTest/codons.nex
+phycas/Tests/CodonTest/codontest.txt
+phycas/Tests/CodonTest/params.p
+phycas/Tests/CodonTest/trees.t
+phycas/Tests/partition/parttest.p
+phycas/Tests/partition/parttest.t
+phycas/Tests/partition/parttest.txtinprep/Praxis/
+phycas/Tests/partition/parttest.txt
 inprep/LandPlants/Doc.html
 inprep/LandPlants/Hadamard/SS_101_2000_10/
 inprep/LandPlants/Hadamard/SS_21_5000_50/
